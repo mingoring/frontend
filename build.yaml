@@ -1,0 +1,37 @@
+# Code generation configuration
+targets:
+  $default:
+    builders:
+      # Freezed configuration
+      freezed:freezed:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+          - test/**/*.dart
+        options:
+          # Generate union types and copyWith
+          union_key: 'type'
+          union_value_case: 'FreezedUnionCase.pascal'
+
+      # JSON Serializable configuration
+      json_serializable:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
+          - test/**/*.dart
+        options:
+          # Generates toJson() and fromJson()
+          any_map: false
+          checked: true
+          create_factory: true
+          create_to_json: true
+          disallow_unrecognized_keys: false
+          explicit_to_json: true
+          field_rename: 'none'
+          include_if_null: false
+
+      # Riverpod generator configuration
+      riverpod_generator:riverpod_generator:
+        enabled: true
+        generate_for:
+          - lib/**/*.dart
