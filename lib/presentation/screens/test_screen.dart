@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../core/constants/app_icon_assets.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/widgets/inputs/mingoring_switch_toggle.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -11,42 +11,40 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  static const double _iconSize = 12.0;
-
-  bool _isEyeOn = true;
-  bool _isDocumentOn = true;
+  bool _isRegularOn = false;
+  bool _isSmallOn = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Widget Preview')),
+      appBar: AppBar(title: const Text('Switch Toggle Test')),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'AppEyeVisibilityIcon',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            _buildRow(
+              label: 'Regular',
+              value: _isRegularOn,
+              onChanged: (v) => setState(() => _isRegularOn = v),
             ),
-            const SizedBox(height: 40),
-            _buildToggleItem(
-              isOn: _isEyeOn,
-              onAsset: AppIconAssets.eyeOn,
-              offAsset: AppIconAssets.eyeOff,
-              onTap: () => setState(() => _isEyeOn = !_isEyeOn),
+            const SizedBox(height: 24),
+            _buildRow(
+              label: 'Small',
+              value: _isSmallOn,
+              size: MingoringSwitchToggleSize.small,
+              onChanged: (v) => setState(() => _isSmallOn = v),
             ),
-            const SizedBox(height: 60),
-            const Text(
-              'AppDocumentVisibilityIcon',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            const SizedBox(height: 24),
+            _buildRow(
+              label: 'Disabled',
+              value: false,
             ),
-            const SizedBox(height: 40),
-            _buildToggleItem(
-              isOn: _isDocumentOn,
-              onAsset: AppIconAssets.documentOn,
-              offAsset: AppIconAssets.documentOff,
-              onTap: () => setState(() => _isDocumentOn = !_isDocumentOn),
+            const SizedBox(height: 24),
+            _buildRow(
+              label: 'Disabled S',
+              value: true,
+              size: MingoringSwitchToggleSize.small,
             ),
           ],
         ),
@@ -54,28 +52,41 @@ class _TestScreenState extends State<TestScreen> {
     );
   }
 
-  Widget _buildToggleItem({
-    required bool isOn,
-    required String onAsset,
-    required String offAsset,
-    required VoidCallback onTap,
+  Widget _buildRow({
+    required String label,
+    required bool value,
+    MingoringSwitchToggleSize size = MingoringSwitchToggleSize.regular,
+    ValueChanged<bool>? onChanged,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          SvgPicture.asset(
-            isOn ? onAsset : offAsset,
-            width: _iconSize,
-            height: _iconSize,
+    final isEnabled = onChanged != null;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 100,
+          child: Text(label, style: const TextStyle(fontSize: 16)),
+        ),
+        MingoringSwitchToggle(
+          value: value,
+          onChanged: onChanged,
+          size: size,
+        ),
+        const SizedBox(width: 12),
+        SizedBox(
+          width: 40,
+          child: Text(
+            value ? 'ON' : 'OFF',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isEnabled
+                  ? (value ? AppColors.pink600 : AppColors.gray500)
+                  : AppColors.gray400,
+            ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            isOn ? 'On' : 'Off',
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
