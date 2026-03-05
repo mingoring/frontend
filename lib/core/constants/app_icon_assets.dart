@@ -45,6 +45,14 @@ abstract final class AppIconAssets {
   static const String editPen = '$_basePath/ic_editpen.svg';
   static const String setting = '$_basePath/ic_setting.svg';
 
+  // NavBar Icon
+  static const String homeGray = '$_basePath/ic_home_gray.svg';
+  static const String homePink = '$_basePath/ic_home_pink.svg';
+  static const String libraryGray = '$_basePath/ic_library_gray.svg';
+  static const String libraryPink = '$_basePath/ic_library_pink.svg';
+  static const String userGray = '$_basePath/ic_user_gray.svg';
+  static const String userPink = '$_basePath/ic_user_pink.svg';
+
   // Color Icon
   static const String book = '$_basePath/ic_book.svg';
   static const String bookmark = '$_basePath/ic_bookmark.svg';
