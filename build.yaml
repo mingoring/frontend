@@ -11,7 +11,7 @@ targets:
         options:
           # Generate union types and copyWith
           union_key: 'type'
-          union_value_case: 'FreezedUnionCase.pascal'
+          union_value_case: pascal
 
       # JSON Serializable configuration
       json_serializable:
