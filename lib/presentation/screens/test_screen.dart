@@ -1,90 +1,161 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/buttons/mingoring_watch_button.dart';
+import '../../core/widgets/badges/mingoring_badge.dart';
 
-class TestScreen extends StatefulWidget {
+class TestScreen extends StatelessWidget {
   const TestScreen({super.key});
-
-  @override
-  State<TestScreen> createState() => _TestScreenState();
-}
-
-class _TestScreenState extends State<TestScreen> {
-  bool _isEnabled = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('MingoringWatchButton Test')),
+      appBar: AppBar(title: const Text('MingoringBadge Test')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionLabel('Big — Enabled'),
-            MingoringWatchButton(
-              onPressed: () => _showSnackBar('Big Enabled'),
-            ),
-            const SizedBox(height: 16),
-            _buildSectionLabel('Big — Disabled'),
-            MingoringWatchButton(
-              onPressed: null,
-            ),
-            const SizedBox(height: 24),
-            _buildSectionLabel('Small — Enabled'),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: MingoringWatchButton(
-                size: MingoringWatchButtonSize.small,
-                onPressed: () => _showSnackBar('Small Enabled'),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildSectionLabel('Small — Disabled'),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: MingoringWatchButton(
-                size: MingoringWatchButtonSize.small,
-                onPressed: null,
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildSectionLabel('Style Override'),
-            MingoringWatchButton(
-              onPressed: () => _showSnackBar('Style Override'),
-              style: TextButton.styleFrom(
-                minimumSize: const Size(200, 50),
-              ),
-            ),
-            const SizedBox(height: 32),
-            const Divider(),
-            const SizedBox(height: 16),
-            Row(
+            _buildSectionLabel('Small — Status'),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                const Text('Enable / Disable 토글'),
-                const Spacer(),
-                Switch(
-                  value: _isEnabled,
-                  onChanged: (v) => setState(() => _isEnabled = v),
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.gray,
+                  label: Text('All'),
+                ),
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Uploading'),
+                ),
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.darkPink,
+                  label: Text('In Progress'),
+                ),
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Completed'),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            _buildSectionLabel('Big — Dynamic'),
-            MingoringWatchButton(
-              onPressed:
-                  _isEnabled ? () => _showSnackBar('Big Dynamic') : null,
+            const SizedBox(height: 24),
+            _buildSectionLabel('Small — Inquiry'),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.gray,
+                  label: Text('Submitted'),
+                ),
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.darkPink,
+                  label: Text('Answered'),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            _buildSectionLabel('Small — Dynamic'),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: MingoringWatchButton(
-                size: MingoringWatchButtonSize.small,
-                onPressed:
-                    _isEnabled ? () => _showSnackBar('Small Dynamic') : null,
-              ),
+            const SizedBox(height: 24),
+            _buildSectionLabel('Small — Learning'),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                MingoringBadge(
+                  badgeColor: MingoringBadgeColor.darkPink,
+                  label: Text('Pattern'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            _buildSectionLabel('Big — Interest'),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('K-pop'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('K-Drama & Movies'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Daily Life'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Travel'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Business'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Beauty & Fashion'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('K-Food'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Gaming'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Webtoon'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.pink,
+                  label: Text('Trends & Slang'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _buildSectionLabel('Big — Level'),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Lv 1 · Beginner'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Lv 2 · Elementary'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Lv 3 · Intermediate'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Lv 4 · Upper-Intermediate'),
+                ),
+                MingoringBadge(
+                  size: MingoringBadgeSize.big,
+                  badgeColor: MingoringBadgeColor.lightPink,
+                  label: Text('Lv 5 · Advanced'),
+                ),
+              ],
             ),
           ],
         ),
@@ -104,11 +175,5 @@ class _TestScreenState extends State<TestScreen> {
         ),
       ),
     );
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('$message 클릭됨')));
   }
 }
