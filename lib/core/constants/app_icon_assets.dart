@@ -42,7 +42,14 @@ abstract final class AppIconAssets {
   // Action Icon
   static const String close = '$_basePath/ic_close.svg';
   static const String bell = '$_basePath/ic_bell.svg';
-  static const String book = '$_basePath/ic_book.svg';
   static const String editPen = '$_basePath/ic_editpen.svg';
   static const String setting = '$_basePath/ic_setting.svg';
+
+  // Color Icon
+  static const String book = '$_basePath/ic_book.svg';
+  static const String bookmark = '$_basePath/ic_bookmark.svg';
+  static const String fire = '$_basePath/ic_fire.svg';
+  static const String lesson = '$_basePath/ic_lesson.svg';
+  static const String link = '$_basePath/ic_link.svg';
+  static const String video = '$_basePath/ic_video.svg';
 }
