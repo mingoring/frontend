@@ -21,8 +21,10 @@ abstract final class AppIconAssets {
   // Arrow Direction Mini Icon
   static const String arrowUpMiniGray = '$_basePath/ic_arrow_up_mini_gray.svg';
   static const String arrowUpMiniPink = '$_basePath/ic_arrow_up_mini_pink.svg';
-  static const String arrowDownMiniGray = '$_basePath/ic_arrow_down_mini_gray.svg';
-  static const String arrowDownMiniPink = '$_basePath/ic_arrow_down_mini_pink.svg';
+  static const String arrowDownMiniGray =
+      '$_basePath/ic_arrow_down_mini_gray.svg';
+  static const String arrowDownMiniPink =
+      '$_basePath/ic_arrow_down_mini_pink.svg';
 
   // Check1 Icon
   static const String check1None = '$_basePath/ic_check1_none.svg';
@@ -53,6 +55,43 @@ abstract final class AppIconAssets {
   static const String userGray = '$_basePath/ic_user_gray.svg';
   static const String userPink = '$_basePath/ic_user_pink.svg';
 
+  // Button Icon
+  static const String btnSoundOff = '$_basePath/btn_sound_off.svg';
+  static const String btnSoundOn = '$_basePath/btn_sound_on.svg';
+  static const String btnPlus1 = '$_basePath/btn_plus1.svg';
+  static const String btnPlus2 = '$_basePath/btn_plus2.svg';
+  static const String btnBookmarkGray = '$_basePath/btn_bookmark_gray.svg';
+  static const String btnBookmarkPink = '$_basePath/btn_bookmark_pink.svg';
+  static const String btnCopyGray = '$_basePath/btn_copy_gray.svg';
+  static const String btnCopyPink = '$_basePath/btn_copy_pink.svg';
+
+  // Video Playing Icon
+  static const String btnVideoPlay = '$_basePath/btn_video_play.svg';
+  static const String btnVideoStop = '$_basePath/btn_video_stop.svg';
+  static const String videoPlayingLeft1 = '$_basePath/ic_video_playing_left1.svg';
+  static const String videoPlayingRight1 = '$_basePath/ic_video_playing_right1.svg';
+  static const String videoPlayingLeft2 = '$_basePath/ic_video_playing_left2.svg';
+  static const String videoPlayingRight2 = '$_basePath/ic_video_playing_right2.svg';
+  static const String videoPlayingAutoOn = '$_basePath/ic_video_playing_auto_on.svg';
+  static const String videoPlayingAutoOff = '$_basePath/ic_video_playing_auto_off.svg';
+
+  // Video Status Icon
+  static const String changeEnable = '$_basePath/ic_change_enable.svg';
+  static const String changeDisable = '$_basePath/ic_change_disable.svg';
+  static const String trashEnable = '$_basePath/ic_trash_enable.svg';
+  static const String trashDisable = '$_basePath/ic_trash_disable.svg';
+
+  // Settings Icon
+  static const String notification = '$_basePath/ic_notification.svg';
+  static const String announcements = '$_basePath/ic_announcements.svg';
+  static const String faq = '$_basePath/ic_faq.svg';
+  static const String notice = '$_basePath/ic_notice.svg';
+  static const String privacy = '$_basePath/ic_privacy.svg';
+  static const String inquiry = '$_basePath/ic_inquiry.svg';
+  static const String contact = '$_basePath/ic_contact.svg';
+  static const String terms = '$_basePath/ic_terms.svg';
+  static const String marketing = '$_basePath/ic_marketing.svg';
+
   // Color Icon
   static const String book = '$_basePath/ic_book.svg';
   static const String bookmark = '$_basePath/ic_bookmark.svg';
@@ -60,4 +99,5 @@ abstract final class AppIconAssets {
   static const String lesson = '$_basePath/ic_lesson.svg';
   static const String link = '$_basePath/ic_link.svg';
   static const String video = '$_basePath/ic_video.svg';
+  static const String search = '$_basePath/ic_search.svg';
 }
