@@ -4,7 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../../../../core/widgets/indicators/mingoring_indicator.dart';
-import '../../../../presentation/screens/test_screen.dart';
+import 'login_screen.dart';
 import '../widgets/onboarding_page_content.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
     } else {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const TestScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
