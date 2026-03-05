@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/buttons/mingoring_text_button.dart';
+import '../../core/widgets/buttons/mingoring_verify_button.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -16,73 +16,39 @@ class _TestScreenState extends State<TestScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('MingoringTextButton Test')),
+      appBar: AppBar(title: const Text('MingoringVerifyButton Test')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionLabel('Big - Enabled'),
-            MingoringTextButton(
-              onPressed: () => _showSnackBar('Big Enabled'),
-              child: const Text('Next'),
-            ),
-            const SizedBox(height: 16),
-            _buildSectionLabel('Big - Disabled'),
-            MingoringTextButton(
-              onPressed: null,
-              child: const Text('Next'),
-            ),
-            const SizedBox(height: 24),
-            _buildSectionLabel('Small - Enabled'),
+            _buildSectionLabel('Enabled'),
             Align(
               alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 163,
-                child: MingoringTextButton(
-                  onPressed: () => _showSnackBar('Small Enabled'),
-                  size: MingoringTextButtonSize.small,
-                  child: const Text('Next'),
-                ),
+              child: MingoringVerifyButton(
+                onPressed: () => _showSnackBar('Verify Enabled'),
+                child: const Text('Verify'),
               ),
             ),
             const SizedBox(height: 16),
-            _buildSectionLabel('Small - Disabled'),
+            _buildSectionLabel('Disabled'),
             Align(
               alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 163,
-                child: MingoringTextButton(
-                  onPressed: null,
-                  size: MingoringTextButtonSize.small,
-                  child: const Text('Next'),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildSectionLabel('Popup - Enabled'),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 305,
-                child: MingoringTextButton(
-                  onPressed: () => _showSnackBar('Popup Enabled'),
-                  size: MingoringTextButtonSize.popup,
-                  child: const Text('Close'),
-                ),
+              child: MingoringVerifyButton(
+                onPressed: null,
+                child: const Text('Verify'),
               ),
             ),
             const SizedBox(height: 16),
-            _buildSectionLabel('Popup - Disabled'),
+            _buildSectionLabel('Style Override (width: 160)'),
             Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 305,
-                child: MingoringTextButton(
-                  onPressed: null,
-                  size: MingoringTextButtonSize.popup,
-                  child: const Text('Close'),
+              alignment: Alignment.centerLeft,
+              child: MingoringVerifyButton(
+                onPressed: () => _showSnackBar('Custom Width'),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(160, 50),
                 ),
+                child: const Text('Verify'),
               ),
             ),
             const SizedBox(height: 32),
@@ -99,9 +65,13 @@ class _TestScreenState extends State<TestScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            MingoringTextButton(
-              onPressed: _isEnabled ? () => _showSnackBar('Dynamic') : null,
-              child: Text(_isEnabled ? '활성화됨' : '비활성화됨'),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: MingoringVerifyButton(
+                onPressed:
+                    _isEnabled ? () => _showSnackBar('Dynamic Verify') : null,
+                child: Text(_isEnabled ? 'Verify' : 'Verify'),
+              ),
             ),
           ],
         ),
