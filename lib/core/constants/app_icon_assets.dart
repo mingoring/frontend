@@ -1,4 +1,4 @@
-/// 앱 공통 아이콘 SVG 에셋
+/// 앱 공통 아이콘 에셋
 abstract final class AppIconAssets {
   static const String _basePath = 'assets/icons';
 
@@ -39,8 +39,8 @@ abstract final class AppIconAssets {
   static const String check2False = '$_basePath/ic_check2_false.svg';
 
   // Social Login Icon
-  static const String apple = '$_basePath/ic_apple.svg';
-  static const String google = '$_basePath/ic_google.svg';
+  static const String apple = '$_basePath/ic_apple.png';
+  static const String google = '$_basePath/ic_google.png';
 
   // Action Icon
   static const String close = '$_basePath/ic_close.svg';
