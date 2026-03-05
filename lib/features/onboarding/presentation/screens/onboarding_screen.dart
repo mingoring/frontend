@@ -46,11 +46,16 @@ const _onboardingPages = <_OnboardingPageData>[
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   static const _pageAnimationDuration = Duration(milliseconds: 300);
-  static const _buttonHorizontalPadding = 32.0;
-  static const _buttonBottomPaddingRatio = 0.11;
-  static const _spacingImageToIndicatorRatio = 0.04;
+
+  static const _horizontalPadding = 32.0;
+
+  // 이미지 영역의 고정 높이 (이미지 들어갈 정도의 크기)
+  static const _imageBoxHeight = 320.0;
+
+  // 요소들 간의 정확한 고정 간격
+  static const _spacingImageToIndicator = 32.0;
   static const _spacingIndicatorToText = 18.0;
-  static const _spacingTextToButtonRatio = 0.05;
+  static const _spacingTextToButton = 40.0;
   static const _indicatorDotSize = 6.0;
   static const _indicatorSpacing = 6.0;
   static const _indicatorSelectedScale = 1.0;
@@ -60,11 +65,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     end: Alignment.bottomCenter,
     colors: [
       AppColors.pink200,
-      AppColors.pink200,
-      AppColors.white,
       AppColors.white,
     ],
-    stops: [0.0, 0.217, 0.627, 1.0],
   );
 
   late final PageController _pageController;
@@ -114,63 +116,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: DecoratedBox(
         decoration: const BoxDecoration(gradient: _backgroundGradient),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final buttonBottomPadding =
-                  constraints.maxHeight * _buttonBottomPaddingRatio;
-              final spacingImageToIndicator =
-                  constraints.maxHeight * _spacingImageToIndicatorRatio;
-              final spacingTextToButton =
-                  constraints.maxHeight * _spacingTextToButtonRatio;
-              final currentPage = _onboardingPages[_currentIndex];
+          child: Column(
+            children: [
+              // 1. 최상단 여백 (하단 여백과 동일하게 늘어남)
+              const Spacer(),
 
-              return Column(
-                children: [
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: pageCount,
-                      onPageChanged: _onPageViewChanged,
-                      itemBuilder: (_, index) {
-                        final page = _onboardingPages[index];
-                        return OnboardingPageImage(
-                          imagePath: page.imagePath,
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: spacingImageToIndicator),
-                  MingoringIndicator(
-                    itemCount: pageCount,
-                    currentIndex: _currentIndex,
-                    dotSize: _indicatorDotSize,
-                    spacing: _indicatorSpacing,
-                    selectedScale: _indicatorSelectedScale,
-                    activeColor: AppColors.pink600,
-                    inactiveColor: AppColors.gray300,
-                  ),
-                  const SizedBox(height: _spacingIndicatorToText),
-                  OnboardingPageTextContent(
-                    title: currentPage.title,
-                    description: currentPage.description,
-                  ),
-                  SizedBox(height: spacingTextToButton),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      _buttonHorizontalPadding,
-                      0,
-                      _buttonHorizontalPadding,
-                      buttonBottomPadding,
-                    ),
-                    child: MingoringTextButton(
-                      onPressed: _onNextPressed,
-                      size: MingoringTextButtonSize.big,
-                      child: Text(isLastPage ? 'Start in 3 seconds' : 'Next'),
-                    ),
-                  ),
-                ],
-              );
-            },
+              // 2. 이미지 영역: 높이를 제한하여 불필요한 공백 제거
+              SizedBox(
+                height: _imageBoxHeight,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: pageCount,
+                  onPageChanged: _onPageViewChanged,
+                  itemBuilder: (_, index) {
+                    final page = _onboardingPages[index];
+                    return OnboardingPageImage(
+                      imagePath: page.imagePath,
+                    );
+                  },
+                ),
+              ),
+
+              // 3. 이미지와 인디케이터 사이의 고정 간격
+              const SizedBox(height: _spacingImageToIndicator),
+
+              MingoringIndicator(
+                itemCount: pageCount,
+                currentIndex: _currentIndex,
+                dotSize: _indicatorDotSize,
+                spacing: _indicatorSpacing,
+                selectedScale: _indicatorSelectedScale,
+                activeColor: AppColors.pink600,
+                inactiveColor: AppColors.gray300,
+              ),
+              const SizedBox(height: _spacingIndicatorToText),
+
+              OnboardingPageTextContent(
+                title: _onboardingPages[_currentIndex].title,
+                description: _onboardingPages[_currentIndex].description,
+              ),
+              const SizedBox(height: _spacingTextToButton),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: _horizontalPadding,
+                ),
+                child: MingoringTextButton(
+                  onPressed: _onNextPressed,
+                  size: MingoringTextButtonSize.big,
+                  child: Text(isLastPage ? 'Start in 3 seconds' : 'Next'),
+                ),
+              ),
+
+              // 4. 최하단 여백 (상단 여백과 동일하게 늘어나 전체를 중앙으로 맞춰줌)
+              const Spacer(),
+            ],
           ),
         ),
       ),

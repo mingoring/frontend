@@ -14,23 +14,19 @@ class OnboardingPageImage extends StatelessWidget {
   final String imagePath;
 
   static const _horizontalPadding = 24.0;
-  static const _imageHeightRatio = 0.38;
-  static const _topPaddingRatio = 0.11;
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-      child: Column(
-        children: [
-          SizedBox(height: size.height * _topPaddingRatio),
-          SizedBox(
-            height: size.height * _imageHeightRatio,
-            child: SvgPicture.asset(imagePath, fit: BoxFit.contain),
-          ),
-        ],
+      // 영역 내에서 하단에 밀착시킵니다.
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: SvgPicture.asset(
+          imagePath,
+          fit: BoxFit.contain,
+          alignment: Alignment.bottomCenter,
+        ),
       ),
     );
   }
