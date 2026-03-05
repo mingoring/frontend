@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../core/widgets/inputs/app_checkbox.dart';
+import '../../core/constants/app_icon_assets.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -10,8 +11,10 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  bool _bigChecked = false;
-  bool _smallChecked = false;
+  static const double _iconSize = 12.0;
+
+  bool _isEyeOn = true;
+  bool _isDocumentOn = true;
 
   @override
   Widget build(BuildContext context) {
@@ -23,83 +26,52 @@ class _TestScreenState extends State<TestScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'AppCheckbox',
+              'AppEyeVisibilityIcon',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
-            _buildRow('Enabled', [
-              _buildItem(
-                'Big',
-                AppCheckbox(
-                  isSelected: _bigChecked,
-                  onChanged: (v) => setState(() => _bigChecked = v),
-                ),
-              ),
-              _buildItem(
-                'Small',
-                AppCheckbox(
-                  isSelected: _smallChecked,
-                  size: AppCheckboxSize.small,
-                  onChanged: (v) => setState(() => _smallChecked = v),
-                ),
-              ),
-            ]),
-            const SizedBox(height: 32),
-            _buildRow('Disabled', [
-              _buildItem(
-                'Big Off',
-                const AppCheckbox(isSelected: false),
-              ),
-              _buildItem(
-                'Big On',
-                const AppCheckbox(isSelected: true),
-              ),
-              _buildItem(
-                'Small Off',
-                const AppCheckbox(
-                  isSelected: false,
-                  size: AppCheckboxSize.small,
-                ),
-              ),
-              _buildItem(
-                'Small On',
-                const AppCheckbox(
-                  isSelected: true,
-                  size: AppCheckboxSize.small,
-                ),
-              ),
-            ]),
+            _buildToggleItem(
+              isOn: _isEyeOn,
+              onAsset: AppIconAssets.eyeOn,
+              offAsset: AppIconAssets.eyeOff,
+              onTap: () => setState(() => _isEyeOn = !_isEyeOn),
+            ),
+            const SizedBox(height: 60),
+            const Text(
+              'AppDocumentVisibilityIcon',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 40),
+            _buildToggleItem(
+              isOn: _isDocumentOn,
+              onAsset: AppIconAssets.documentOn,
+              offAsset: AppIconAssets.documentOff,
+              onTap: () => setState(() => _isDocumentOn = !_isDocumentOn),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRow(String title, List<Widget> children) {
-    return Column(
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: children,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildItem(String label, Widget child) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+  Widget _buildToggleItem({
+    required bool isOn,
+    required String onAsset,
+    required String offAsset,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
       child: Column(
         children: [
-          child,
+          SvgPicture.asset(
+            isOn ? onAsset : offAsset,
+            width: _iconSize,
+            height: _iconSize,
+          ),
           const SizedBox(height: 6),
           Text(
-            label,
+            isOn ? 'On' : 'Off',
             style: const TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ],

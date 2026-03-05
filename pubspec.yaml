@@ -42,6 +42,7 @@ dependencies:
   # Code generation annotations
   freezed_annotation: 2.4.4
   json_annotation: 4.9.0
+  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,7 @@ flutter:
 
   assets:
     - assets/images/mingo/
+    - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
