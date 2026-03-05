@@ -35,6 +35,10 @@ abstract final class AppIconAssets {
   static const String check2True = '$_basePath/ic_check2_true.svg';
   static const String check2False = '$_basePath/ic_check2_false.svg';
 
+  // Social Login Icon
+  static const String apple = '$_basePath/ic_apple.svg';
+  static const String google = '$_basePath/ic_google.svg';
+
   // Action Icon
   static const String close = '$_basePath/ic_close.svg';
   static const String bell = '$_basePath/ic_bell.svg';
