@@ -74,6 +74,7 @@ flutter:
 
   assets:
     - assets/images/mingo/
+    - assets/images/onboarding/
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
