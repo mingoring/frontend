@@ -99,6 +99,9 @@ abstract final class AppIconAssets {
   static const String terms = '$_basePath/ic_terms.svg';
   static const String marketing = '$_basePath/ic_marketing.svg';
 
+  // Watch Button Icon
+  static const String watchPlay = '$_basePath/ic_watch_play.svg';
+
   // Color Icon
   static const String book = '$_basePath/ic_book.svg';
   static const String bookmark = '$_basePath/ic_bookmark.svg';
