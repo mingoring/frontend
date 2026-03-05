@@ -87,3 +87,8 @@ flutter devices
 # 디바이스 ID로 실행
 flutter run -d <device-id>
 ```
+
+### 3. 작업 후 reload
+실행 중이면 r 키 누르기
+- hot reload(r): 위젯 트리만 다시 빌드
+- hot restart(R): 앱 상태를 초기화하고 전체를 다시 시작 (클래스 구조 변경 시에는 항상 hot restart가 필요)
