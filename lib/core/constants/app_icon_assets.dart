@@ -34,7 +34,8 @@ abstract final class AppIconAssets {
 
   // Check2 Icon
   static const String check2None = '$_basePath/ic_check2_none.svg';
-  static const String check2True = '$_basePath/ic_check2_true.svg';
+  static const String check2True1 = '$_basePath/ic_check2_true1.svg';
+  static const String check2True2 = '$_basePath/ic_check2_true2.svg';
   static const String check2False = '$_basePath/ic_check2_false.svg';
 
   // Social Login Icon
@@ -68,12 +69,18 @@ abstract final class AppIconAssets {
   // Video Playing Icon
   static const String btnVideoPlay = '$_basePath/btn_video_play.svg';
   static const String btnVideoStop = '$_basePath/btn_video_stop.svg';
-  static const String videoPlayingLeft1 = '$_basePath/ic_video_playing_left1.svg';
-  static const String videoPlayingRight1 = '$_basePath/ic_video_playing_right1.svg';
-  static const String videoPlayingLeft2 = '$_basePath/ic_video_playing_left2.svg';
-  static const String videoPlayingRight2 = '$_basePath/ic_video_playing_right2.svg';
-  static const String videoPlayingAutoOn = '$_basePath/ic_video_playing_auto_on.svg';
-  static const String videoPlayingAutoOff = '$_basePath/ic_video_playing_auto_off.svg';
+  static const String videoPlayingLeft1 =
+      '$_basePath/ic_video_playing_left1.svg';
+  static const String videoPlayingRight1 =
+      '$_basePath/ic_video_playing_right1.svg';
+  static const String videoPlayingLeft2 =
+      '$_basePath/ic_video_playing_left2.svg';
+  static const String videoPlayingRight2 =
+      '$_basePath/ic_video_playing_right2.svg';
+  static const String videoPlayingAutoOn =
+      '$_basePath/ic_video_playing_auto_on.svg';
+  static const String videoPlayingAutoOff =
+      '$_basePath/ic_video_playing_auto_off.svg';
 
   // Video Status Icon
   static const String changeEnable = '$_basePath/ic_change_enable.svg';
