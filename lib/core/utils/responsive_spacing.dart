@@ -17,7 +17,10 @@ abstract final class ResponsiveSpacing {
     double minMargin = 24.0,
     double maxMargin = 120.0,
   }) {
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
     final h = MediaQuery.sizeOf(context).height;
-    return (h * ratio).clamp(minMargin, maxMargin);
+    final calculatedMargin = (h * ratio).clamp(minMargin, maxMargin);
+    
+    return calculatedMargin < bottomInset ? bottomInset : calculatedMargin;
   }
 }
