@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_logo_typography.dart';
+import '../../../../core/constants/app_typography.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
@@ -10,6 +12,7 @@ import '../constants/signup_screen_constants.dart';
 import '../widgets/signup_interest_input.dart';
 import '../widgets/signup_level_input.dart';
 import '../widgets/signup_name_input.dart';
+import '../widgets/signup_referral_input.dart';
 
 /// 회원가입 화면
 class SignupScreen extends StatefulWidget {
@@ -42,21 +45,44 @@ class _SignupScreenState extends State<SignupScreen> {
 
   bool get _isInterestValid => _selectedInterestIndexes.isNotEmpty;
 
+  // ── Step 4: Referral ────────────────────────────────
+  late final TextEditingController _referralController;
+  MingoringInputTextfieldVerifyState _referralFieldState =
+      MingoringInputTextfieldVerifyState.defaultState;
+  String? _referralErrorMessage;
+  bool _isReferralVerified = false;
+
+  bool get _isReferralVerifyEnabled {
+    return _referralController.text.length ==
+            SignupScreenConstants.referralMaxLength &&
+        !_isReferralVerified &&
+        _referralFieldState != MingoringInputTextfieldVerifyState.error;
+  }
+
+  bool get _isReferralValid {
+    if (_referralController.text.isEmpty) return true;
+    if (_isReferralVerified) return true;
+    return false;
+  }
+
   // ── Derived ─────────────────────────────────────────
   bool get _isValid {
     if (_currentStep == 1) return _isNameValid;
     if (_currentStep == 2) return _isLevelValid;
-    return _isInterestValid;
+    if (_currentStep == 3) return _isInterestValid;
+    return _isReferralValid;
   }
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _referralController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _referralController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -105,16 +131,47 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  // ── Step 4 handlers ─────────────────────────────────
+  void _onReferralChanged(String value) {
+    setState(() {
+      _isReferralVerified = false;
+      if (value.isEmpty) {
+        _referralFieldState = MingoringInputTextfieldVerifyState.defaultState;
+        _referralErrorMessage = null;
+      } else {
+        _referralFieldState = MingoringInputTextfieldVerifyState.typing;
+        _referralErrorMessage = null;
+      }
+    });
+  }
+
+  void _onReferralVerify() {
+    FocusScope.of(context).unfocus();
+    if (_referralController.text ==
+        SignupScreenConstants.tempValidReferralCode) {
+      setState(() {
+        _isReferralVerified = true;
+        _referralFieldState = MingoringInputTextfieldVerifyState.active;
+        _referralErrorMessage = SignupScreenConstants.referralSuccessText;
+      });
+    } else {
+      setState(() {
+        _isReferralVerified = false;
+        _referralFieldState = MingoringInputTextfieldVerifyState.error;
+        _referralErrorMessage = SignupScreenConstants.referralErrorText;
+      });
+    }
+  }
+
   // ── Common handlers ─────────────────────────────────
 
   /// Continue 버튼 또는 키보드 "완료" 시 호출.
-  /// Step 1, 2: 유효하면 다음 Step으로 전환.
-  /// Step 3: 유효하면 다음 화면으로 이동.
+  /// 마지막 Step이면 다음 화면으로 이동.
   void _onContinue() {
     if (!_isValid) return;
     FocusScope.of(context).unfocus();
 
-    if (_currentStep < 3) {
+    if (_currentStep < 4) {
       setState(() => _currentStep++);
     } else {
       context.go(RoutePaths.login);
@@ -156,14 +213,90 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(
-                      height: SignupScreenConstants.headerToStepperGap),
-                  MingoringProgressStepper.big(
-                    maxItemCount: 3,
-                    currentItem: _currentStep,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                          height: SignupScreenConstants.headerToStepperGap),
+                      if (_currentStep < 4) ...[
+                        MingoringProgressStepper.big(
+                          maxItemCount: 3,
+                          currentItem: _currentStep,
+                        ),
+                        const SizedBox(
+                            height: SignupScreenConstants.stepperToContentGap),
+                      ] else ...[
+                        Text(
+                          SignupScreenConstants.referralOptionalText,
+                          style: AppTypography.head7Sb18.copyWith(
+                            color: AppColors.pink300,
+                          ),
+                        ),
+                        const SizedBox(height: 26.0),
+                      ],
+                      Builder(builder: (context) {
+                        final title = _currentStep == 1
+                            ? SignupScreenConstants.nameTitleText
+                            : _currentStep == 2
+                                ? SignupScreenConstants.levelTitleText
+                                : _currentStep == 3
+                                    ? SignupScreenConstants.interestTitleText
+                                    : SignupScreenConstants.referralTitleText;
+                        final subtitle = _currentStep == 1
+                            ? SignupScreenConstants.nameSubtitleText
+                            : _currentStep == 2
+                                ? SignupScreenConstants.levelSubtitleText
+                                : _currentStep == 3
+                                    ? SignupScreenConstants.interestSubtitleText
+                                    : SignupScreenConstants.referralSubtitleText;
+                        final gap = _currentStep == 1
+                            ? SignupScreenConstants.nameSubtitleToInputGap
+                            : _currentStep == 2
+                                ? SignupScreenConstants.levelSubtitleToListGap
+                                : _currentStep == 3
+                                    ? SignupScreenConstants.interestSubtitleToListGap
+                                    : SignupScreenConstants.referralSubtitleToInputGap;
+                        final titleStyle = _currentStep == 4
+                            ? AppLogoTypography.logoEb5.copyWith(
+                                color: AppColors.pink600,
+                                height: 1.03,
+                                letterSpacing: 0.4,
+                              )
+                            : AppLogoTypography.logoEb5.copyWith(
+                                color: AppColors.pink600,
+                                height: 1.03,
+                                letterSpacing: 0.4,
+                              );
+                        final subtitleStyle = _currentStep == 4
+                            ? AppTypography.detail6Md12.copyWith(
+                                color: AppColors.gray600,
+                                height: 1.2,
+                                letterSpacing: -0.0288,
+                              )
+                            : AppTypography.detail6Md12.copyWith(
+                                color: AppColors.gray600,
+                              );
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: titleStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            const SizedBox(height: 10.0),
+                            Text(
+                              subtitle,
+                              style: subtitleStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            SizedBox(height: gap),
+                          ],
+                        );
+                      }),
+                    ],
                   ),
-                  const SizedBox(
-                      height: SignupScreenConstants.stepperToContentGap),
                   if (_currentStep == 1)
                     SignupNameInput(
                       controller: _controller,
@@ -178,16 +311,29 @@ class _SignupScreenState extends State<SignupScreen> {
                       selectedIndex: _selectedLevelIndex,
                       onSelected: _onLevelSelected,
                     )
-                  else
+                  else if (_currentStep == 3)
                     SignupInterestInput(
                       selectedIndexes: _selectedInterestIndexes,
                       onSelected: _onInterestSelected,
+                    )
+                  else
+                    SignupReferralInput(
+                      controller: _referralController,
+                      fieldState: _referralFieldState,
+                      isVerifyEnabled: _isReferralVerifyEnabled,
+                      errorMessage: _referralErrorMessage,
+                      onChanged: _onReferralChanged,
+                      onVerify: _onReferralVerify,
+                      onSubmitted: _onSubmitted,
+                      textInputAction: TextInputAction.done,
                     ),
                 ],
               ),
             ),
           ),
-          buttonText: SignupScreenConstants.buttonTextContinue,
+          buttonText: _currentStep == 4
+              ? SignupScreenConstants.buttonTextFinish
+              : SignupScreenConstants.buttonTextContinue,
           onPressed: _isValid ? _onContinue : null,
         ),
       ),
