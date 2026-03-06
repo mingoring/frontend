@@ -8,24 +8,51 @@ import 'mingoring_text_button_bottom_column.dart';
 
 // 상단 헤더 타입
 enum MingoringBackHeaderType {
-  none,
-  title,
-  actionSave,
-  actionEdit,
+  none, // [뒤로가기]
+  title, // [뒤로가기] + [타이틀]
+  titleWithSave, // [뒤로가기] + [타이틀] + [저장]
+  titleWithEdit, // [뒤로가기] + [타이틀] + [수정]
 }
 
-// 좌측 뒤로가기와 타입별 텍스트/액션을 제공하는 상단 헤더
 class MingoringBackHeader extends StatelessWidget {
+  // none 타입, title 타입 전용
   const MingoringBackHeader({
     super.key,
     required this.onBack,
     this.type = MingoringBackHeaderType.none,
     this.text,
-    this.onActionPressed,
     this.backgroundColor = Colors.transparent,
     this.horizontalPadding =
         MingoringTextButtonBottomColumn.defaultButtonHorizontalPadding,
-  });
+  })  : onActionPressed = null,
+        assert(
+          type != MingoringBackHeaderType.titleWithSave &&
+              type != MingoringBackHeaderType.titleWithEdit,
+          '액션 헤더는 MingoringBackHeader.actionSave() 또는 '
+          'MingoringBackHeader.actionEdit()를 사용하세요.',
+        );
+
+  // titleWithSave 타입 전용
+  const MingoringBackHeader.actionSave({
+    super.key,
+    required this.onBack,
+    required String this.text,
+    required VoidCallback this.onActionPressed,
+    this.backgroundColor = Colors.transparent,
+    this.horizontalPadding =
+        MingoringTextButtonBottomColumn.defaultButtonHorizontalPadding,
+  }) : type = MingoringBackHeaderType.titleWithSave;
+
+  // titleWithEdit 타입 전용
+  const MingoringBackHeader.actionEdit({
+    super.key,
+    required this.onBack,
+    required String this.text,
+    required VoidCallback this.onActionPressed,
+    this.backgroundColor = Colors.transparent,
+    this.horizontalPadding =
+        MingoringTextButtonBottomColumn.defaultButtonHorizontalPadding,
+  }) : type = MingoringBackHeaderType.titleWithEdit;
 
   final VoidCallback onBack; // 뒤로가기 콜백
   final MingoringBackHeaderType type; // 헤더 타입
@@ -79,7 +106,7 @@ class MingoringBackHeader extends StatelessWidget {
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
-                if (type == MingoringBackHeaderType.actionSave && text != null)
+                if (type == MingoringBackHeaderType.titleWithSave && text != null)
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -98,7 +125,7 @@ class MingoringBackHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (type == MingoringBackHeaderType.actionEdit && text != null)
+                if (type == MingoringBackHeaderType.titleWithEdit && text != null)
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
