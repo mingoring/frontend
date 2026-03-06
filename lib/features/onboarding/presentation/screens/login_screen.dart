@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_icon_assets.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../../../../core/router/route_paths.dart';
 import '../widgets/social_icon_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -93,13 +95,13 @@ class LoginScreen extends StatelessWidget {
                 SocialIconButton(
                   iconPath: AppIconAssets.google,
                   iconSize: _socialIconSize,
-                  onTap: () {},
+                  onTap: () => context.push(RoutePaths.terms),
                 ),
                 const SizedBox(width: _socialGap),
                 SocialIconButton(
                   iconPath: AppIconAssets.apple,
                   iconSize: _socialIconSize,
-                  onTap: () {},
+                  onTap: () => context.push(RoutePaths.terms),
                 ),
               ],
             ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../constants/onboarding_constants.dart';
 import '../widgets/onboarding_center_content.dart';
+import '../../../../core/router/route_paths.dart';
 import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
-import 'login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -36,9 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
+      context.go(RoutePaths.login);
     }
   }
 
