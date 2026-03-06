@@ -62,7 +62,7 @@ class MingoringInputTextfieldVerify extends StatefulWidget {
 
 class _MingoringInputTextfieldVerifyState
     extends State<MingoringInputTextfieldVerify> {
-  late final FocusNode _internalFocusNode;
+  late FocusNode _internalFocusNode;
   bool _isFocused = false;
   bool _hasText = false;
 
@@ -82,6 +82,12 @@ class _MingoringInputTextfieldVerifyState
       oldWidget.controller.removeListener(_onTextChanged);
       widget.controller.addListener(_onTextChanged);
       _hasText = widget.controller.text.isNotEmpty;
+    }
+    if (oldWidget.focusNode != widget.focusNode) {
+      _internalFocusNode.removeListener(_onFocusChanged);
+      if (oldWidget.focusNode == null) _internalFocusNode.dispose();
+      _internalFocusNode = widget.focusNode ?? FocusNode();
+      _internalFocusNode.addListener(_onFocusChanged);
     }
   }
 
