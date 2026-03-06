@@ -61,7 +61,28 @@ abstract final class SignupScreenConstants {
     ),
   ];
 
-  // ── Step 3: (TBD) ─────────────────────────────────
+  // ── Step 3: Interest ──────────────────────────────
+  static const String interestTitleText = 'What areas are you\ninterested in?';
+  static const String interestSubtitleText =
+      'We recommend content tailored to your chosen field.\n(Multiple selections allowed)';
+  static const double interestTitleToSubtitleGap = 10.0;
+  static const double interestSubtitleToListGap = 29.0;
+  static const double interestChipSpacing = 10.0; // horizontal gap
+  static const double interestChipRunSpacing = 6.0; // vertical gap
+
+  /// 관심 분야 선택지 목록
+  static const List<String> interestOptions = [
+    'K-pop',
+    'K-Drama & Movies',
+    'Daily Life',
+    'Travel',
+    'Business',
+    'Beauty & Fashion',
+    'K-Food',
+    'Gaming',
+    'Webtoon',
+    'Trends & Slang',
+  ];
 
   // ── Step 4: (TBD) ─────────────────────────────────
 }

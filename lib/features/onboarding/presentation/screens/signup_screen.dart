@@ -7,6 +7,7 @@ import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
 import '../constants/signup_screen_constants.dart';
+import '../widgets/signup_interest_input.dart';
 import '../widgets/signup_level_input.dart';
 import '../widgets/signup_name_input.dart';
 
@@ -36,9 +37,17 @@ class _SignupScreenState extends State<SignupScreen> {
 
   bool get _isLevelValid => _selectedLevelIndex != null;
 
+  // ── Step 3: Interest ────────────────────────────────
+  final Set<int> _selectedInterestIndexes = {};
+
+  bool get _isInterestValid => _selectedInterestIndexes.isNotEmpty;
+
   // ── Derived ─────────────────────────────────────────
-  bool get _isValid =>
-      _currentStep == 1 ? _isNameValid : _isLevelValid;
+  bool get _isValid {
+    if (_currentStep == 1) return _isNameValid;
+    if (_currentStep == 2) return _isLevelValid;
+    return _isInterestValid;
+  }
 
   @override
   void initState() {
@@ -85,17 +94,28 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _selectedLevelIndex = index);
   }
 
+  // ── Step 3 handlers ─────────────────────────────────
+  void _onInterestSelected(int index) {
+    setState(() {
+      if (_selectedInterestIndexes.contains(index)) {
+        _selectedInterestIndexes.remove(index);
+      } else {
+        _selectedInterestIndexes.add(index);
+      }
+    });
+  }
+
   // ── Common handlers ─────────────────────────────────
 
   /// Continue 버튼 또는 키보드 "완료" 시 호출.
-  /// Step 1: 유효하면 Step 2로 전환.
-  /// Step 2: 유효하면 다음 화면으로 이동.
+  /// Step 1, 2: 유효하면 다음 Step으로 전환.
+  /// Step 3: 유효하면 다음 화면으로 이동.
   void _onContinue() {
     if (!_isValid) return;
     FocusScope.of(context).unfocus();
 
-    if (_currentStep == 1) {
-      setState(() => _currentStep = 2);
+    if (_currentStep < 3) {
+      setState(() => _currentStep++);
     } else {
       context.go(RoutePaths.login);
     }
@@ -107,10 +127,10 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   /// Back 버튼 핸들러.
-  /// Step 2에서는 Step 1로 돌아가고, Step 1에서는 이전 화면으로 pop.
+  /// Step이 1보다 크면 이전 Step으로 돌아가고, 1이면 이전 화면으로 pop.
   void _onBack() {
     if (_currentStep > 1) {
-      setState(() => _currentStep = _currentStep - 1);
+      setState(() => _currentStep--);
     } else {
       context.pop();
     }
@@ -153,10 +173,15 @@ class _SignupScreenState extends State<SignupScreen> {
                       onSubmitted: _onSubmitted,
                       textInputAction: TextInputAction.done,
                     )
-                  else
+                  else if (_currentStep == 2)
                     SignupLevelInput(
                       selectedIndex: _selectedLevelIndex,
                       onSelected: _onLevelSelected,
+                    )
+                  else
+                    SignupInterestInput(
+                      selectedIndexes: _selectedInterestIndexes,
+                      onSelected: _onInterestSelected,
                     ),
                 ],
               ),
