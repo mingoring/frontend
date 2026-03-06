@@ -6,20 +6,30 @@ import '../../../constants/app_icon_assets.dart';
 import '../../../constants/app_typography.dart';
 import 'mingoring_text_button_bottom_column.dart';
 
-/// 좌측 뒤로가기 + (옵션) 중앙 타이틀 헤더.
-/// SafeArea(top)를 포함하며, 기기별로 자연스럽게 배치된다.
+enum MingoringBackHeaderType {
+  none,
+  title,
+  actionSave,
+  actionEdit,
+}
+
+/// 좌측 뒤로가기와 타입별 텍스트/액션을 제공하는 상단 헤더.
 class MingoringBackHeader extends StatelessWidget {
   const MingoringBackHeader({
     super.key,
     required this.onBack,
-    this.title,
+    this.type = MingoringBackHeaderType.none,
+    this.text,
+    this.onActionPressed,
     this.backgroundColor = Colors.transparent,
     this.horizontalPadding =
         MingoringTextButtonBottomColumn.defaultButtonHorizontalPadding,
   });
 
   final VoidCallback onBack;
-  final String? title;
+  final MingoringBackHeaderType type;
+  final String? text;
+  final VoidCallback? onActionPressed;
   final Color backgroundColor;
   final double horizontalPadding;
 
@@ -58,15 +68,53 @@ class MingoringBackHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (title != null)
+                if (type == MingoringBackHeaderType.title && text != null)
                   Text(
-                    title!,
+                    text!,
                     style: AppTypography.body7B14.copyWith(
                       color: AppColors.black,
                       height: 1.2,
                     ),
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                if (type == MingoringBackHeaderType.actionSave && text != null)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: onActionPressed,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, _iconSize),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        text!,
+                        style: AppTypography.body7B14.copyWith(
+                          color: AppColors.pink600,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (type == MingoringBackHeaderType.actionEdit && text != null)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: onActionPressed,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, _iconSize),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        text!,
+                        style: AppTypography.body7B14.copyWith(
+                          color: AppColors.gray700,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
                   ),
               ],
             ),

@@ -46,7 +46,13 @@ class TopSpaceCenteredBottomLayout extends StatelessWidget {
           TopSpaceCenteredBottomTopType.safeSpace =>
             SpaceSizedBox.topSafeSpace(context),
           TopSpaceCenteredBottomTopType.backHeader =>
-            MingoringBackHeader(onBack: onBack!, title: headerTitle),
+            MingoringBackHeader(
+              onBack: onBack!,
+              type: headerTitle == null
+                  ? MingoringBackHeaderType.none
+                  : MingoringBackHeaderType.title,
+              text: headerTitle,
+            ),
         },
 
         /// Container(height: 2, color: Colors.red),
