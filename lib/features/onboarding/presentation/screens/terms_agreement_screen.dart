@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/router/route_paths.dart';
+import '../../../../core/utils/testtoast.dart';
 import '../../../../core/widgets/inputs/mingoring_input_selection_card.dart';
 import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
 import '../constants/onboarding_constants.dart';
@@ -93,7 +94,10 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                         setState(() => _termsOfService = v);
                         _syncAcceptAll();
                       },
-                      onLinkPressed: () {},
+                      onLinkPressed: () => TestToast.show(
+                        context,
+                        message: 'viewfull 클릭됨!',
+                      ),
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -107,7 +111,10 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                         setState(() => _privacyPolicy = v);
                         _syncAcceptAll();
                       },
-                      onLinkPressed: () {},
+                      onLinkPressed: () => TestToast.show(
+                        context,
+                        message: 'viewfull 클릭됨!',
+                      ),
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -122,7 +129,10 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                         setState(() => _pushNotifications = v);
                         _syncAcceptAll();
                       },
-                      onLinkPressed: () {},
+                      onLinkPressed: () => TestToast.show(
+                        context,
+                        message: 'viewfull 클릭됨!',
+                      ),
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -136,7 +146,10 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                         setState(() => _marketing = v);
                         _syncAcceptAll();
                       },
-                      onLinkPressed: () {},
+                      onLinkPressed: () => TestToast.show(
+                        context,
+                        message: 'viewfull 클릭됨!',
+                      ),
                     ),
                   ],
                 ),
