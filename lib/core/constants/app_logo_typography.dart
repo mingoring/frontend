@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppLogoTypography {
-  static const String _fontFamily = 'Gilroy';
+  static const String _fontFamily = 'Paperlogy';
 
   // ──────────────────────────────────────────
   // Logo Level 1 — 40px
@@ -104,6 +104,6 @@ abstract final class AppLogoTypography {
     fontWeight: FontWeight.w700,
     fontSize: 16,
     height: 1.03,
-    letterSpacing: 0.32, // 2%
+    letterSpacing: 0, // 0%
   );
 }

@@ -3,6 +3,11 @@
 이 프로젝트는 Flutter와 Riverpod을 기반으로 하는 프론트엔드 애플리케이션입니다.
 아래 가이드라인과 워크플로우를 따라 작업해 주세요.
 
+## 0. 최우선 원칙
+- 매직넘버는 상수화하세요.
+- 새로운 컴포넌트를 만들기 전에 constants 과 widgets 을 먼저 확인하세요. (재사용성 중요)
+
+
 ## 1. 핵심 기술 스택
 
 ### 버전 정보
@@ -22,17 +27,6 @@
 - **코드 생성**: build_runner: 2.5.4 (dev)
 - **린트**: flutter_lints: 5.0.0 (dev)
 
-### 코드 생성 명령어
-```bash
-# 코드 생성 실행 (한 번만)
-flutter pub run build_runner build
-
-# 코드 생성 실행 (변경 감지 및 자동 재생성)
-flutter pub run build_runner watch
-
-# 기존 생성 파일 삭제 후 재생성
-flutter pub run build_runner build --delete-conflicting-outputs
-```
 
 ---
 
@@ -52,6 +46,7 @@ lib/
 │   ├── utils/               # 유틸 함수
 │   ├── extensions/          # extension 메서드
 │   └── widgets/             # 공통 위젯
+│       ├── badges/          # 입력 없는 라벨 칩 요소들
 │       ├── buttons/         # 클릭 가능한 요소들
 │       ├── inputs/          # 입력받는 요소들 (텍스트필드, 체크박스 등)
 │       ├── dialogs/         # 팝업, 알럿, 바텀시트
@@ -137,14 +132,6 @@ assets/                       # 정적 파일 저장소
     - GoRouter 설정, RoutePaths(경로 상수), Guards(접근 제어)
   - widgets/
     - 전역 공통 위젯
-  - buttons/
-    - 공통 버튼 컴포넌트 (PrimaryButton 등)
-  - inputs/
-    - 입력 폼 컴포넌트 (CustomTextField 등)
-  - dialogs/
-    - 팝업, 바텀시트
-  - layouts/
-    - 공통 스캐폴드, 간격 컴포넌트(Gap 등)
   - utils/
     - 포맷터 등 순수 헬퍼 함수
 
