@@ -62,7 +62,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             pageController: _pageController,
             onPageChanged: _onPageViewChanged,
           ),
-          buttonText: isLastPage ? 'Start in 3 seconds' : 'Next',
+          buttonText: isLastPage ? 'Start' : 'Next',
           onPressed: _onNextPressed,
         ),
       ),
