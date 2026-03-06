@@ -6,7 +6,7 @@ import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/utils/testtoast.dart';
 import '../../../../core/widgets/inputs/mingoring_input_selection_card.dart';
-import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/layouts/frames/page_frame.dart';
 import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/onboarding_constants.dart';

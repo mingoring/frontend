@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/onboarding_constants.dart';
 import '../widgets/onboarding_center_content.dart';
 import '../../../../core/router/route_paths.dart';
-import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/layouts/frames/page_frame.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 
 class OnboardingScreen extends StatefulWidget {

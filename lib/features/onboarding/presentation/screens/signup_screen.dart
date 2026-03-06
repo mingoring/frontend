@@ -7,7 +7,7 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
-import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/layouts/frames/page_frame.dart';
 import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/signup_screen_constants.dart';
