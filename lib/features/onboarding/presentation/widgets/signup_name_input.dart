@@ -9,7 +9,7 @@ class SignupNameInput extends StatelessWidget {
   const SignupNameInput({
     super.key,
     required this.controller,
-    required this.fieldState,
+    required this.validationStatus,
     this.errorMessage,
     this.onChanged,
     this.onSubmitted,
@@ -17,7 +17,7 @@ class SignupNameInput extends StatelessWidget {
   });
 
   final TextEditingController controller;
-  final MingoringInputTextfieldVerifyState fieldState;
+  final MingoringValidationStatus validationStatus;
   final String? errorMessage;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
@@ -31,7 +31,7 @@ class SignupNameInput extends StatelessWidget {
       showMax: true,
       maxLength: SignupScreenConstants.nameMaxLength,
       leadingIconAsset: null,
-      state: fieldState,
+      validationStatus: validationStatus,
       helperText: errorMessage,
       onChanged: onChanged,
       onSubmitted: onSubmitted,

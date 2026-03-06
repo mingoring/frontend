@@ -9,7 +9,7 @@ class SignupReferralInput extends StatelessWidget {
   const SignupReferralInput({
     super.key,
     required this.controller,
-    required this.fieldState,
+    required this.validationStatus,
     required this.isVerifyEnabled,
     this.errorMessage,
     required this.onChanged,
@@ -19,7 +19,7 @@ class SignupReferralInput extends StatelessWidget {
   });
 
   final TextEditingController controller;
-  final MingoringInputTextfieldVerifyState fieldState;
+  final MingoringValidationStatus validationStatus;
   final bool isVerifyEnabled;
   final String? errorMessage;
   final ValueChanged<String> onChanged;
@@ -35,7 +35,7 @@ class SignupReferralInput extends StatelessWidget {
         Expanded(
           child: MingoringInputTextfieldVerify(
             controller: controller,
-            state: fieldState,
+            validationStatus: validationStatus,
             hintText: SignupScreenConstants.referralHintText,
             showMax: false,
             maxLength: SignupScreenConstants.referralMaxLength,

@@ -28,12 +28,12 @@ class _SignupScreenState extends State<SignupScreen> {
 
   // ── Step 1: Name ────────────────────────────────────
   late final TextEditingController _controller;
-  MingoringInputTextfieldVerifyState _fieldState =
-      MingoringInputTextfieldVerifyState.defaultState;
+  MingoringValidationStatus _nameValidationStatus =
+      MingoringValidationStatus.none;
   String? _errorMessage;
 
   bool get _isNameValid =>
-      _fieldState == MingoringInputTextfieldVerifyState.active;
+      _nameValidationStatus == MingoringValidationStatus.success;
 
   // ── Step 2: Level ───────────────────────────────────
   int? _selectedLevelIndex;
@@ -47,8 +47,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   // ── Step 4: Referral ────────────────────────────────
   late final TextEditingController _referralController;
-  MingoringInputTextfieldVerifyState _referralFieldState =
-      MingoringInputTextfieldVerifyState.defaultState;
+  MingoringValidationStatus _referralValidationStatus =
+      MingoringValidationStatus.none;
   String? _referralErrorMessage;
   bool _isReferralVerified = false;
 
@@ -56,7 +56,7 @@ class _SignupScreenState extends State<SignupScreen> {
     return _referralController.text.length ==
             SignupScreenConstants.referralMaxLength &&
         !_isReferralVerified &&
-        _referralFieldState != MingoringInputTextfieldVerifyState.error;
+        _referralValidationStatus != MingoringValidationStatus.error;
   }
 
   bool get _isReferralValid {
@@ -91,7 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void _onChanged(String value) {
     if (value.isEmpty) {
       setState(() {
-        _fieldState = MingoringInputTextfieldVerifyState.defaultState;
+        _nameValidationStatus = MingoringValidationStatus.none;
         _errorMessage = null;
       });
       return;
@@ -100,7 +100,7 @@ class _SignupScreenState extends State<SignupScreen> {
     // Validation
     if (!SignupScreenConstants.nameValidChars.hasMatch(value)) {
       setState(() {
-        _fieldState = MingoringInputTextfieldVerifyState.error;
+        _nameValidationStatus = MingoringValidationStatus.error;
         _errorMessage = SignupScreenConstants.nameSpecialChars.hasMatch(value)
             ? SignupScreenConstants.nameErrorSpecialChars
             : SignupScreenConstants.nameErrorInvalidInput;
@@ -110,7 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     // Valid
     setState(() {
-      _fieldState = MingoringInputTextfieldVerifyState.active;
+      _nameValidationStatus = MingoringValidationStatus.success;
       _errorMessage = null;
     });
   }
@@ -135,13 +135,8 @@ class _SignupScreenState extends State<SignupScreen> {
   void _onReferralChanged(String value) {
     setState(() {
       _isReferralVerified = false;
-      if (value.isEmpty) {
-        _referralFieldState = MingoringInputTextfieldVerifyState.defaultState;
-        _referralErrorMessage = null;
-      } else {
-        _referralFieldState = MingoringInputTextfieldVerifyState.typing;
-        _referralErrorMessage = null;
-      }
+      _referralValidationStatus = MingoringValidationStatus.none;
+      _referralErrorMessage = null;
     });
   }
 
@@ -151,13 +146,13 @@ class _SignupScreenState extends State<SignupScreen> {
         SignupScreenConstants.tempValidReferralCode) {
       setState(() {
         _isReferralVerified = true;
-        _referralFieldState = MingoringInputTextfieldVerifyState.active;
+        _referralValidationStatus = MingoringValidationStatus.success;
         _referralErrorMessage = SignupScreenConstants.referralSuccessText;
       });
     } else {
       setState(() {
         _isReferralVerified = false;
-        _referralFieldState = MingoringInputTextfieldVerifyState.error;
+        _referralValidationStatus = MingoringValidationStatus.error;
         _referralErrorMessage = SignupScreenConstants.referralErrorText;
       });
     }
@@ -300,7 +295,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (_currentStep == 1)
                     SignupNameInput(
                       controller: _controller,
-                      fieldState: _fieldState,
+                      validationStatus: _nameValidationStatus,
                       errorMessage: _errorMessage,
                       onChanged: _onChanged,
                       onSubmitted: _onSubmitted,
@@ -319,7 +314,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   else
                     SignupReferralInput(
                       controller: _referralController,
-                      fieldState: _referralFieldState,
+                      validationStatus: _referralValidationStatus,
                       isVerifyEnabled: _isReferralVerifyEnabled,
                       errorMessage: _referralErrorMessage,
                       onChanged: _onReferralChanged,

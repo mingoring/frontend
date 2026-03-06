@@ -5,22 +5,27 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-// 검증 전용 텍스트 필드 상태
-enum MingoringInputTextfieldVerifyState {
-  defaultState,
-  typing,
-  active,
-  filled,
+// 검증 결과 상태
+enum MingoringValidationStatus {
+  none,
+  success,
   error,
 }
 
+// trailing 아이콘 타입 (위젯 내부 전용)
+enum _TrailingIconType {
+  none,
+  checkTrue,
+  checkFalse,
+}
+
 // 검증 기능이 포함된 표준 텍스트 입력 위젯.
-class MingoringInputTextfieldVerify extends StatelessWidget {
+class MingoringInputTextfieldVerify extends StatefulWidget {
   const MingoringInputTextfieldVerify({
     super.key,
     required this.controller, // 텍스트 컨트롤러
     this.hintText = '', // 힌트 텍스트
-    this.state = MingoringInputTextfieldVerifyState.defaultState, // 필드 상태
+    this.validationStatus = MingoringValidationStatus.none, // 검증 상태
     this.showMax = false, // 글자 수 카운터 표시 여부
     this.maxLength, // 최대 글자 수
     this.leadingIconAsset, // 앞쪽 아이콘 에셋 경로
@@ -30,23 +35,74 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
     this.textInputAction, // 키보드 액션 버튼
     this.enabled = true, // 활성화 여부
     this.helperText, // 도움말 텍스트
+    this.focusNode, // 포커스 노드
   }) : assert(
           showMax == false || maxLength != null,
           'maxLength is required when showMax is true',
         );
 
-  final TextEditingController controller; // 텍스트 컨트롤러
-  final String hintText; // 힌트 텍스트
-  final MingoringInputTextfieldVerifyState state; // 필드 상태
-  final bool showMax; // 글자 수 카운터 표시 여부
-  final int? maxLength; // 최대 글자 수
-  final String? leadingIconAsset; // 앞쪽 아이콘 에셋 경로
-  final ValueChanged<String>? onChanged; // 입력 변경 콜백
-  final ValueChanged<String>? onSubmitted; // 입력 완료 콜백
-  final TextInputType? keyboardType; // 키보드 타입
-  final TextInputAction? textInputAction; // 키보드 액션 버튼
-  final bool enabled; // 활성화 여부
-  final String? helperText; // 도움말 텍스트
+  final TextEditingController controller;
+  final String hintText;
+  final MingoringValidationStatus validationStatus;
+  final bool showMax;
+  final int? maxLength;
+  final String? leadingIconAsset;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final bool enabled;
+  final String? helperText;
+  final FocusNode? focusNode;
+
+  @override
+  State<MingoringInputTextfieldVerify> createState() => _MingoringInputTextfieldVerifyState();
+}
+
+class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldVerify> {
+  late final FocusNode _internalFocusNode;
+  bool _isFocused = false;
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _internalFocusNode = widget.focusNode ?? FocusNode();
+    _internalFocusNode.addListener(_onFocusChanged);
+    widget.controller.addListener(_onTextChanged);
+    _hasText = widget.controller.text.isNotEmpty;
+  }
+
+  @override
+  void didUpdateWidget(covariant MingoringInputTextfieldVerify oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_onTextChanged);
+      widget.controller.addListener(_onTextChanged);
+      _hasText = widget.controller.text.isNotEmpty;
+    }
+  }
+
+  @override
+  void dispose() {
+    _internalFocusNode.removeListener(_onFocusChanged);
+    widget.controller.removeListener(_onTextChanged);
+    if (widget.focusNode == null) {
+      _internalFocusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void _onFocusChanged() {
+    setState(() => _isFocused = _internalFocusNode.hasFocus);
+  }
+
+  void _onTextChanged() {
+    final hasText = widget.controller.text.isNotEmpty;
+    if (_hasText != hasText) {
+      setState(() => _hasText = hasText);
+    }
+  }
 
   static const double _borderRadius = 20.0;
   static const double _height = 50.0;
@@ -57,28 +113,34 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
   static const double _contentGapDense = 7.0;
   static const double _helperGap = 8.0;
 
-  bool get _isError => state == MingoringInputTextfieldVerifyState.error;
+  // ── 내부 계산 getters ─────────────────────────────
+  bool get _isError => widget.validationStatus == MingoringValidationStatus.error;
 
-  bool get _isActiveBorder =>
-      state == MingoringInputTextfieldVerifyState.active ||
-      state == MingoringInputTextfieldVerifyState.typing;
+  bool get _showOutline =>
+      _isFocused ||
+      widget.validationStatus == MingoringValidationStatus.success ||
+      _isError;
 
-  bool get _showTrailingCheckTrue =>
-      state == MingoringInputTextfieldVerifyState.active;
+  bool get _showErrorBackground => _isError;
 
-  bool get _showTrailingCheckFalse =>
-      state == MingoringInputTextfieldVerifyState.typing ||
-      state == MingoringInputTextfieldVerifyState.filled ||
-      state == MingoringInputTextfieldVerifyState.error;
+  _TrailingIconType get _trailingIconType {
+    if (!_hasText) return _TrailingIconType.none;
+    if (widget.validationStatus == MingoringValidationStatus.success) {
+      return _TrailingIconType.checkTrue;
+    }
+    return _TrailingIconType.checkFalse;
+  }
+
+  bool get _hasTrailingIcon => _trailingIconType != _TrailingIconType.none;
 
   Color get _borderColor {
     if (_isError) return AppColors.pink600;
-    if (_isActiveBorder) return AppColors.pink600;
+    if (_showOutline) return AppColors.pink600;
     return AppColors.gray400;
   }
 
   Color get _backgroundColor {
-    if (_isError) return AppColors.pink200;
+    if (_showErrorBackground) return AppColors.pink200;
     return AppColors.white;
   }
 
@@ -89,38 +151,59 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasHelperOrCounter = helperText != null || showMax;
+    final hasHelperOrCounter = widget.helperText != null || widget.showMax;
 
-    final field = Container(
-      height: _height,
-      padding: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-        vertical: _verticalPadding,
-      ),
-      decoration: BoxDecoration(
-        color: _backgroundColor,
-        borderRadius: BorderRadius.circular(_borderRadius),
-        border: Border.all(color: _borderColor),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (leadingIconAsset != null) ...[
-            _buildLeadingIcon(),
-            SizedBox(
-              width: _isError || _isActiveBorder
-                  ? _contentGapDense
-                  : _contentGapDefault,
+    final field = GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        // TextField 영역 전체를 눌렀을 때 포커스 요청 (아이콘 터치 영역 외 전체)
+        if (widget.enabled) {
+          FocusScope.of(context).requestFocus(_internalFocusNode);
+        }
+      },
+      child: Container(
+        height: _height,
+        decoration: BoxDecoration(
+          color: _backgroundColor,
+          borderRadius: BorderRadius.circular(_borderRadius),
+          border: Border.all(color: _borderColor),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: _horizontalPadding,
+                vertical: _verticalPadding,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  if (widget.leadingIconAsset != null) ...[
+                    _buildLeadingIcon(),
+                    SizedBox(
+                      width: _isError || _showOutline
+                          ? _contentGapDense
+                          : _contentGapDefault,
+                    ),
+                  ],
+                  Expanded(
+                    child: _buildTextField(),
+                  ),
+                  if (_hasTrailingIcon)
+                    const SizedBox(width: _contentGapDense + _iconSize),
+                ],
+              ),
             ),
+            if (_hasTrailingIcon)
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: _buildTrailingIcon(),
+              ),
           ],
-          Expanded(
-            child: _buildTextField(),
-          ),
-          if (_showTrailingCheckTrue || _showTrailingCheckFalse) ...[
-            const SizedBox(width: _contentGapDense),
-            _buildTrailingIcon(),
-          ],
-        ],
+        ),
       ),
     );
 
@@ -135,7 +218,7 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
         field,
         const SizedBox(height: _helperGap),
         ValueListenableBuilder<TextEditingValue>(
-          valueListenable: controller,
+          valueListenable: widget.controller,
           builder: (context, value, _) {
             final currentLength = value.text.characters.length;
             return _buildHelperAndCounter(currentLength);
@@ -147,11 +230,12 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
 
   Widget _buildTextField() {
     return TextField(
-      controller: controller,
-      enabled: enabled,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      maxLength: maxLength,
+      controller: widget.controller,
+      focusNode: _internalFocusNode,
+      enabled: widget.enabled,
+      keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
+      maxLength: widget.maxLength,
       style: AppTypography.body9Md14.copyWith(
         color: _textColor,
         height: 1.2,
@@ -162,7 +246,7 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
         focusedBorder: InputBorder.none,
         enabledBorder: InputBorder.none,
         disabledBorder: InputBorder.none,
-        hintText: hintText,
+        hintText: widget.hintText,
         hintStyle: AppTypography.body9Md14.copyWith(
           color: AppColors.gray400,
           height: 1.2,
@@ -170,13 +254,13 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
         counterText: '',
         isDense: true,
       ),
-      onChanged: onChanged,
-      onSubmitted: onSubmitted,
+      onChanged: widget.onChanged,
+      onSubmitted: widget.onSubmitted,
     );
   }
 
   Widget _buildLeadingIcon() {
-    final asset = leadingIconAsset!;
+    final asset = widget.leadingIconAsset!;
     final icon = asset.endsWith('.svg')
         ? SvgPicture.asset(
             asset,
@@ -198,40 +282,54 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
 
   Widget _buildTrailingIcon() {
     final String assetPath;
-    if (_showTrailingCheckTrue) {
+    if (_trailingIconType == _TrailingIconType.checkTrue) {
       assetPath = AppIconAssets.check1True;
     } else {
       assetPath = AppIconAssets.check1False;
     }
 
-    final icon = SizedBox(
-      width: _iconSize,
-      height: _iconSize,
-      child: SvgPicture.asset(
-        assetPath,
+    final icon = Center(
+      child: SizedBox(
         width: _iconSize,
         height: _iconSize,
+        child: SvgPicture.asset(
+          assetPath,
+          width: _iconSize,
+          height: _iconSize,
+        ),
       ),
     );
 
-    if (_showTrailingCheckFalse) {
+    // 삭제 버튼 터치 영역 (아이콘 시작 x좌표부터 우측 끝 지정)
+    final touchAreaWidth = _iconSize + _horizontalPadding;
+
+    final touchArea = Container(
+      width: touchAreaWidth,
+      color: Colors.transparent,
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: _horizontalPadding),
+      child: icon,
+    );
+
+    if (_trailingIconType == _TrailingIconType.checkFalse) {
       return GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
-          controller.clear();
-          onChanged?.call('');
+          widget.controller.clear();
+          widget.onChanged?.call('');
         },
-        child: icon,
+        child: touchArea,
       );
     }
 
-    return icon;
+    return touchArea;
   }
 
   Widget _buildHelperAndCounter(int currentLength) {
     final counterText =
-        showMax && maxLength != null ? '$currentLength/$maxLength' : null;
+        widget.showMax && widget.maxLength != null ? '$currentLength/${widget.maxLength}' : null;
 
-    if (helperText == null && counterText == null) {
+    if (widget.helperText == null && counterText == null) {
       return const SizedBox.shrink();
     }
 
@@ -242,12 +340,12 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
 
     final counterStyle = helperStyle;
 
-    if (helperText != null && counterText != null) {
+    if (widget.helperText != null && counterText != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            helperText!,
+            widget.helperText!,
             style: helperStyle,
           ),
           Text(
@@ -258,9 +356,9 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
       );
     }
 
-    if (helperText != null) {
+    if (widget.helperText != null) {
       return Text(
-        helperText!,
+        widget.helperText!,
         style: helperStyle,
       );
     }
@@ -274,4 +372,3 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
     );
   }
 }
-
