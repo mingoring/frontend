@@ -13,15 +13,15 @@ enum MingoringProgressStepperSize {
 class MingoringProgressStepper extends StatelessWidget {
   const MingoringProgressStepper.small({
     super.key,
-    required this.currentItem,
+    required this.currentIndex,
   }) : size = MingoringProgressStepperSize.small,
-       assert(currentItem >= 1 && currentItem <= stepCount);
+       assert(currentIndex >= 0 && currentIndex < stepCount);
 
   const MingoringProgressStepper.big({
     super.key,
-    required this.currentItem,
+    required this.currentIndex,
   }) : size = MingoringProgressStepperSize.big,
-       assert(currentItem >= 1 && currentItem <= stepCount);
+       assert(currentIndex >= 0 && currentIndex < stepCount);
 
   // 3단계 고정
   static const stepCount = 3;
@@ -29,10 +29,8 @@ class MingoringProgressStepper extends StatelessWidget {
   @visibleForTesting
   final MingoringProgressStepperSize size;
 
-  // 현재 단계 (1-indexed)
-  final int currentItem;
-
-  int get _currentIndex => currentItem - 1;
+  // 현재 단계 (0-indexed)
+  final int currentIndex;
 
   // ── Small 상수 ──────────────────────────────────────
   static const _smallDotSize = 6.0;
@@ -52,10 +50,10 @@ class MingoringProgressStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (size) {
       MingoringProgressStepperSize.small => _SmallStepper(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
       ),
       MingoringProgressStepperSize.big => _BigStepper(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
       ),
     };
   }
