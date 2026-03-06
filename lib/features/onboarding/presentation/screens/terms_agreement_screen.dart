@@ -111,7 +111,7 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
           bottomType: PageFrameBottomType.actionButton,
           bottomActionButton: MingoringTextButton(
             onPressed:
-                _canContinue ? () => context.go(RoutePaths.signup) : null,
+                _canContinue ? () => context.push(RoutePaths.signup) : null,
             size: MingoringTextButtonSize.big,
             child: Text(TermsAgreementScreenConstants.buttonTextContinue),
           ),

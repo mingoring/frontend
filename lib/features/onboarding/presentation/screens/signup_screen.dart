@@ -171,7 +171,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (_currentStep < 4) {
       setState(() => _currentStep++);
     } else {
-      context.go(RoutePaths.login);
+      context.go(RoutePaths.home);
     }
   }
 
@@ -192,9 +192,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: DecoratedBox(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onBack();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: DecoratedBox(
         decoration: const BoxDecoration(
           color: AppColors.white,
         ),
@@ -322,6 +327,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }
+

@@ -7,4 +7,5 @@ abstract final class RoutePaths {
   static const String terms = '/terms';
   static const String signup = '/signup';
   static const String login = '/login';
+  static const String home = '/home';
 }
