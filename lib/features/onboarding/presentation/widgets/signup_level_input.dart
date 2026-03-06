@@ -20,24 +20,30 @@ class SignupLevelInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: List.generate(SignupScreenConstants.levelOptions.length, (index) {
-        final option = SignupScreenConstants.levelOptions[index];
-        return Padding(
-          padding: EdgeInsets.only(
-            top: index == 0 ? 0 : SignupScreenConstants.levelCardGap,
-          ),
-          child: MingoringInputSelectionCard(
-            type: InputSelectionCardType.compact,
-            title: option.title,
-            subtitle: option.subtitle,
-            value: selectedIndex == index,
-            onChanged: (_) => onSelected(index),
-          ),
-        );
-      }),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: List.generate(
+          SignupScreenConstants.levelOptions.length,
+          (index) {
+            final option = SignupScreenConstants.levelOptions[index];
+            return Padding(
+              padding: EdgeInsets.only(
+                top: index == 0 ? 0 : SignupScreenConstants.levelCardGap,
+              ),
+              child: MingoringInputSelectionCard(
+                type: InputSelectionCardType.compact,
+                title: option.title,
+                subtitle: option.subtitle,
+                value: selectedIndex == index,
+                onChanged: (_) => onSelected(index),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

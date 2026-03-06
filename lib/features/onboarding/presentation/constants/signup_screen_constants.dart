@@ -8,6 +8,8 @@ abstract final class SignupScreenConstants {
   static const String buttonTextFinish = 'Finish';
   static const double headerToStepperGap = 43.0;
   static const double stepperToContentGap = 26.0;
+  static const double titleToSubtitleGap = 10.0;
+  static const double referralOptionalToTitleGap = 26.0;
 
   // ── Step 1: Name ───────────────────────────────────
   static const String nameTitleText = 'What should\nMingo call you?';
@@ -20,9 +22,9 @@ abstract final class SignupScreenConstants {
   static final RegExp nameSpecialChars =
       RegExp(r'''[!@#$%^&*(),.?":{}|<>~`\-_=+\[\]\\/;'0-9]'''); // 특수문자 검출
   static const String nameErrorSpecialChars =
-    'Special characters and numbers are not allowed.';
+      'Special characters and numbers are not allowed.';
   static const String nameErrorInvalidInput =
-    'Only Korean and English letters are allowed.';
+      'Only Korean and English letters are allowed.';
   static const double nameTitleToSubtitleGap = 10.0;
   static const double nameSubtitleToInputGap = 40.0;
 
@@ -33,13 +35,13 @@ abstract final class SignupScreenConstants {
   static const double levelTitleToSubtitleGap = 10.0;
   static const double levelSubtitleToListGap = 13.0;
   static const double levelCardGap = 8.0;
+  static const double levelListMaxHeight = 260.0;
 
   /// 레벨 선택지 목록. 각 항목은 {title, subtitle}.
   static const List<({String title, String subtitle})> levelOptions = [
     (
       title: 'Lv 1 · Beginner',
-      subtitle:
-          'I can read Hangul and use basic phrases. (TOPIK 1 / CEFR A1)',
+      subtitle: 'I can read Hangul and use basic phrases. (TOPIK 1 / CEFR A1)',
     ),
     (
       title: 'Lv 2 · Elementary',
@@ -98,7 +100,7 @@ abstract final class SignupScreenConstants {
   static const int referralMaxLength = 8;
   static const double referralTitleToSubtitleGap = 10.0;
   static const double referralSubtitleToInputGap = 40.0;
-  
+
   // TODO: (임시) 테스트용 추천인 코드
   static const String tempValidReferralCode = 'AAAAAAAA';
 }

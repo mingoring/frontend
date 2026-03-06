@@ -24,10 +24,6 @@ class PageFrame extends StatelessWidget {
     this.topType = PageFrameTopType.safeSpace, // 상단 타입 (기본 safeSpace)
     this.topBackHeader, // 상단 헤더 위젯 전달 (옵션)
     required this.content, // 중앙 콘텐츠 위젯 전달 (필수)
-    this.contentVerticalAlignment =
-        MainAxisAlignment.center, // 중앙 콘텐츠 세로 정렬 타입 (기본 center)
-    this.contentHorizontalAlignment =
-        CrossAxisAlignment.center, // 중앙 콘텐츠 가로 정렬 타입 (기본 center)
     this.bottomType = PageFrameBottomType.none, // 하단 타입 (기본 none)
     this.bottomActionButton, // 하단 버튼 위젯 전달 (옵션)
   });
@@ -36,8 +32,6 @@ class PageFrame extends StatelessWidget {
   final MingoringBackHeader? topBackHeader;
 
   final Widget content;
-  final MainAxisAlignment contentVerticalAlignment;
-  final CrossAxisAlignment contentHorizontalAlignment;
 
   final PageFrameBottomType bottomType;
   final MingoringTextButton? bottomActionButton;
@@ -61,13 +55,7 @@ class PageFrame extends StatelessWidget {
     return Column(
       children: [
         _buildTop(context),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: contentVerticalAlignment,
-            crossAxisAlignment: contentHorizontalAlignment,
-            children: [content],
-          ),
-        ),
+        Expanded(child: content),
         _buildBottom(context),
       ],
     );

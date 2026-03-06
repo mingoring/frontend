@@ -57,11 +57,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           gradient: OnboardingConstants.backgroundGradient,
         ),
         child: PageFrame(
-          content: OnboardingCenterContent(
-            pages: onboardingPages,
-            currentIndex: _currentIndex,
-            pageController: _pageController,
-            onPageChanged: _onPageViewChanged,
+          topType: PageFrameTopType.safeSpace,
+          content: Center(
+            child: OnboardingCenterContent(
+              pages: onboardingPages,
+              currentIndex: _currentIndex,
+              pageController: _pageController,
+              onPageChanged: _onPageViewChanged,
+            ),
           ),
           bottomType: PageFrameBottomType.actionButton,
           bottomActionButton: MingoringTextButton(

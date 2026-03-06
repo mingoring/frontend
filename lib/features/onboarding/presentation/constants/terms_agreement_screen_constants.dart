@@ -9,6 +9,10 @@ abstract final class TermsAgreementScreenConstants {
   static const double cardListGap = 7.0;
 
   /// 화면 제목과 체크박스 카드 영역 사이의 세로 간격.
+  /// 헤더와 화면 제목 사이의 세로 간격.
+  static const double headerToTitleGap = 32.0;
+
+  /// 화면 제목과 체크박스 카드 영역 사이의 세로 간격.
   static const double titleToCardAreaGap = 32.0;
 
   // ─── Copy ───────────────────────────────────────────────────────────────

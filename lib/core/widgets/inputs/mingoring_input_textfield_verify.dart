@@ -56,10 +56,12 @@ class MingoringInputTextfieldVerify extends StatefulWidget {
   final FocusNode? focusNode;
 
   @override
-  State<MingoringInputTextfieldVerify> createState() => _MingoringInputTextfieldVerifyState();
+  State<MingoringInputTextfieldVerify> createState() =>
+      _MingoringInputTextfieldVerifyState();
 }
 
-class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldVerify> {
+class _MingoringInputTextfieldVerifyState
+    extends State<MingoringInputTextfieldVerify> {
   late final FocusNode _internalFocusNode;
   bool _isFocused = false;
   bool _hasText = false;
@@ -114,7 +116,8 @@ class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldV
   static const double _helperGap = 8.0;
 
   // ── 내부 계산 getters ─────────────────────────────
-  bool get _isError => widget.validationStatus == MingoringValidationStatus.error;
+  bool get _isError =>
+      widget.validationStatus == MingoringValidationStatus.error;
 
   bool get _showOutline =>
       _isFocused ||
@@ -324,8 +327,9 @@ class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldV
   }
 
   Widget _buildHelperAndCounter(int currentLength) {
-    final counterText =
-        widget.showMax && widget.maxLength != null ? '$currentLength/${widget.maxLength}' : null;
+    final counterText = widget.showMax && widget.maxLength != null
+        ? '$currentLength/${widget.maxLength}'
+        : null;
 
     if (widget.helperText == null && counterText == null) {
       return const SizedBox.shrink();

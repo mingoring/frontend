@@ -67,6 +67,8 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const SizedBox(
+                    height: TermsAgreementScreenConstants.headerToTitleGap),
                 TermsAgreementTitle(
                   titleText: TermsAgreementScreenConstants.titleText,
                   titleStyle: AppLogoTypography.logoEb5.copyWith(

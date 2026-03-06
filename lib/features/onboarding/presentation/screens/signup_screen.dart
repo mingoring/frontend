@@ -201,113 +201,101 @@ class _SignupScreenState extends State<SignupScreen> {
         child: PageFrame(
           topType: PageFrameTopType.backHeader,
           topBackHeader: MingoringBackHeader(onBack: _onBack),
-          contentVerticalAlignment: MainAxisAlignment.start,
-          contentHorizontalAlignment: CrossAxisAlignment.start,
-          content: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
+          content: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                    height: SignupScreenConstants.headerToStepperGap),
+                if (_currentStep < 4) ...[
+                  MingoringProgressStepper.big(
+                    currentItem: _currentStep,
+                  ),
+                  const SizedBox(
+                      height: SignupScreenConstants.stepperToContentGap),
+                ] else ...[
+                  Text(
+                    SignupScreenConstants.referralOptionalText,
+                    style: AppTypography.head7Sb18.copyWith(
+                      color: AppColors.pink300,
+                    ),
+                  ),
+                  const SizedBox(
+                      height:
+                          SignupScreenConstants.referralOptionalToTitleGap),
+                ],
+                Builder(builder: (context) {
+                  final title = _currentStep == 1
+                      ? SignupScreenConstants.nameTitleText
+                      : _currentStep == 2
+                          ? SignupScreenConstants.levelTitleText
+                          : _currentStep == 3
+                              ? SignupScreenConstants.interestTitleText
+                              : SignupScreenConstants.referralTitleText;
+                  final subtitle = _currentStep == 1
+                      ? SignupScreenConstants.nameSubtitleText
+                      : _currentStep == 2
+                          ? SignupScreenConstants.levelSubtitleText
+                          : _currentStep == 3
+                              ? SignupScreenConstants.interestSubtitleText
+                              : SignupScreenConstants.referralSubtitleText;
+                  final gap = _currentStep == 1
+                      ? SignupScreenConstants.nameSubtitleToInputGap
+                      : _currentStep == 2
+                          ? SignupScreenConstants.levelSubtitleToListGap
+                          : _currentStep == 3
+                              ? SignupScreenConstants.interestSubtitleToListGap
+                              : SignupScreenConstants.referralSubtitleToInputGap;
+
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        title,
+                        style: AppLogoTypography.logoEb5.copyWith(
+                          color: AppColors.pink600,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
                       const SizedBox(
-                          height: SignupScreenConstants.headerToStepperGap),
-                      if (_currentStep < 4) ...[
-                        MingoringProgressStepper.big(
-                          currentItem: _currentStep,
+                          height: SignupScreenConstants.titleToSubtitleGap),
+                      Text(
+                        subtitle,
+                        style: AppTypography.body9Md14.copyWith(
+                          color: AppColors.gray600,
                         ),
-                        const SizedBox(
-                            height: SignupScreenConstants.stepperToContentGap),
-                      ] else ...[
-                        Text(
-                          SignupScreenConstants.referralOptionalText,
-                          style: AppTypography.head7Sb18.copyWith(
-                            color: AppColors.pink300,
-                          ),
-                        ),
-                        const SizedBox(height: 26.0),
-                      ],
-                      Builder(builder: (context) {
-                        final title = _currentStep == 1
-                            ? SignupScreenConstants.nameTitleText
-                            : _currentStep == 2
-                                ? SignupScreenConstants.levelTitleText
-                                : _currentStep == 3
-                                    ? SignupScreenConstants.interestTitleText
-                                    : SignupScreenConstants.referralTitleText;
-                        final subtitle = _currentStep == 1
-                            ? SignupScreenConstants.nameSubtitleText
-                            : _currentStep == 2
-                                ? SignupScreenConstants.levelSubtitleText
-                                : _currentStep == 3
-                                    ? SignupScreenConstants.interestSubtitleText
-                                    : SignupScreenConstants.referralSubtitleText;
-                        final gap = _currentStep == 1
-                            ? SignupScreenConstants.nameSubtitleToInputGap
-                            : _currentStep == 2
-                                ? SignupScreenConstants.levelSubtitleToListGap
-                                : _currentStep == 3
-                                    ? SignupScreenConstants.interestSubtitleToListGap
-                                    : SignupScreenConstants.referralSubtitleToInputGap;
-                        final titleStyle = _currentStep == 4
-                            ? AppLogoTypography.logoEb5.copyWith(
-                                color: AppColors.pink600,
-                              )
-                            : AppLogoTypography.logoEb5.copyWith(
-                                color: AppColors.pink600,
-                              );
-                        final subtitleStyle = _currentStep == 4
-                            ? AppTypography.body9Md14.copyWith(
-                                color: AppColors.gray600,
-                              )
-                            : AppTypography.body9Md14.copyWith(
-                                color: AppColors.gray600,
-                              );
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: titleStyle,
-                              textAlign: TextAlign.left,
-                            ),
-                            const SizedBox(height: 10.0),
-                            Text(
-                              subtitle,
-                              style: subtitleStyle,
-                              textAlign: TextAlign.left,
-                            ),
-                            SizedBox(height: gap),
-                          ],
-                        );
-                      }),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(height: gap),
                     ],
-                  ),
-                  if (_currentStep == 1)
-                    SignupNameInput(
-                      controller: _controller,
-                      validationStatus: _nameValidationStatus,
-                      errorMessage: _errorMessage,
-                      onChanged: _onChanged,
-                      onSubmitted: _onSubmitted,
-                      textInputAction: TextInputAction.done,
-                    )
-                  else if (_currentStep == 2)
-                    SignupLevelInput(
-                      selectedIndex: _selectedLevelIndex,
-                      onSelected: _onLevelSelected,
-                    )
-                  else if (_currentStep == 3)
-                    SignupInterestInput(
-                      selectedIndexes: _selectedInterestIndexes,
-                      onSelected: _onInterestSelected,
-                    )
-                  else
-                    SignupReferralInput(
+                  );
+                }),
+                Expanded(
+                  child: Builder(builder: (context) {
+                    if (_currentStep == 1) {
+                      return SignupNameInput(
+                        controller: _controller,
+                        validationStatus: _nameValidationStatus,
+                        errorMessage: _errorMessage,
+                        onChanged: _onChanged,
+                        onSubmitted: _onSubmitted,
+                        textInputAction: TextInputAction.done,
+                      );
+                    }
+                    if (_currentStep == 2) {
+                      return SignupLevelInput(
+                        selectedIndex: _selectedLevelIndex,
+                        onSelected: _onLevelSelected,
+                      );
+                    }
+                    if (_currentStep == 3) {
+                      return SignupInterestInput(
+                        selectedIndexes: _selectedInterestIndexes,
+                        onSelected: _onInterestSelected,
+                      );
+                    }
+                    return SignupReferralInput(
                       controller: _referralController,
                       validationStatus: _referralValidationStatus,
                       isVerifyEnabled: _isReferralVerifyEnabled,
@@ -316,9 +304,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       onVerify: _onReferralVerify,
                       onSubmitted: _onSubmitted,
                       textInputAction: TextInputAction.done,
-                    ),
-                ],
-              ),
+                    );
+                  }),
+                ),
+              ],
             ),
           ),
           bottomType: PageFrameBottomType.actionButton,
