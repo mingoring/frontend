@@ -5,26 +5,26 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-/// 라벨 표시 방식 ([Required], [Optional] 텍스트)
+/// 입력 카드 타입 (타입에 따라 디자인 다름)
+enum InputSelectionCardType {
+  primary,
+  secondary,
+  compact,
+}
+
+/// 라벨 표시 여부 설정 ([Required], [Optional] 텍스트)
 enum InputSelectionCardLabel {
   none,
   required,
   optional,
 }
 
-/// 카드 스타일 디자인 (primary = 전체 동의, secondary = 개별 항목)
-enum InputSelectionCardType {
-  primary,
-  secondary,
-}
-
-/// 설명(subtitle) 아래에 링크 텍스트 버튼을 노출할지 여부 (viewFull = 전체 보기)
+/// 링크 텍스트 버튼을 노출 여부 설정 (viewFull 버튼)
 enum InputSelectionCardLinkButton {
   none,
   viewFull,
 }
 
-/// 선택형 입력 카드. (카드 스타일에 따라 디자인 스타일 다름)
 class MingoringInputSelectionCard extends StatelessWidget {
   const MingoringInputSelectionCard({
     super.key,
@@ -59,16 +59,26 @@ class MingoringInputSelectionCard extends StatelessWidget {
   static const double _contentGap = 8.0;
   static const double _subtitleGap = 7.0;
   static const double _checkIconSize = 24.0;
+  static const double _checkIconSizeCompact = 16.0;
+  static const double _subtitleGapCompact = 3.0;
+  static const EdgeInsets _paddingCompact =
+      EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0);
 
   @override
   Widget build(BuildContext context) {
-    final padding = type == InputSelectionCardType.primary
-        ? _paddingPrimary
-        : _paddingSecondary;
+    final isCompact = type == InputSelectionCardType.compact;
+    final edgeInsets = isCompact
+        ? _paddingCompact
+        : EdgeInsets.all(type == InputSelectionCardType.primary
+            ? _paddingPrimary
+            : _paddingSecondary);
     final borderColor = value ? AppColors.pink600 : AppColors.gray400;
-    final checkAsset = type == InputSelectionCardType.primary
-        ? (value ? AppIconAssets.check2True2 : AppIconAssets.check2None)
-        : (value ? AppIconAssets.check2True1 : AppIconAssets.check2None);
+    final checkAsset = isCompact
+        ? (value ? AppIconAssets.check1True : AppIconAssets.check1None)
+        : type == InputSelectionCardType.primary
+            ? (value ? AppIconAssets.check2True2 : AppIconAssets.check2None)
+            : (value ? AppIconAssets.check2True1 : AppIconAssets.check2None);
+    final iconSize = isCompact ? _checkIconSizeCompact : _checkIconSize;
 
     return Material(
       color: AppColors.white,
@@ -77,14 +87,16 @@ class MingoringInputSelectionCard extends StatelessWidget {
         onTap: () => onChanged(!value),
         borderRadius: BorderRadius.circular(_borderRadius),
         child: Container(
-          padding: EdgeInsets.all(padding),
+          padding: edgeInsets,
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(_borderRadius),
             border: Border.all(color: borderColor),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: isCompact
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -94,9 +106,11 @@ class MingoringInputSelectionCard extends StatelessWidget {
                     _buildTitle(),
                     if (subtitle != null) ...[
                       SizedBox(
-                          height: type == InputSelectionCardType.primary
-                              ? _subtitleGap
-                              : _contentGap),
+                          height: isCompact
+                              ? _subtitleGapCompact
+                              : type == InputSelectionCardType.primary
+                                  ? _subtitleGap
+                                  : _contentGap),
                       Text(
                         subtitle!,
                         style: AppTypography.detail3Md13.copyWith(
@@ -125,8 +139,8 @@ class MingoringInputSelectionCard extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: _checkIconSize,
-                height: _checkIconSize,
+                width: iconSize,
+                height: iconSize,
                 child: SvgPicture.asset(
                   checkAsset,
                   fit: BoxFit.contain,
@@ -175,6 +189,17 @@ class MingoringInputSelectionCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      );
+    }
+
+    if (type == InputSelectionCardType.compact) {
+      final bodyColor = value ? AppColors.pink600 : AppColors.black;
+      return Text(
+        title,
+        style: AppTypography.body4B15.copyWith(
+          color: bodyColor,
+          height: 1.2,
         ),
       );
     }
