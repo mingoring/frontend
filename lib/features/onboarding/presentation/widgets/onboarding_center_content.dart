@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/indicators/mingoring_indicator.dart';
+import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../constants/onboarding_constants.dart';
 import 'onboarding_page_content.dart';
 
@@ -36,9 +36,9 @@ class OnboardingCenterContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: OnboardingConstants.spacingImageToIndicator),
-        MingoringIndicator(
-          itemCount: pages.length,
-          currentIndex: currentIndex,
+        MingoringProgressStepper.small(
+          maxItemCount: pages.length,
+          currentItem: currentIndex + 1,
         ),
         const SizedBox(height: OnboardingConstants.spacingIndicatorToText),
         OnboardingPageTextContent(
