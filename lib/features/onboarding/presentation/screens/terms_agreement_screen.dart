@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/router/route_paths.dart';
-import '../../../../core/utils/testtoast.dart';
+import '../../../../core/widgets/dialogs/web_view_popup.dart';
 import '../../../../core/widgets/inputs/mingoring_input_selection_card.dart';
 import '../../../../core/widgets/layouts/frames/page_frame.dart';
 import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
@@ -23,32 +23,24 @@ class TermsAgreementScreen extends StatefulWidget {
 }
 
 class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
-  bool _isAcceptAll = false;
-  bool _isTermsOfServiceAccepted = false;
-  bool _isPrivacyPolicyAccepted = false;
-  bool _isPushNotificationsEnabled = false;
-  bool _isMarketingEnabled = false;
+  static const _items = TermsAgreementScreenConstants.items;
 
-  bool get _canContinue => _isTermsOfServiceAccepted && _isPrivacyPolicyAccepted;
+  List<bool> _accepted = List.filled(_items.length, false);
+
+  bool get _isAcceptAll => _accepted.every((v) => v);
+
+  bool get _canContinue => _items
+      .asMap()
+      .entries
+      .where((e) => e.value.isRequired)
+      .every((e) => _accepted[e.key]);
 
   void _onAcceptAllChanged(bool value) {
-    setState(() {
-      _isAcceptAll = value;
-      _isTermsOfServiceAccepted = value;
-      _isPrivacyPolicyAccepted = value;
-      _isPushNotificationsEnabled = value;
-      _isMarketingEnabled = value;
-    });
+    setState(() => _accepted = List.filled(_items.length, value));
   }
 
-  void _syncAcceptAll() {
-    final all = _isTermsOfServiceAccepted &&
-        _isPrivacyPolicyAccepted &&
-        _isPushNotificationsEnabled &&
-        _isMarketingEnabled;
-    if (_isAcceptAll != all) {
-      setState(() => _isAcceptAll = all);
-    }
+  void _onItemChanged(int index, bool value) {
+    setState(() => _accepted[index] = value);
   }
 
   @override
@@ -71,10 +63,8 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                     height: TermsAgreementScreenConstants.headerToTitleGap),
                 TermsAgreementTitle(
                   titleText: TermsAgreementScreenConstants.titleText,
-                  titleStyle: AppLogoTypography.logoEb5.copyWith(
-                    color: AppColors.pink600,
-                    height: 1.03,
-                  ),
+                  titleStyle: AppLogoTypography.logoEb5
+                      .copyWith(color: AppColors.pink600),
                 ),
                 const SizedBox(
                     height: TermsAgreementScreenConstants.titleToCardAreaGap),
@@ -90,74 +80,29 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.titleCardGap),
-                    MingoringInputSelectionCard(
-                      type: InputSelectionCardType.secondary,
-                      title: TermsAgreementScreenConstants.termsOfServiceTitle,
-                      optionalLabel: InputSelectionCardLabel.required,
-                      linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _isTermsOfServiceAccepted,
-                      onChanged: (v) {
-                        setState(() => _isTermsOfServiceAccepted = v);
-                        _syncAcceptAll();
-                      },
-                      // TODO: 실제 링크 연결 필요
-                      onLinkPressed: () => TestToast.show(
-                        context,
-                        message: 'viewfull 클릭됨!',
+                    for (int i = 0; i < _items.length; i++) ...[
+                      if (i > 0)
+                        const SizedBox(
+                            height: TermsAgreementScreenConstants.cardListGap),
+                      MingoringInputSelectionCard(
+                        type: InputSelectionCardType.secondary,
+                        title: _items[i].title,
+                        optionalLabel: _items[i].isRequired
+                            ? InputSelectionCardLabel.required
+                            : InputSelectionCardLabel.optional,
+                        linkButton: _items[i].url != null
+                            ? InputSelectionCardLinkButton.viewFull
+                            : InputSelectionCardLinkButton.none,
+                        value: _accepted[i],
+                        onChanged: (v) => _onItemChanged(i, v),
+                        onLinkPressed: _items[i].url != null
+                            ? () => WebViewPopup.show(
+                                  context,
+                                  url: _items[i].url!,
+                                )
+                            : null,
                       ),
-                    ),
-                    const SizedBox(
-                        height: TermsAgreementScreenConstants.cardListGap),
-                    MingoringInputSelectionCard(
-                      type: InputSelectionCardType.secondary,
-                      title: TermsAgreementScreenConstants.privacyPolicyTitle,
-                      optionalLabel: InputSelectionCardLabel.required,
-                      linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _isPrivacyPolicyAccepted,
-                      onChanged: (v) {
-                        setState(() => _isPrivacyPolicyAccepted = v);
-                        _syncAcceptAll();
-                      },
-                      onLinkPressed: () => TestToast.show(
-                        context,
-                        message: 'viewfull 클릭됨!',
-                      ),
-                    ),
-                    const SizedBox(
-                        height: TermsAgreementScreenConstants.cardListGap),
-                    MingoringInputSelectionCard(
-                      type: InputSelectionCardType.secondary,
-                      title: TermsAgreementScreenConstants
-                          .pushNotificationsTitle,
-                      optionalLabel: InputSelectionCardLabel.optional,
-                      linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _isPushNotificationsEnabled,
-                      onChanged: (v) {
-                        setState(() => _isPushNotificationsEnabled = v);
-                        _syncAcceptAll();
-                      },
-                      onLinkPressed: () => TestToast.show(
-                        context,
-                        message: 'viewfull 클릭됨!',
-                      ),
-                    ),
-                    const SizedBox(
-                        height: TermsAgreementScreenConstants.cardListGap),
-                    MingoringInputSelectionCard(
-                      type: InputSelectionCardType.secondary,
-                      title: TermsAgreementScreenConstants.marketingTitle,
-                      optionalLabel: InputSelectionCardLabel.optional,
-                      linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _isMarketingEnabled,
-                      onChanged: (v) {
-                        setState(() => _isMarketingEnabled = v);
-                        _syncAcceptAll();
-                      },
-                      onLinkPressed: () => TestToast.show(
-                        context,
-                        message: 'viewfull 클릭됨!',
-                      ),
-                    ),
+                    ],
                   ],
                 ),
               ],
@@ -165,7 +110,8 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
           ),
           bottomType: PageFrameBottomType.actionButton,
           bottomActionButton: MingoringTextButton(
-            onPressed: _canContinue ? () => context.go(RoutePaths.signup) : null,
+            onPressed:
+                _canContinue ? () => context.go(RoutePaths.signup) : null,
             size: MingoringTextButtonSize.big,
             child: Text(TermsAgreementScreenConstants.buttonTextContinue),
           ),

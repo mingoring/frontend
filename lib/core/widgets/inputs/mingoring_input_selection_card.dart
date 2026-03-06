@@ -63,6 +63,8 @@ class MingoringInputSelectionCard extends StatelessWidget {
   static const double _subtitleGapCompact = 3.0;
   static const EdgeInsets _paddingCompact =
       EdgeInsets.symmetric(horizontal: 16.0, vertical: 13.0);
+  static const double _linkHitAreaHorizontalPadding = 8.0;
+  static const double _linkHitAreaVerticalPadding = 4.0;
 
   @override
   Widget build(BuildContext context) {
@@ -122,15 +124,23 @@ class MingoringInputSelectionCard extends StatelessWidget {
                     if (linkButton ==
                         InputSelectionCardLinkButton.viewFull) ...[
                       SizedBox(height: _contentGap),
-                      InkWell(
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: onLinkPressed,
-                        child: Text(
-                          linkText,
-                          style: AppTypography.detail3Md13.copyWith(
-                            color: AppColors.gray400,
-                            height: 1.2,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.gray400,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            right: _linkHitAreaHorizontalPadding,
+                            top: _linkHitAreaVerticalPadding,
+                            bottom: _linkHitAreaVerticalPadding,
+                          ),
+                          child: Text(
+                            linkText,
+                            style: AppTypography.detail3Md13.copyWith(
+                              color: AppColors.gray400,
+                              height: 1.2,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.gray400,
+                            ),
                           ),
                         ),
                       ),
