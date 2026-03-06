@@ -49,17 +49,15 @@ class MingoringInputSelectionChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(color: borderColor),
           ),
-          child: Center(
-            child: Text(
-              label,
-              style: AppTypography.body4B15.copyWith(
-                color: textColor,
-                height: 1.2,
-                letterSpacing: -0.3,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          child: Text(
+            label,
+            style: AppTypography.body4B15.copyWith(
+              color: textColor,
+              height: 1.2,
+              letterSpacing: -0.3,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
