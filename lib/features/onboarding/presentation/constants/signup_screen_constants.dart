@@ -24,7 +24,42 @@ abstract final class SignupScreenConstants {
   static const double nameTitleToSubtitleGap = 10.0;
   static const double nameSubtitleToInputGap = 40.0;
 
-  // ── Step 2: (TBD) ─────────────────────────────────
+  // ── Step 2: Level ──────────────────────────────────
+  static const String levelTitleText = "What's your Korean level?";
+  static const String levelSubtitleText =
+      'Start learning with a course that fits your level.';
+  static const double levelTitleToSubtitleGap = 10.0;
+  static const double levelSubtitleToListGap = 13.0;
+  static const double levelCardGap = 8.0;
+
+  /// 레벨 선택지 목록. 각 항목은 {title, subtitle}.
+  static const List<({String title, String subtitle})> levelOptions = [
+    (
+      title: 'Lv 1 · Beginner',
+      subtitle:
+          'I can read Hangul and use basic phrases. (TOPIK 1 / CEFR A1)',
+    ),
+    (
+      title: 'Lv 2 · Elementary',
+      subtitle:
+          'I can handle simple everyday conversations. (TOPIK 2 / CEFR A2)',
+    ),
+    (
+      title: 'Lv 3 · Intermediate',
+      subtitle:
+          'I can express my thoughts in full sentences. (TOPIK 3 / CEFR B1)',
+    ),
+    (
+      title: 'Lv 4 · Upper-Intermediate',
+      subtitle:
+          'I can have natural conversations on most of the topics. (TOPIK 4 / CEFR B2)',
+    ),
+    (
+      title: 'Lv 5 · Advanced',
+      subtitle:
+          'I can communicate confidently in professional or academic settings. (TOPIK 5–6 / CEFR C1)',
+    ),
+  ];
 
   // ── Step 3: (TBD) ─────────────────────────────────
 
