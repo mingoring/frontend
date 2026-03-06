@@ -255,21 +255,15 @@ class _SignupScreenState extends State<SignupScreen> {
                         final titleStyle = _currentStep == 4
                             ? AppLogoTypography.logoEb5.copyWith(
                                 color: AppColors.pink600,
-                                height: 1.03,
-                                letterSpacing: 0.4,
                               )
                             : AppLogoTypography.logoEb5.copyWith(
                                 color: AppColors.pink600,
-                                height: 1.03,
-                                letterSpacing: 0.4,
                               );
                         final subtitleStyle = _currentStep == 4
-                            ? AppTypography.detail6Md12.copyWith(
+                            ? AppTypography.body9Md14.copyWith(
                                 color: AppColors.gray600,
-                                height: 1.2,
-                                letterSpacing: -0.0288,
                               )
-                            : AppTypography.detail6Md12.copyWith(
+                            : AppTypography.body9Md14.copyWith(
                                 color: AppColors.gray600,
                               );
 

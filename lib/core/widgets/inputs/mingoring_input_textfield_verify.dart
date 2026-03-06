@@ -236,9 +236,8 @@ class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldV
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       maxLength: widget.maxLength,
-      style: AppTypography.body9Md14.copyWith(
+      style: AppTypography.body3Md16.copyWith(
         color: _textColor,
-        height: 1.2,
       ),
       decoration: InputDecoration(
         isCollapsed: true,
@@ -247,9 +246,8 @@ class _MingoringInputTextfieldVerifyState extends State<MingoringInputTextfieldV
         enabledBorder: InputBorder.none,
         disabledBorder: InputBorder.none,
         hintText: widget.hintText,
-        hintStyle: AppTypography.body9Md14.copyWith(
+        hintStyle: AppTypography.body3Md16.copyWith(
           color: AppColors.gray400,
-          height: 1.2,
         ),
         counterText: '',
         isDense: true,
