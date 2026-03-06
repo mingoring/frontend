@@ -215,7 +215,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: SignupScreenConstants.headerToStepperGap),
                       if (_currentStep < 4) ...[
                         MingoringProgressStepper.big(
-                          maxItemCount: 3,
                           currentItem: _currentStep,
                         ),
                         const SizedBox(

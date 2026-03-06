@@ -37,7 +37,6 @@ class OnboardingCenterContent extends StatelessWidget {
         ),
         const SizedBox(height: OnboardingConstants.spacingImageToIndicator),
         MingoringProgressStepper.small(
-          maxItemCount: pages.length,
           currentItem: currentIndex + 1,
         ),
         const SizedBox(height: OnboardingConstants.spacingIndicatorToText),

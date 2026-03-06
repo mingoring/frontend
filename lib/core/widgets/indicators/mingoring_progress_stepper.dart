@@ -1,94 +1,73 @@
 import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
+import '../../constants/app_typography.dart';
 
-// 프로그레스 스텝퍼 사이즈
-enum MingoringProgressStepperSize {
+// stepper 사이즈
+enum MingoringProgressStepperSize { 
   small,
-  big,
+  big
 }
 
-// 단계 진행 상태 표시 스텝퍼
+// 프로그레스 스텝퍼
 class MingoringProgressStepper extends StatelessWidget {
   const MingoringProgressStepper.small({
     super.key,
-    required this.maxItemCount, // 전체 스텝 수
-    required this.currentItem, // 현재 선택된 스텝 (1-indexed)
-  })  : size = MingoringProgressStepperSize.small,
-        assert(maxItemCount > 0, 'maxItemCount must be greater than 0'),
-        assert(
-          currentItem >= 1 && currentItem <= maxItemCount,
-          'currentItem must be within [1, maxItemCount]',
-        );
+    required this.currentItem,
+  }) : size = MingoringProgressStepperSize.small,
+       assert(currentItem >= 1 && currentItem <= stepCount);
 
   const MingoringProgressStepper.big({
     super.key,
-    required this.maxItemCount, // 전체 스텝 수
-    required this.currentItem, // 현재 선택된 스텝 (1-indexed)
-  })  : size = MingoringProgressStepperSize.big,
-        assert(maxItemCount > 0, 'maxItemCount must be greater than 0'),
-        assert(
-          currentItem >= 1 && currentItem <= maxItemCount,
-          'currentItem must be within [1, maxItemCount]',
-        ),
-        assert(
-          maxItemCount == 3,
-          'Big MingoringProgressStepper supports maxItemCount == 3 only',
-        );
+    required this.currentItem,
+  }) : size = MingoringProgressStepperSize.big,
+       assert(currentItem >= 1 && currentItem <= stepCount);
+
+  // 3단계 고정
+  static const stepCount = 3;
 
   @visibleForTesting
-  final MingoringProgressStepperSize size; // 스텝퍼 사이즈
+  final MingoringProgressStepperSize size;
 
-  final int maxItemCount; // 전체 스텝 수
-  final int currentItem; // 현재 단계
+  // 현재 단계 (1-indexed)
+  final int currentItem;
 
   int get _currentIndex => currentItem - 1;
 
-  // Small (Figma: 711:5119)
+  // ── Small 상수 ──────────────────────────────────────
   static const _smallDotSize = 6.0;
   static const _smallSpacing = 6.0;
-  static const _smallAnimationDuration = Duration(milliseconds: 300);
+  static const _smallAnimDuration = Duration(milliseconds: 300);
 
-  // Big (Figma: 711:5132)
+  // ── Big 상수 ────────────────────────────────────────
   static const _bigHeight = 24.0;
   static const _bigWidth = 114.0;
   static const _bigCircleSize = 24.0;
-  static const _bigCircleRadius = 12.0;
   static const _bigConnectorWidth = 21.0;
   static const _bigConnectorDotSize = 3.0;
   static const _bigConnectorEdgeGap = 3.0;
   static const _bigConnectorDotGap = 3.0;
-  static const _bigTextStyle = TextStyle(
-    fontFamily: 'Pretendard',
-    fontSize: 14,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
-    letterSpacing: -0.28,
-  );
-
-  static const _bigVariant2CompletedText = Color(0xFFF8EDEC);
 
   @override
   Widget build(BuildContext context) {
     return switch (size) {
-      MingoringProgressStepperSize.small => _SmallProgressStepper(
-        itemCount: maxItemCount,
+      MingoringProgressStepperSize.small => _SmallStepper(
         currentIndex: _currentIndex,
       ),
-      MingoringProgressStepperSize.big => _BigProgressStepper(
+      MingoringProgressStepperSize.big => _BigStepper(
         currentIndex: _currentIndex,
       ),
     };
   }
 }
 
-class _SmallProgressStepper extends StatelessWidget {
-  const _SmallProgressStepper({
-    required this.itemCount,
-    required this.currentIndex,
-  });
+// =====================================================================
+// Small
+// =====================================================================
 
-  final int itemCount;
+class _SmallStepper extends StatelessWidget {
+  const _SmallStepper({required this.currentIndex});
+
   final int currentIndex;
 
   @override
@@ -96,10 +75,10 @@ class _SmallProgressStepper extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(itemCount, (index) {
+      children: List.generate(MingoringProgressStepper.stepCount, (index) {
         final isSelected = index == currentIndex;
         return AnimatedContainer(
-          duration: MingoringProgressStepper._smallAnimationDuration,
+          duration: MingoringProgressStepper._smallAnimDuration,
           margin: const EdgeInsets.symmetric(
             horizontal: MingoringProgressStepper._smallSpacing / 2,
           ),
@@ -117,10 +96,12 @@ class _SmallProgressStepper extends StatelessWidget {
   }
 }
 
-class _BigProgressStepper extends StatelessWidget {
-  const _BigProgressStepper({
-    required this.currentIndex,
-  });
+// =====================================================================
+// Big
+// =====================================================================
+
+class _BigStepper extends StatelessWidget {
+  const _BigStepper({required this.currentIndex});
 
   final int currentIndex;
 
@@ -132,20 +113,11 @@ class _BigProgressStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _StepCircle(
-            index: 0,
-            currentIndex: currentIndex,
-          ),
+          _StepCircle(index: 0, currentIndex: currentIndex),
           _ConnectorDots(isActive: currentIndex > 0),
-          _StepCircle(
-            index: 1,
-            currentIndex: currentIndex,
-          ),
+          _StepCircle(index: 1, currentIndex: currentIndex),
           _ConnectorDots(isActive: currentIndex > 1),
-          _StepCircle(
-            index: 2,
-            currentIndex: currentIndex,
-          ),
+          _StepCircle(index: 2, currentIndex: currentIndex),
         ],
       ),
     );
@@ -177,9 +149,7 @@ class _StepCircle extends StatelessWidget {
     } else if (isCompleted) {
       borderColor = AppColors.pink300;
       fillColor = AppColors.pink300;
-      textColor = (currentIndex == 1 && index == 0)
-          ? MingoringProgressStepper._bigVariant2CompletedText
-          : AppColors.pink100;
+      textColor = AppColors.pink100;
     } else {
       borderColor = AppColors.gray400;
       fillColor = null;
@@ -193,15 +163,13 @@ class _StepCircle extends StatelessWidget {
           color: fillColor,
           border: Border.all(color: borderColor),
           borderRadius: BorderRadius.circular(
-            MingoringProgressStepper._bigCircleRadius,
+            MingoringProgressStepper._bigCircleSize / 2,
           ),
         ),
         child: Center(
           child: Text(
             '${index + 1}',
-            style: MingoringProgressStepper._bigTextStyle.copyWith(
-              color: textColor,
-            ),
+            style: AppTypography.body7B14.copyWith(color: textColor),
           ),
         ),
       ),
@@ -210,9 +178,7 @@ class _StepCircle extends StatelessWidget {
 }
 
 class _ConnectorDots extends StatelessWidget {
-  const _ConnectorDots({
-    required this.isActive,
-  });
+  const _ConnectorDots({required this.isActive});
 
   final bool isActive;
 
@@ -235,8 +201,7 @@ class _ConnectorDots extends StatelessWidget {
     return SizedBox(
       width: MingoringProgressStepper._bigConnectorWidth,
       height: MingoringProgressStepper._bigHeight,
-      child: Align(
-        alignment: Alignment.center,
+      child: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -253,4 +218,3 @@ class _ConnectorDots extends StatelessWidget {
     );
   }
 }
-
