@@ -4,7 +4,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_typography.dart';
 
 enum MingoringTextButtonSize {
-  big(height: 55.0),
+  big(height: 58.0),
   small(height: 50.0),
   popup(height: 50.0);
 
@@ -13,9 +13,9 @@ enum MingoringTextButtonSize {
   final double height;
 
   TextStyle get _textStyle => switch (this) {
-    big => AppTypography.head6B18.copyWith(height: 1.2),
-    small || popup => AppTypography.body4B15.copyWith(height: 1.2),
-  };
+        big => AppTypography.head6B18.copyWith(height: 1.2),
+        small || popup => AppTypography.body4B15.copyWith(height: 1.2),
+      };
 }
 
 /// [onPressed]가 null이면 disabled 상태로 렌더링된다.
