@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_icon_assets.dart';
+import '../../../../core/constants/app_images.dart';
+import '../../../../core/constants/app_logo_typography.dart';
+import '../../../../core/constants/app_typography.dart';
+import '../../../../core/router/route_paths.dart';
+import '../widgets/social_icon_button.dart';
+
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
+  static const _characterWidth = 270.0;
+  static const _socialIconSize = 52.0;
+  static const _dividerHorizontalPadding = 20.0;
+  static const _dividerTextGap = 18.0;
+  static const _socialGap = 14.0;
+  static const _dividerThickness = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.pink600,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Spacer(flex: 17),
+            Text(
+              'Learn with\nthe videos you love!',
+              style: AppLogoTypography.logoEb3.copyWith(
+                color: AppColors.pink50,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Sign in to add any YouTube video you want',
+              style: AppTypography.body5Sb15.copyWith(
+                color: AppColors.pink50,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const Spacer(flex: 9),
+            SizedBox(
+              width: _characterWidth,
+              child: SvgPicture.asset(
+                AppImages.mingoWithGreeting,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const Spacer(flex: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: _dividerHorizontalPadding,
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Divider(
+                      color: AppColors.pink400,
+                      thickness: _dividerThickness,
+                      height: _dividerThickness,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: _dividerTextGap,
+                    ),
+                    child: Text(
+                      'sign in with',
+                      style: AppTypography.detail6Md12.copyWith(
+                        color: AppColors.pink400,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Divider(
+                      color: AppColors.pink400,
+                      thickness: _dividerThickness,
+                      height: _dividerThickness,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SocialIconButton(
+                  iconPath: AppIconAssets.google,
+                  iconSize: _socialIconSize,
+                  onTap: () => context.push(RoutePaths.terms),
+                ),
+                const SizedBox(width: _socialGap),
+                SocialIconButton(
+                  iconPath: AppIconAssets.apple,
+                  iconSize: _socialIconSize,
+                  onTap: () => context.push(RoutePaths.terms),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            InkWell(
+              onTap: () {},
+              child: Text(
+                'Explore as Guest',
+                style: AppTypography.body4B15.copyWith(
+                  color: AppColors.pink50,
+                  height: 1.2,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.pink50,
+                ),
+              ),
+            ),
+            const Spacer(flex: 7),
+          ],
+        ),
+      ),
+    );
+  }
+}

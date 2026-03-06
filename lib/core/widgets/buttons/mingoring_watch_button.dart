@@ -5,37 +5,38 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
+// 시청(Watch) 버튼 사이즈
 enum MingoringWatchButtonSize {
   big,
   small,
 }
 
-/// [onPressed]가 null이면 disabled 상태로 렌더링된다.
+// 시청(Watch) 버튼 (onPressed 가 null 이면 disabled 상태)
 class MingoringWatchButton extends StatelessWidget {
   const MingoringWatchButton({
     super.key,
-    required this.onPressed,
-    this.onLongPress,
-    this.onHover,
-    this.onFocusChange,
-    this.size = MingoringWatchButtonSize.big,
-    this.style,
-    this.focusNode,
-    this.autofocus = false,
-    this.clipBehavior,
-    this.statesController,
+    required this.onPressed, // 클릭 콜백 (null 이면 disabled)
+    this.onLongPress, // 길게 누르기 콜백
+    this.onHover, // 호버 콜백
+    this.onFocusChange, // 포커스 변경 콜백
+    this.size = MingoringWatchButtonSize.big, // 버튼 사이즈 (크기 및 텍스트 유무 차이)
+    this.style, // 커스텀 버튼 스타일
+    this.focusNode, // 포커스 노드
+    this.autofocus = false, // 자동 포커스 여부
+    this.clipBehavior, // 클립 동작 방식
+    this.statesController, // 상태 컨트롤러
   });
 
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPress;
-  final ValueChanged<bool>? onHover;
-  final ValueChanged<bool>? onFocusChange;
-  final MingoringWatchButtonSize size;
-  final ButtonStyle? style;
-  final FocusNode? focusNode;
-  final bool autofocus;
-  final Clip? clipBehavior;
-  final WidgetStatesController? statesController;
+  final VoidCallback? onPressed; // 클릭 콜백
+  final VoidCallback? onLongPress; // 길게 누르기 콜백
+  final ValueChanged<bool>? onHover; // 호버 콜백
+  final ValueChanged<bool>? onFocusChange; // 포커스 변경 콜백
+  final MingoringWatchButtonSize size; // 버튼 사이즈
+  final ButtonStyle? style; // 커스텀 버튼 스타일
+  final FocusNode? focusNode; // 포커스 노드
+  final bool autofocus; // 자동 포커스 여부
+  final Clip? clipBehavior; // 클립 동작 방식
+  final WidgetStatesController? statesController; // 상태 컨트롤러
 
   bool get _isEnabled => onPressed != null;
 
