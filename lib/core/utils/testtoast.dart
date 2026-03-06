@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 abstract final class TestToast {
@@ -5,6 +6,7 @@ abstract final class TestToast {
     BuildContext context, {
     required String message,
   }) {
+    if (!kDebugMode) return;
     final messenger = ScaffoldMessenger.maybeOf(context);
     if (messenger == null) return;
 

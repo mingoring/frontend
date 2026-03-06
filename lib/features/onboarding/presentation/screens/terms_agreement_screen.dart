@@ -94,6 +94,7 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                         setState(() => _termsOfService = v);
                         _syncAcceptAll();
                       },
+                      // TODO: 실제 링크 연결 필요
                       onLinkPressed: () => TestToast.show(
                         context,
                         message: 'viewfull 클릭됨!',
