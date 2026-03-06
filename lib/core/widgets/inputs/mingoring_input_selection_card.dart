@@ -5,21 +5,21 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-// 입력 카드 타입
+// 입력 카드 타입 (타입에 따라 디자인 다름)
 enum InputSelectionCardType {
   primary,
   secondary,
   compact,
 }
 
-// 라벨 표시 여부
+// 라벨 표시 여부 ([Required], [Optional] 텍스트)
 enum InputSelectionCardLabel {
   none,
   required,
   optional,
 }
 
-// 링크 텍스트 버튼 노출 여부
+// 링크 텍스트 버튼 노출 여부 (viewFull 버튼)
 enum InputSelectionCardLinkButton {
   none,
   viewFull,

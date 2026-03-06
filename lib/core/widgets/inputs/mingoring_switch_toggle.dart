@@ -13,6 +13,7 @@ enum MingoringSwitchToggleSize {
   final double height;
 }
 
+// Controlled 토글 스위치
 class MingoringSwitchToggle extends StatefulWidget {
   const MingoringSwitchToggle({
     super.key,

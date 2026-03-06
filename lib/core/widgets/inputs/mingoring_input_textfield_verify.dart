@@ -14,6 +14,7 @@ enum MingoringInputTextfieldVerifyState {
   error,
 }
 
+// 검증 기능이 포함된 표준 텍스트 입력 위젯.
 class MingoringInputTextfieldVerify extends StatelessWidget {
   const MingoringInputTextfieldVerify({
     super.key,
