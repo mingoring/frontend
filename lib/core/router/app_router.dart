@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 import '../../features/onboarding/presentation/screens/login_screen.dart';
+import '../../features/onboarding/presentation/screens/signup_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/onboarding/presentation/screens/terms_agreement_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
@@ -20,6 +21,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: RoutePaths.terms,
       builder: (_, __) => const TermsAgreementScreen(),
+    ),
+    GoRoute(
+      path: RoutePaths.signup,
+      builder: (_, __) => const SignupScreen(),
     ),
     GoRoute(
       path: RoutePaths.login,

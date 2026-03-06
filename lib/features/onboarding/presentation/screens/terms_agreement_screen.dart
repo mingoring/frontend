@@ -157,7 +157,7 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
             ),
           ),
           buttonText: TermsAgreementScreenConstants.buttonTextContinue,
-          onPressed: _canContinue ? () => context.go(RoutePaths.login) : null,
+          onPressed: _canContinue ? () => context.go(RoutePaths.signup) : null,
         ),
       ),
     );

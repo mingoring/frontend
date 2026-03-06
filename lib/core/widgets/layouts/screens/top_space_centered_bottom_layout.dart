@@ -4,17 +4,15 @@ import '../components/mingoring_text_button_bottom_column.dart';
 import '../components/mingoring_back_header.dart';
 import '../components/space_sized_box.dart';
 
-/// `TopSpaceCenteredBottomLayout`의 상단 영역 타입.
-///
-/// - `safeSpace`: 상단 SafeArea(inset)만 확보
-/// - `backHeader`: MingoringBackHeader (`onBack`은 필수, `headerTitle`을 넘기면 중앙 타이틀이 표시되고, null이면 좌측 back만 표시됩니다.)
-
+/// 상단 영역 타입.
+/// - [safeSpace]: SafeArea inset만 확보.
+/// - [backHeader]: back 버튼 헤더. [headerTitle] 넘기면 중앙 타이틀 표시.
 enum TopSpaceCenteredBottomTopType {
   safeSpace,
   backHeader,
 }
 
-/// 상단 SpaceSizedBox + 가운데 정렬 콘텐츠 + 하단 MingoringTextButtonBottomColumn
+/// 상단(헤더) + 중앙(콘텐츠) + 하단(버튼) 3단 레이아웃.
 class TopSpaceCenteredBottomLayout extends StatelessWidget {
   const TopSpaceCenteredBottomLayout({
     super.key,
@@ -24,14 +22,24 @@ class TopSpaceCenteredBottomLayout extends StatelessWidget {
     this.topType = TopSpaceCenteredBottomTopType.safeSpace,
     this.onBack,
     this.headerTitle,
+    this.contentVerticalAlignment = MainAxisAlignment.center,
+    this.contentHorizontalAlignment = CrossAxisAlignment.center,
   });
 
   final Widget content;
   final String buttonText;
   final VoidCallback? onPressed;
   final TopSpaceCenteredBottomTopType topType;
+
+  /// [topType]이 [backHeader]일 때 필수.
   final VoidCallback? onBack;
   final String? headerTitle;
+
+  /// 콘텐츠 영역 수직 정렬. 기본: center.
+  final MainAxisAlignment contentVerticalAlignment;
+
+  /// 콘텐츠 영역 수평 정렬. 기본: center.
+  final CrossAxisAlignment contentHorizontalAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -55,25 +63,20 @@ class TopSpaceCenteredBottomLayout extends StatelessWidget {
             ),
         },
 
-        /// Container(height: 2, color: Colors.red),
-
         Expanded(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: contentVerticalAlignment,
+            crossAxisAlignment: contentHorizontalAlignment,
             children: [
               content,
             ],
           ),
         ),
 
-        /// Container(height: 2, color: Colors.red),
-
         MingoringTextButtonBottomColumn(
           buttonText: buttonText,
           onPressed: onPressed,
         ),
-
-        /// Container(height: 2, color: Colors.red),
       ],
     );
   }
