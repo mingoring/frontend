@@ -21,31 +21,31 @@ class TermsAgreementScreen extends StatefulWidget {
 }
 
 class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
-  bool _acceptAll = false;
-  bool _termsOfService = false;
-  bool _privacyPolicy = false;
-  bool _pushNotifications = false;
-  bool _marketing = false;
+  bool _isAcceptAll = false;
+  bool _isTermsOfServiceAccepted = false;
+  bool _isPrivacyPolicyAccepted = false;
+  bool _isPushNotificationsEnabled = false;
+  bool _isMarketingEnabled = false;
 
-  bool get _canContinue => _termsOfService && _privacyPolicy;
+  bool get _canContinue => _isTermsOfServiceAccepted && _isPrivacyPolicyAccepted;
 
   void _onAcceptAllChanged(bool value) {
     setState(() {
-      _acceptAll = value;
-      _termsOfService = value;
-      _privacyPolicy = value;
-      _pushNotifications = value;
-      _marketing = value;
+      _isAcceptAll = value;
+      _isTermsOfServiceAccepted = value;
+      _isPrivacyPolicyAccepted = value;
+      _isPushNotificationsEnabled = value;
+      _isMarketingEnabled = value;
     });
   }
 
   void _syncAcceptAll() {
-    final all = _termsOfService &&
-        _privacyPolicy &&
-        _pushNotifications &&
-        _marketing;
-    if (_acceptAll != all) {
-      setState(() => _acceptAll = all);
+    final all = _isTermsOfServiceAccepted &&
+        _isPrivacyPolicyAccepted &&
+        _isPushNotificationsEnabled &&
+        _isMarketingEnabled;
+    if (_isAcceptAll != all) {
+      setState(() => _isAcceptAll = all);
     }
   }
 
@@ -79,7 +79,7 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       title: TermsAgreementScreenConstants.acceptAllTitle,
                       subtitle:
                           TermsAgreementScreenConstants.acceptAllSubtitle,
-                      value: _acceptAll,
+                      value: _isAcceptAll,
                       onChanged: _onAcceptAllChanged,
                     ),
                     const SizedBox(
@@ -89,9 +89,9 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       title: TermsAgreementScreenConstants.termsOfServiceTitle,
                       optionalLabel: InputSelectionCardLabel.required,
                       linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _termsOfService,
+                      value: _isTermsOfServiceAccepted,
                       onChanged: (v) {
-                        setState(() => _termsOfService = v);
+                        setState(() => _isTermsOfServiceAccepted = v);
                         _syncAcceptAll();
                       },
                       // TODO: 실제 링크 연결 필요
@@ -107,9 +107,9 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       title: TermsAgreementScreenConstants.privacyPolicyTitle,
                       optionalLabel: InputSelectionCardLabel.required,
                       linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _privacyPolicy,
+                      value: _isPrivacyPolicyAccepted,
                       onChanged: (v) {
-                        setState(() => _privacyPolicy = v);
+                        setState(() => _isPrivacyPolicyAccepted = v);
                         _syncAcceptAll();
                       },
                       onLinkPressed: () => TestToast.show(
@@ -125,9 +125,9 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                           .pushNotificationsTitle,
                       optionalLabel: InputSelectionCardLabel.optional,
                       linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _pushNotifications,
+                      value: _isPushNotificationsEnabled,
                       onChanged: (v) {
-                        setState(() => _pushNotifications = v);
+                        setState(() => _isPushNotificationsEnabled = v);
                         _syncAcceptAll();
                       },
                       onLinkPressed: () => TestToast.show(
@@ -142,9 +142,9 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       title: TermsAgreementScreenConstants.marketingTitle,
                       optionalLabel: InputSelectionCardLabel.optional,
                       linkButton: InputSelectionCardLinkButton.viewFull,
-                      value: _marketing,
+                      value: _isMarketingEnabled,
                       onChanged: (v) {
-                        setState(() => _marketing = v);
+                        setState(() => _isMarketingEnabled = v);
                         _syncAcceptAll();
                       },
                       onLinkPressed: () => TestToast.show(
