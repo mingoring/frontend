@@ -208,7 +208,7 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
       assetPath = AppIconAssets.check1False;
     }
 
-    return SizedBox(
+    final icon = SizedBox(
       width: _iconSize,
       height: _iconSize,
       child: SvgPicture.asset(
@@ -217,6 +217,18 @@ class MingoringInputTextfieldVerify extends StatelessWidget {
         height: _iconSize,
       ),
     );
+
+    if (_showTrailingCheckFalse) {
+      return GestureDetector(
+        onTap: () {
+          controller.clear();
+          onChanged?.call('');
+        },
+        child: icon,
+      );
+    }
+
+    return icon;
   }
 
   Widget _buildHelperAndCounter(int currentLength) {
