@@ -19,7 +19,6 @@ class OnboardingPageImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-      // 영역 내에서 하단에 밀착시킵니다.
       child: Align(
         alignment: Alignment.bottomCenter,
         child: SvgPicture.asset(
