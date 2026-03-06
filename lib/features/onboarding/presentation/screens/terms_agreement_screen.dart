@@ -6,7 +6,9 @@ import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/utils/testtoast.dart';
 import '../../../../core/widgets/inputs/mingoring_input_selection_card.dart';
-import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
+import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
+import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/onboarding_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
 import '../widgets/terms_agreement_checkbox_cards.dart';
@@ -56,9 +58,11 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
         decoration: const BoxDecoration(
           gradient: OnboardingConstants.backgroundGradient,
         ),
-        child: TopSpaceCenteredBottomLayout(
-          topType: TopSpaceCenteredBottomTopType.backHeader,
-          onBack: () => context.pop(),
+        child: PageFrame(
+          topType: PageFrameTopType.backHeader,
+          topBackHeader: MingoringBackHeader(
+            onBack: () => context.pop(),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -157,8 +161,12 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
               ],
             ),
           ),
-          buttonText: TermsAgreementScreenConstants.buttonTextContinue,
-          onPressed: _canContinue ? () => context.go(RoutePaths.signup) : null,
+          bottomType: PageFrameBottomType.actionButton,
+          bottomActionButton: MingoringTextButton(
+            onPressed: _canContinue ? () => context.go(RoutePaths.signup) : null,
+            size: MingoringTextButtonSize.big,
+            child: Text(TermsAgreementScreenConstants.buttonTextContinue),
+          ),
         ),
       ),
     );

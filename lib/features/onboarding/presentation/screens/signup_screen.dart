@@ -7,7 +7,9 @@ import '../../../../core/constants/app_typography.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
-import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
+import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
+import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/signup_screen_constants.dart';
 import '../widgets/signup_interest_input.dart';
 import '../widgets/signup_level_input.dart';
@@ -196,9 +198,9 @@ class _SignupScreenState extends State<SignupScreen> {
         decoration: const BoxDecoration(
           color: AppColors.white,
         ),
-        child: TopSpaceCenteredBottomLayout(
-          topType: TopSpaceCenteredBottomTopType.backHeader,
-          onBack: _onBack,
+        child: PageFrame(
+          topType: PageFrameTopType.backHeader,
+          topBackHeader: MingoringBackHeader(onBack: _onBack),
           contentVerticalAlignment: MainAxisAlignment.start,
           contentHorizontalAlignment: CrossAxisAlignment.start,
           content: SingleChildScrollView(
@@ -325,10 +327,16 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
           ),
-          buttonText: _currentStep == 4
-              ? SignupScreenConstants.buttonTextFinish
-              : SignupScreenConstants.buttonTextContinue,
-          onPressed: _isValid ? _onContinue : null,
+          bottomType: PageFrameBottomType.actionButton,
+          bottomActionButton: MingoringTextButton(
+            onPressed: _isValid ? _onContinue : null,
+            size: MingoringTextButtonSize.big,
+            child: Text(
+              _currentStep == 4
+                  ? SignupScreenConstants.buttonTextFinish
+                  : SignupScreenConstants.buttonTextContinue,
+            ),
+          ),
         ),
       ),
     );

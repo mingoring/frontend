@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../constants/onboarding_constants.dart';
 import '../widgets/onboarding_center_content.dart';
 import '../../../../core/router/route_paths.dart';
-import '../../../../core/widgets/layouts/screens/top_space_centered_bottom_layout.dart';
+import '../../../../core/widgets/layouts/screens/page_frame.dart';
+import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -55,15 +56,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         decoration: const BoxDecoration(
           gradient: OnboardingConstants.backgroundGradient,
         ),
-        child: TopSpaceCenteredBottomLayout(
+        child: PageFrame(
           content: OnboardingCenterContent(
             pages: onboardingPages,
             currentIndex: _currentIndex,
             pageController: _pageController,
             onPageChanged: _onPageViewChanged,
           ),
-          buttonText: isLastPage ? 'Start' : 'Next',
-          onPressed: _onNextPressed,
+          bottomType: PageFrameBottomType.actionButton,
+          bottomActionButton: MingoringTextButton(
+            onPressed: _onNextPressed,
+            size: MingoringTextButtonSize.big,
+            child: Text(isLastPage ? 'Start' : 'Next'),
+          ),
         ),
       ),
     );
