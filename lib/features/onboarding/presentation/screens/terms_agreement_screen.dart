@@ -87,12 +87,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       type: InputSelectionCardType.secondary,
                       title: TermsAgreementScreenConstants.termsOfServiceTitle,
                       optionalLabel: InputSelectionCardLabel.required,
+                      linkButton: InputSelectionCardLinkButton.viewFull,
                       value: _termsOfService,
                       onChanged: (v) {
                         setState(() => _termsOfService = v);
                         _syncAcceptAll();
                       },
-                      onViewFullPressed: () {},
+                      onLinkPressed: () {},
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -100,12 +101,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       type: InputSelectionCardType.secondary,
                       title: TermsAgreementScreenConstants.privacyPolicyTitle,
                       optionalLabel: InputSelectionCardLabel.required,
+                      linkButton: InputSelectionCardLinkButton.viewFull,
                       value: _privacyPolicy,
                       onChanged: (v) {
                         setState(() => _privacyPolicy = v);
                         _syncAcceptAll();
                       },
-                      onViewFullPressed: () {},
+                      onLinkPressed: () {},
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -114,12 +116,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       title: TermsAgreementScreenConstants
                           .pushNotificationsTitle,
                       optionalLabel: InputSelectionCardLabel.optional,
+                      linkButton: InputSelectionCardLinkButton.viewFull,
                       value: _pushNotifications,
                       onChanged: (v) {
                         setState(() => _pushNotifications = v);
                         _syncAcceptAll();
                       },
-                      onViewFullPressed: () {},
+                      onLinkPressed: () {},
                     ),
                     const SizedBox(
                         height: TermsAgreementScreenConstants.cardListGap),
@@ -127,12 +130,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
                       type: InputSelectionCardType.secondary,
                       title: TermsAgreementScreenConstants.marketingTitle,
                       optionalLabel: InputSelectionCardLabel.optional,
+                      linkButton: InputSelectionCardLinkButton.viewFull,
                       value: _marketing,
                       onChanged: (v) {
                         setState(() => _marketing = v);
                         _syncAcceptAll();
                       },
-                      onViewFullPressed: () {},
+                      onLinkPressed: () {},
                     ),
                   ],
                 ),

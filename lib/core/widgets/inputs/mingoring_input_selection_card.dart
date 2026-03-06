@@ -5,20 +5,26 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-/// [Required] / [Optional] 라벨 표시 방식. 타입 관계없이 사용 가능.
+/// 라벨 표시 방식 ([Required], [Optional] 텍스트)
 enum InputSelectionCardLabel {
   none,
   required,
   optional,
 }
 
-/// 카드 스타일: primary = 전체 동의(accept all), secondary = 개별 항목(single).
+/// 카드 스타일 디자인 (primary = 전체 동의, secondary = 개별 항목)
 enum InputSelectionCardType {
   primary,
   secondary,
 }
 
-/// 선택형 입력 카드. primary(전체 동의) / secondary(개별 항목) 타입으로 스타일 구분.
+/// 설명(subtitle) 아래에 링크 텍스트 버튼을 노출할지 여부 (viewFull = 전체 보기)
+enum InputSelectionCardLinkButton {
+  none,
+  viewFull,
+}
+
+/// 선택형 입력 카드. (카드 스타일에 따라 디자인 스타일 다름)
 class MingoringInputSelectionCard extends StatelessWidget {
   const MingoringInputSelectionCard({
     super.key,
@@ -28,16 +34,24 @@ class MingoringInputSelectionCard extends StatelessWidget {
     required this.onChanged,
     this.subtitle,
     this.optionalLabel = InputSelectionCardLabel.none,
-    this.onViewFullPressed,
-  });
+    this.linkButton = InputSelectionCardLinkButton.none,
+    this.linkText = 'View full',
+    this.onLinkPressed,
+  }) : assert(
+          linkButton != InputSelectionCardLinkButton.viewFull ||
+              onLinkPressed != null,
+          'onLinkPressed is required when linkButton is viewFull',
+        );
 
   final InputSelectionCardType type;
   final String title;
   final String? subtitle;
   final InputSelectionCardLabel optionalLabel;
+  final InputSelectionCardLinkButton linkButton;
+  final String linkText;
   final bool value;
   final ValueChanged<bool> onChanged;
-  final VoidCallback? onViewFullPressed;
+  final VoidCallback? onLinkPressed;
 
   static const double _borderRadius = 20.0;
   static const double _paddingPrimary = 17.0;
@@ -48,8 +62,9 @@ class MingoringInputSelectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding =
-        type == InputSelectionCardType.primary ? _paddingPrimary : _paddingSecondary;
+    final padding = type == InputSelectionCardType.primary
+        ? _paddingPrimary
+        : _paddingSecondary;
     final borderColor = value ? AppColors.pink600 : AppColors.gray400;
     final checkAsset = type == InputSelectionCardType.primary
         ? (value ? AppIconAssets.check2True2 : AppIconAssets.check2None)
@@ -78,7 +93,10 @@ class MingoringInputSelectionCard extends StatelessWidget {
                   children: [
                     _buildTitle(),
                     if (subtitle != null) ...[
-                      SizedBox(height: type == InputSelectionCardType.primary ? _subtitleGap : _contentGap),
+                      SizedBox(
+                          height: type == InputSelectionCardType.primary
+                              ? _subtitleGap
+                              : _contentGap),
                       Text(
                         subtitle!,
                         style: AppTypography.detail3Md13.copyWith(
@@ -87,12 +105,13 @@ class MingoringInputSelectionCard extends StatelessWidget {
                         ),
                       ),
                     ],
-                    if (onViewFullPressed != null) ...[
+                    if (linkButton ==
+                        InputSelectionCardLinkButton.viewFull) ...[
                       SizedBox(height: _contentGap),
-                      GestureDetector(
-                        onTap: onViewFullPressed,
+                      InkWell(
+                        onTap: onLinkPressed,
                         child: Text(
-                          'View full',
+                          linkText,
                           style: AppTypography.detail3Md13.copyWith(
                             color: AppColors.gray400,
                             height: 1.2,
