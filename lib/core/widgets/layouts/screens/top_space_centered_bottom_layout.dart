@@ -4,15 +4,13 @@ import '../components/mingoring_text_button_bottom_column.dart';
 import '../components/mingoring_back_header.dart';
 import '../components/space_sized_box.dart';
 
-/// 상단 영역 타입.
-/// - [safeSpace]: SafeArea inset만 확보.
-/// - [backHeader]: back 버튼 헤더. [headerTitle] 넘기면 중앙 타이틀 표시.
+// 상단 영역 타입
 enum TopSpaceCenteredBottomTopType {
-  safeSpace,
-  backHeader,
+  safeSpace, // SafeArea inset만 확보
+  backHeader, // back 버튼 헤더 (headerTitle 이 있으면 중앙 타이틀 표시)
 }
 
-/// 상단(헤더) + 중앙(콘텐츠) + 하단(버튼) 3단 레이아웃.
+// 상단(헤더) + 중앙(콘텐츠) + 하단(버튼) 3단 레이아웃
 class TopSpaceCenteredBottomLayout extends StatelessWidget {
   const TopSpaceCenteredBottomLayout({
     super.key,
@@ -26,20 +24,16 @@ class TopSpaceCenteredBottomLayout extends StatelessWidget {
     this.contentHorizontalAlignment = CrossAxisAlignment.center,
   });
 
-  final Widget content;
-  final String buttonText;
-  final VoidCallback? onPressed;
-  final TopSpaceCenteredBottomTopType topType;
+  final Widget content; // 중앙 콘텐츠
+  final String buttonText; // 하단 버튼 텍스트
+  final VoidCallback? onPressed; // 하단 버튼 클릭 콜백
+  final TopSpaceCenteredBottomTopType topType; // 상단 헤더 타입
 
-  /// [topType]이 [backHeader]일 때 필수.
-  final VoidCallback? onBack;
-  final String? headerTitle;
+  final VoidCallback? onBack; // 뒤로가기 콜백 (topType 이 backHeader 일 때 필수)
+  final String? headerTitle; // 헤더 타이틀 텍스트
 
-  /// 콘텐츠 영역 수직 정렬. 기본: center.
-  final MainAxisAlignment contentVerticalAlignment;
-
-  /// 콘텐츠 영역 수평 정렬. 기본: center.
-  final CrossAxisAlignment contentHorizontalAlignment;
+  final MainAxisAlignment contentVerticalAlignment; // 콘텐츠 영역 수직 정렬 (기본: center)
+  final CrossAxisAlignment contentHorizontalAlignment; // 콘텐츠 영역 수평 정렬 (기본: center)
 
   @override
   Widget build(BuildContext context) {

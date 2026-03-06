@@ -5,7 +5,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-/// 검증 전용 텍스트 필드 상태
+// 검증 전용 텍스트 필드 상태
 enum MingoringInputTextfieldVerifyState {
   defaultState,
   typing,
@@ -14,43 +14,38 @@ enum MingoringInputTextfieldVerifyState {
   error,
 }
 
-/// 검증 기능이 포함된 표준 텍스트 입력 위젯.
-/// - [state] / [helperText]: 외부에서 UI 상태·메시지 제어
-/// - [onChanged]: 실시간 입력 검증용 콜백
-/// - [onSubmitted] / [textInputAction]: 키보드 액션 버튼 처리
-/// - [showMax] / [maxLength]: 글자 수 카운터 표시
 class MingoringInputTextfieldVerify extends StatelessWidget {
   const MingoringInputTextfieldVerify({
     super.key,
-    required this.controller,
-    this.hintText = '',
-    this.state = MingoringInputTextfieldVerifyState.defaultState,
-    this.showMax = false,
-    this.maxLength,
-    this.leadingIconAsset,
-    this.onChanged,
-    this.onSubmitted,
-    this.keyboardType,
-    this.textInputAction,
-    this.enabled = true,
-    this.helperText,
+    required this.controller, // 텍스트 컨트롤러
+    this.hintText = '', // 힌트 텍스트
+    this.state = MingoringInputTextfieldVerifyState.defaultState, // 필드 상태
+    this.showMax = false, // 글자 수 카운터 표시 여부
+    this.maxLength, // 최대 글자 수
+    this.leadingIconAsset, // 앞쪽 아이콘 에셋 경로
+    this.onChanged, // 입력 변경 콜백
+    this.onSubmitted, // 입력 완료 콜백
+    this.keyboardType, // 키보드 타입
+    this.textInputAction, // 키보드 액션 버튼
+    this.enabled = true, // 활성화 여부
+    this.helperText, // 도움말 텍스트
   }) : assert(
           showMax == false || maxLength != null,
           'maxLength is required when showMax is true',
         );
 
-  final TextEditingController controller;
-  final String hintText;
-  final MingoringInputTextfieldVerifyState state;
-  final bool showMax;
-  final int? maxLength;
-  final String? leadingIconAsset;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final bool enabled;
-  final String? helperText;
+  final TextEditingController controller; // 텍스트 컨트롤러
+  final String hintText; // 힌트 텍스트
+  final MingoringInputTextfieldVerifyState state; // 필드 상태
+  final bool showMax; // 글자 수 카운터 표시 여부
+  final int? maxLength; // 최대 글자 수
+  final String? leadingIconAsset; // 앞쪽 아이콘 에셋 경로
+  final ValueChanged<String>? onChanged; // 입력 변경 콜백
+  final ValueChanged<String>? onSubmitted; // 입력 완료 콜백
+  final TextInputType? keyboardType; // 키보드 타입
+  final TextInputAction? textInputAction; // 키보드 액션 버튼
+  final bool enabled; // 활성화 여부
+  final String? helperText; // 도움말 텍스트
 
   static const double _borderRadius = 20.0;
   static const double _height = 50.0;

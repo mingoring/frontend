@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
 
+// 프로그레스 스텝퍼 사이즈
 enum MingoringProgressStepperSize {
   small,
   big,
 }
 
+// 단계 진행 상태 표시 스텝퍼
 class MingoringProgressStepper extends StatelessWidget {
   const MingoringProgressStepper.small({
     super.key,
-    required this.maxItemCount,
-    required this.currentItem,
+    required this.maxItemCount, // 전체 스텝 수
+    required this.currentItem, // 현재 선택된 스텝 (1-indexed)
   })  : size = MingoringProgressStepperSize.small,
         assert(maxItemCount > 0, 'maxItemCount must be greater than 0'),
         assert(
@@ -21,8 +23,8 @@ class MingoringProgressStepper extends StatelessWidget {
 
   const MingoringProgressStepper.big({
     super.key,
-    required this.maxItemCount,
-    required this.currentItem,
+    required this.maxItemCount, // 전체 스텝 수
+    required this.currentItem, // 현재 선택된 스텝 (1-indexed)
   })  : size = MingoringProgressStepperSize.big,
         assert(maxItemCount > 0, 'maxItemCount must be greater than 0'),
         assert(
@@ -35,10 +37,10 @@ class MingoringProgressStepper extends StatelessWidget {
         );
 
   @visibleForTesting
-  final MingoringProgressStepperSize size;
+  final MingoringProgressStepperSize size; // 스텝퍼 사이즈
 
-  final int maxItemCount;
-  final int currentItem;
+  final int maxItemCount; // 전체 스텝 수
+  final int currentItem; // 현재 단계
 
   int get _currentIndex => currentItem - 1;
 

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_typography.dart';
 
+// 배지 사이즈
 enum MingoringBadgeSize {
   big,
   small,
 }
 
+// 배지 색상
 enum MingoringBadgeColor {
   gray,
   lightPink,
@@ -15,29 +17,28 @@ enum MingoringBadgeColor {
   pink,
 }
 
-/// 라벨 표시용 배지 위젯. [badgeColor]로 4가지 색상,
-/// [size]로 big/small 사이즈를 선택한다.
+// 라벨 표시용 배지 위젯
 class MingoringBadge extends StatelessWidget {
   const MingoringBadge({
     super.key,
-    required this.label,
-    this.size = MingoringBadgeSize.small,
-    this.badgeColor = MingoringBadgeColor.gray,
-    this.labelStyle,
-    this.padding,
-    this.side,
-    this.shape,
-    this.clipBehavior = Clip.none,
+    required this.label, // 표시할 라벨 위젯
+    this.size = MingoringBadgeSize.small, // 배지 사이즈
+    this.badgeColor = MingoringBadgeColor.gray, // 배지 색상
+    this.labelStyle, // 라벨 텍스트 스타일
+    this.padding, // 여백
+    this.side, // 테두리 옵션
+    this.shape, // 테두리 모양
+    this.clipBehavior = Clip.none, // 클립 동작 방식
   });
 
-  final Widget label;
-  final MingoringBadgeSize size;
-  final MingoringBadgeColor badgeColor;
-  final TextStyle? labelStyle;
-  final EdgeInsetsGeometry? padding;
-  final BorderSide? side;
-  final OutlinedBorder? shape;
-  final Clip clipBehavior;
+  final Widget label; // 표시할 라벨 위젯
+  final MingoringBadgeSize size; // 배지 사이즈
+  final MingoringBadgeColor badgeColor; // 배지 색상
+  final TextStyle? labelStyle; // 라벨 텍스트 스타일
+  final EdgeInsetsGeometry? padding; // 여백
+  final BorderSide? side; // 테두리 옵션
+  final OutlinedBorder? shape; // 테두리 모양
+  final Clip clipBehavior; // 클립 동작 방식
 
   static const _smallHeight = 21.0;
   static const _bigHeight = 26.0;

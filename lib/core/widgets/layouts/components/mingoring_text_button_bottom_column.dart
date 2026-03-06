@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'space_sized_box.dart';
 import '../../buttons/mingoring_text_button.dart';
 
-/// MingoringTextButton + 하단 여백 Column
+// MingoringTextButton + 하단 자동 여백 Column 위젯
 class MingoringTextButtonBottomColumn extends StatelessWidget {
   const MingoringTextButtonBottomColumn({
     super.key,
@@ -13,10 +13,10 @@ class MingoringTextButtonBottomColumn extends StatelessWidget {
     this.buttonSize = MingoringTextButtonSize.big,
   });
 
-  final String buttonText;
-  final VoidCallback? onPressed;
-  final double horizontalPadding;
-  final MingoringTextButtonSize buttonSize;
+  final String buttonText; // 버튼 텍스트
+  final VoidCallback? onPressed; // 버튼 클릭 콜백
+  final double horizontalPadding; // 가로 여백
+  final MingoringTextButtonSize buttonSize; // 버튼 사이즈
 
   static const defaultButtonHorizontalPadding = 32.0;
 

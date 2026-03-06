@@ -5,21 +5,21 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../constants/app_typography.dart';
 
-/// 입력 카드 타입 (타입에 따라 디자인 다름)
+// 입력 카드 타입
 enum InputSelectionCardType {
   primary,
   secondary,
   compact,
 }
 
-/// 라벨 표시 여부 설정 ([Required], [Optional] 텍스트)
+// 라벨 표시 여부
 enum InputSelectionCardLabel {
   none,
   required,
   optional,
 }
 
-/// 링크 텍스트 버튼을 노출 여부 설정 (viewFull 버튼)
+// 링크 텍스트 버튼 노출 여부
 enum InputSelectionCardLinkButton {
   none,
   viewFull,
@@ -43,15 +43,15 @@ class MingoringInputSelectionCard extends StatelessWidget {
           'onLinkPressed is required when linkButton is viewFull',
         );
 
-  final InputSelectionCardType type;
-  final String title;
-  final String? subtitle;
-  final InputSelectionCardLabel optionalLabel;
-  final InputSelectionCardLinkButton linkButton;
-  final String linkText;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final VoidCallback? onLinkPressed;
+  final InputSelectionCardType type; // 카드 타입
+  final String title; // 카드 제목
+  final String? subtitle; // 카드 부제목
+  final InputSelectionCardLabel optionalLabel; // 라벨 표시 여부
+  final InputSelectionCardLinkButton linkButton; // 링크 버튼 노출 여부
+  final String linkText; // 링크 텍스트
+  final bool value; // 선택 여부
+  final ValueChanged<bool> onChanged; // 변경 콜백
+  final VoidCallback? onLinkPressed; // 링크 클릭 콜백
 
   static const double _borderRadius = 20.0;
   static const double _paddingPrimary = 17.0;

@@ -6,6 +6,7 @@ import '../../../constants/app_icon_assets.dart';
 import '../../../constants/app_typography.dart';
 import 'mingoring_text_button_bottom_column.dart';
 
+// 상단 헤더 타입
 enum MingoringBackHeaderType {
   none,
   title,
@@ -13,7 +14,7 @@ enum MingoringBackHeaderType {
   actionEdit,
 }
 
-/// 좌측 뒤로가기와 타입별 텍스트/액션을 제공하는 상단 헤더.
+// 좌측 뒤로가기와 타입별 텍스트/액션을 제공하는 상단 헤더
 class MingoringBackHeader extends StatelessWidget {
   const MingoringBackHeader({
     super.key,
@@ -26,12 +27,12 @@ class MingoringBackHeader extends StatelessWidget {
         MingoringTextButtonBottomColumn.defaultButtonHorizontalPadding,
   });
 
-  final VoidCallback onBack;
-  final MingoringBackHeaderType type;
-  final String? text;
-  final VoidCallback? onActionPressed;
-  final Color backgroundColor;
-  final double horizontalPadding;
+  final VoidCallback onBack; // 뒤로가기 콜백
+  final MingoringBackHeaderType type; // 헤더 타입
+  final String? text; // 타이틀 또는 액션 텍스트
+  final VoidCallback? onActionPressed; // 우측 액션 버튼 클릭 콜백
+  final Color backgroundColor; // 배경색
+  final double horizontalPadding; // 가로 여백
 
   static const double _iconSize = 24.0;
 

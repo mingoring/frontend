@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_colors.dart';
 
-/// 사이즈 프리셋. Painter가 비율 기반이므로 절대 크기만 정의한다.
+// 토글 스위치 사이즈
 enum MingoringSwitchToggleSize {
   regular(width: 45.0, height: 28.0),
   small(width: 29.0, height: 18.0);
@@ -13,18 +13,17 @@ enum MingoringSwitchToggleSize {
   final double height;
 }
 
-/// Controlled 토글 스위치. [onChanged]가 null이면 Disabled로 렌더링된다.
 class MingoringSwitchToggle extends StatefulWidget {
   const MingoringSwitchToggle({
     super.key,
-    required this.value,
-    this.onChanged,
-    this.size = MingoringSwitchToggleSize.regular,
+    required this.value, // 현재 상태
+    this.onChanged, // 변경 콜백, null이면 Disabled
+    this.size = MingoringSwitchToggleSize.regular, // 스위치 사이즈
   });
 
-  final bool value;
-  final ValueChanged<bool>? onChanged;
-  final MingoringSwitchToggleSize size;
+  final bool value; // 현재 상태
+  final ValueChanged<bool>? onChanged; // 변경 콜백
+  final MingoringSwitchToggleSize size; // 스위치 사이즈
 
   @override
   State<MingoringSwitchToggle> createState() => _MingoringSwitchToggleState();
