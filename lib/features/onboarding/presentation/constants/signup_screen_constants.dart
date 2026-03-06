@@ -99,6 +99,6 @@ abstract final class SignupScreenConstants {
   static const double referralTitleToSubtitleGap = 10.0;
   static const double referralSubtitleToInputGap = 40.0;
   
-  // (임시) 테스트용 추천인 코드
+  // TODO: (임시) 테스트용 추천인 코드
   static const String tempValidReferralCode = 'AAAAAAAA';
 }
