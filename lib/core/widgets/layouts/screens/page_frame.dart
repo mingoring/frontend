@@ -26,7 +26,15 @@ class PageFrame extends StatelessWidget {
     required this.content, // 중앙 콘텐츠 위젯 전달 (필수)
     this.bottomType = PageFrameBottomType.none, // 하단 타입 (기본 none)
     this.bottomActionButton, // 하단 버튼 위젯 전달 (옵션)
-  });
+  })  : assert(
+          topType != PageFrameTopType.backHeader || topBackHeader != null,
+          'topBackHeader is required when topType is backHeader',
+        ),
+        assert(
+          bottomType != PageFrameBottomType.actionButton ||
+              bottomActionButton != null,
+          'bottomActionButton is required when bottomType is actionButton',
+        );
 
   final PageFrameTopType topType;
   final MingoringBackHeader? topBackHeader;
@@ -40,18 +48,6 @@ class PageFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (topType == PageFrameTopType.backHeader && topBackHeader == null) {
-      throw ArgumentError(
-        'topBackHeader is required when topType is backHeader',
-      );
-    }
-    if (bottomType == PageFrameBottomType.actionButton &&
-        bottomActionButton == null) {
-      throw ArgumentError(
-        'bottomActionButton is required when bottomType is actionButton',
-      );
-    }
-
     return Column(
       children: [
         _buildTop(context),
