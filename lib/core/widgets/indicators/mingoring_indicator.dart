@@ -6,20 +6,18 @@ class MingoringIndicator extends StatelessWidget {
     super.key,
     required this.itemCount,
     required this.currentIndex,
-    this.dotSize = 8.0,
-    this.spacing = 8.0,
-    this.selectedScale = 2.5,
     this.activeColor = AppColors.pink600,
-    this.inactiveColor = AppColors.gray200,
+    this.inactiveColor = AppColors.gray300,
   });
 
   final int itemCount;
   final int currentIndex;
-  final double dotSize;
-  final double spacing;
-  final double selectedScale;
   final Color activeColor;
   final Color inactiveColor;
+
+  static const _dotSize = 6.0;
+  static const _spacing = 6.0;
+  static const _selectedScale = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +27,12 @@ class MingoringIndicator extends StatelessWidget {
         final isSelected = index == currentIndex;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          margin: EdgeInsets.symmetric(horizontal: spacing / 2),
-          width: isSelected ? dotSize * selectedScale : dotSize,
-          height: dotSize,
+          margin: EdgeInsets.symmetric(horizontal: _spacing / 2),
+          width: isSelected ? _dotSize * _selectedScale : _dotSize,
+          height: _dotSize,
           decoration: BoxDecoration(
             color: isSelected ? activeColor : inactiveColor,
-            borderRadius: BorderRadius.circular(dotSize / 2),
+            borderRadius: BorderRadius.circular(_dotSize / 2),
           ),
         );
       }),
