@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_logo_typography.dart';
 import '../../../../core/constants/app_typography.dart';
+import '../../../../core/errors/app_exception.dart';
 import '../../../../core/router/route_paths.dart';
 import '../../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
@@ -11,20 +13,21 @@ import '../../../../core/widgets/layouts/frames/page_frame.dart';
 import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/signup_screen_constants.dart';
+import '../viewmodels/signup_viewmodel.dart';
 import '../widgets/signup_interest_input.dart';
 import '../widgets/signup_level_input.dart';
 import '../widgets/signup_name_input.dart';
 import '../widgets/signup_referral_input.dart';
 
 /// 회원가입 화면
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   // ── Common ──────────────────────────────────────────
   int _currentStep = 1;
 
@@ -75,6 +78,10 @@ class _SignupScreenState extends State<SignupScreen> {
     return _isReferralValid;
   }
 
+  bool get _isSubmitting {
+    return ref.watch(signupViewModelProvider).submitState.isLoading;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -99,7 +106,6 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    // Validation
     if (!SignupScreenConstants.nameValidChars.hasMatch(value)) {
       setState(() {
         _nameValidationStatus = MingoringValidationStatus.error;
@@ -110,7 +116,6 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    // Valid
     setState(() {
       _nameValidationStatus = MingoringValidationStatus.success;
       _errorMessage = null;
@@ -163,14 +168,30 @@ class _SignupScreenState extends State<SignupScreen> {
   // ── Common handlers ─────────────────────────────────
 
   /// Continue 버튼 또는 키보드 "완료" 시 호출.
-  /// 마지막 Step이면 다음 화면으로 이동.
-  void _onContinue() {
-    if (!_isValid) return;
+  /// Step 4(마지막)이면 회원가입 API를 호출하고, 이전 Step이면 다음 Step으로 이동.
+  Future<void> _onContinue() async {
+    if (!_isValid || _isSubmitting) return;
     FocusScope.of(context).unfocus();
 
     if (_currentStep < 4) {
       setState(() => _currentStep++);
-    } else {
+      return;
+    }
+
+    // Step 4 Finish: API 호출
+    final interestCodes = _selectedInterestIndexes
+        .map((i) => SignupScreenConstants.interestCodes[i])
+        .toList();
+
+    final response = await ref.read(signupViewModelProvider.notifier).submit(
+          nickname: _controller.text,
+          level: _selectedLevelIndex! + 1,
+          interestCodes: interestCodes,
+        );
+
+    if (!mounted) return;
+
+    if (response != null) {
       context.go(RoutePaths.home);
     }
   }
@@ -181,7 +202,6 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   /// Back 버튼 핸들러.
-  /// Step이 1보다 크면 이전 Step으로 돌아가고, 1이면 이전 화면으로 pop.
   void _onBack() {
     if (_currentStep > 1) {
       setState(() => _currentStep--);
@@ -192,6 +212,19 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // submitState 에러 발생 시 SnackBar 표시
+    ref.listen<SignupFormState>(signupViewModelProvider, (prev, next) {
+      next.submitState.whenOrNull(
+        error: (e, _) {
+          final message =
+              e is AppException ? e.message : '알 수 없는 오류가 발생했습니다.';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
+        },
+      );
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -200,135 +233,135 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-        ),
-        child: PageFrame(
-          topType: PageFrameTopType.backHeader,
-          topBackHeader: MingoringBackHeader(onBack: _onBack),
-          content: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                    height: SignupScreenConstants.headerToStepperGap),
-                if (_currentStep < 4) ...[
-                  MingoringProgressStepper.big(
-                    currentIndex: _currentStep - 1,
-                  ),
+          decoration: const BoxDecoration(
+            color: AppColors.white,
+          ),
+          child: PageFrame(
+            topType: PageFrameTopType.backHeader,
+            topBackHeader: MingoringBackHeader(onBack: _onBack),
+            content: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   const SizedBox(
-                      height: SignupScreenConstants.stepperToContentGap),
-                ] else ...[
-                  Text(
-                    SignupScreenConstants.referralOptionalText,
-                    style: AppTypography.head7Sb18.copyWith(
-                      color: AppColors.pink300,
+                      height: SignupScreenConstants.headerToStepperGap),
+                  if (_currentStep < 4) ...[
+                    MingoringProgressStepper.big(
+                      currentIndex: _currentStep - 1,
                     ),
-                  ),
-                  const SizedBox(
-                      height:
-                          SignupScreenConstants.referralOptionalToTitleGap),
-                ],
-                Builder(builder: (context) {
-                  final title = _currentStep == 1
-                      ? SignupScreenConstants.nameTitleText
-                      : _currentStep == 2
-                          ? SignupScreenConstants.levelTitleText
-                          : _currentStep == 3
-                              ? SignupScreenConstants.interestTitleText
-                              : SignupScreenConstants.referralTitleText;
-                  final subtitle = _currentStep == 1
-                      ? SignupScreenConstants.nameSubtitleText
-                      : _currentStep == 2
-                          ? SignupScreenConstants.levelSubtitleText
-                          : _currentStep == 3
-                              ? SignupScreenConstants.interestSubtitleText
-                              : SignupScreenConstants.referralSubtitleText;
-                  final gap = _currentStep == 1
-                      ? SignupScreenConstants.nameSubtitleToInputGap
-                      : _currentStep == 2
-                          ? SignupScreenConstants.levelSubtitleToListGap
-                          : _currentStep == 3
-                              ? SignupScreenConstants.interestSubtitleToListGap
-                              : SignupScreenConstants.referralSubtitleToInputGap;
+                    const SizedBox(
+                        height: SignupScreenConstants.stepperToContentGap),
+                  ] else ...[
+                    Text(
+                      SignupScreenConstants.referralOptionalText,
+                      style: AppTypography.head7Sb18.copyWith(
+                        color: AppColors.pink300,
+                      ),
+                    ),
+                    const SizedBox(
+                        height:
+                            SignupScreenConstants.referralOptionalToTitleGap),
+                  ],
+                  Builder(builder: (context) {
+                    final title = _currentStep == 1
+                        ? SignupScreenConstants.nameTitleText
+                        : _currentStep == 2
+                            ? SignupScreenConstants.levelTitleText
+                            : _currentStep == 3
+                                ? SignupScreenConstants.interestTitleText
+                                : SignupScreenConstants.referralTitleText;
+                    final subtitle = _currentStep == 1
+                        ? SignupScreenConstants.nameSubtitleText
+                        : _currentStep == 2
+                            ? SignupScreenConstants.levelSubtitleText
+                            : _currentStep == 3
+                                ? SignupScreenConstants.interestSubtitleText
+                                : SignupScreenConstants.referralSubtitleText;
+                    final gap = _currentStep == 1
+                        ? SignupScreenConstants.nameSubtitleToInputGap
+                        : _currentStep == 2
+                            ? SignupScreenConstants.levelSubtitleToListGap
+                            : _currentStep == 3
+                                ? SignupScreenConstants.interestSubtitleToListGap
+                                : SignupScreenConstants
+                                    .referralSubtitleToInputGap;
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: AppLogoTypography.logoEb5.copyWith(
-                          color: AppColors.pink600,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: AppLogoTypography.logoEb5.copyWith(
+                            color: AppColors.pink600,
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      const SizedBox(
-                          height: SignupScreenConstants.titleToSubtitleGap),
-                      Text(
-                        subtitle,
-                        style: AppTypography.body9Md14.copyWith(
-                          color: AppColors.gray600,
+                        const SizedBox(
+                            height: SignupScreenConstants.titleToSubtitleGap),
+                        Text(
+                          subtitle,
+                          style: AppTypography.body9Md14.copyWith(
+                            color: AppColors.gray600,
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: gap),
-                    ],
-                  );
-                }),
-                Expanded(
-                  child: Builder(builder: (context) {
-                    if (_currentStep == 1) {
-                      return SignupNameInput(
-                        controller: _controller,
-                        validationStatus: _nameValidationStatus,
-                        errorMessage: _errorMessage,
-                        onChanged: _onChanged,
+                        SizedBox(height: gap),
+                      ],
+                    );
+                  }),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      if (_currentStep == 1) {
+                        return SignupNameInput(
+                          controller: _controller,
+                          validationStatus: _nameValidationStatus,
+                          errorMessage: _errorMessage,
+                          onChanged: _onChanged,
+                          onSubmitted: _onSubmitted,
+                          textInputAction: TextInputAction.done,
+                        );
+                      }
+                      if (_currentStep == 2) {
+                        return SignupLevelInput(
+                          selectedIndex: _selectedLevelIndex,
+                          onSelected: _onLevelSelected,
+                        );
+                      }
+                      if (_currentStep == 3) {
+                        return SignupInterestInput(
+                          selectedIndexes: _selectedInterestIndexes,
+                          onSelected: _onInterestSelected,
+                        );
+                      }
+                      return SignupReferralInput(
+                        controller: _referralController,
+                        validationStatus: _referralValidationStatus,
+                        isVerifyEnabled: _isReferralVerifyEnabled,
+                        errorMessage: _referralErrorMessage,
+                        onChanged: _onReferralChanged,
+                        onVerify: _onReferralVerify,
                         onSubmitted: _onSubmitted,
                         textInputAction: TextInputAction.done,
                       );
-                    }
-                    if (_currentStep == 2) {
-                      return SignupLevelInput(
-                        selectedIndex: _selectedLevelIndex,
-                        onSelected: _onLevelSelected,
-                      );
-                    }
-                    if (_currentStep == 3) {
-                      return SignupInterestInput(
-                        selectedIndexes: _selectedInterestIndexes,
-                        onSelected: _onInterestSelected,
-                      );
-                    }
-                    return SignupReferralInput(
-                      controller: _referralController,
-                      validationStatus: _referralValidationStatus,
-                      isVerifyEnabled: _isReferralVerifyEnabled,
-                      errorMessage: _referralErrorMessage,
-                      onChanged: _onReferralChanged,
-                      onVerify: _onReferralVerify,
-                      onSubmitted: _onSubmitted,
-                      textInputAction: TextInputAction.done,
-                    );
-                  }),
-                ),
-              ],
+                    }),
+                  ),
+                ],
+              ),
             ),
-          ),
-          bottomType: PageFrameBottomType.actionButton,
-          bottomActionButton: MingoringTextButton(
-            onPressed: _isValid ? _onContinue : null,
-            size: MingoringTextButtonSize.big,
-            child: Text(
-              _currentStep == 4
-                  ? SignupScreenConstants.buttonTextFinish
-                  : SignupScreenConstants.buttonTextContinue,
+            bottomType: PageFrameBottomType.actionButton,
+            bottomActionButton: MingoringTextButton(
+              onPressed: (_isValid && !_isSubmitting) ? _onContinue : null,
+              size: MingoringTextButtonSize.big,
+              child: Text(
+                _currentStep == 4
+                    ? SignupScreenConstants.buttonTextFinish
+                    : SignupScreenConstants.buttonTextContinue,
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }
-

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -11,18 +12,20 @@ import '../../../../core/widgets/layouts/components/mingoring_back_header.dart';
 import '../../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/onboarding_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
+import '../viewmodels/signup_viewmodel.dart';
 import '../widgets/terms_agreement_checkbox_cards.dart';
 import '../widgets/terms_agreement_title.dart';
 
 /// 약관동의 화면
-class TermsAgreementScreen extends StatefulWidget {
+class TermsAgreementScreen extends ConsumerStatefulWidget {
   const TermsAgreementScreen({super.key});
 
   @override
-  State<TermsAgreementScreen> createState() => _TermsAgreementScreenState();
+  ConsumerState<TermsAgreementScreen> createState() =>
+      _TermsAgreementScreenState();
 }
 
-class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
+class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
   static const _items = TermsAgreementScreenConstants.items;
 
   List<bool> _accepted = List.filled(_items.length, false);
@@ -41,6 +44,13 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
 
   void _onItemChanged(int index, bool value) {
     setState(() => _accepted[index] = value);
+  }
+
+  void _onContinue() {
+    ref
+        .read(signupViewModelProvider.notifier)
+        .setTermAgreements(List.unmodifiable(_accepted));
+    context.push(RoutePaths.signup);
   }
 
   @override
@@ -110,8 +120,7 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
           ),
           bottomType: PageFrameBottomType.actionButton,
           bottomActionButton: MingoringTextButton(
-            onPressed:
-                _canContinue ? () => context.push(RoutePaths.signup) : null,
+            onPressed: _canContinue ? _onContinue : null,
             size: MingoringTextButtonSize.big,
             child: Text(TermsAgreementScreenConstants.buttonTextContinue),
           ),
