@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'mingoring_back_header.dart';
+import 'mingoring_app_bar.dart';
 import '../../utils/app_spacing.dart';
 import '../buttons/mingoring_text_button.dart';
 
@@ -37,7 +37,7 @@ class PageFrame extends StatelessWidget {
         );
 
   final PageFrameTopType topType;
-  final MingoringBackHeader? topBackHeader;
+  final MingoringAppBar? topBackHeader;
 
   final Widget content;
 

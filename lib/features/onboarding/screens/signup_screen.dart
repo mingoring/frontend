@@ -11,7 +11,7 @@ import '../../../core/widgets/dialogs/error_popup.dart';
 import '../../../core/widgets/indicators/mingoring_progress_stepper.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../../../core/widgets/layouts/page_frame.dart';
-import '../../../core/widgets/layouts/mingoring_back_header.dart';
+import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/signup_screen_constants.dart';
 import '../providers/signup_provider.dart';
@@ -238,7 +238,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           ),
           child: PageFrame(
             topType: PageFrameTopType.backHeader,
-            topBackHeader: MingoringBackHeader(onBack: _onBack),
+            topBackHeader: MingoringAppBar(onBack: _onBack),
             content: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(

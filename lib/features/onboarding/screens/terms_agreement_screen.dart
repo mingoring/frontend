@@ -7,7 +7,7 @@ import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/widgets/dialogs/web_view_popup.dart';
 import '../../../core/widgets/inputs/mingoring_input_selection_card.dart';
-import '../../../core/widgets/layouts/mingoring_back_header.dart';
+import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../../core/utils/app_spacing.dart';
 import '../../../core/widgets/layouts/page_frame.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
@@ -62,7 +62,7 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
         ),
         child: PageFrame(
           topType: PageFrameTopType.backHeader,
-          topBackHeader: MingoringBackHeader(
+          topBackHeader: MingoringAppBar(
             onBack: () => context.pop(),
           ),
           content: SingleChildScrollView(
