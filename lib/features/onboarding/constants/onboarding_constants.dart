@@ -33,11 +33,15 @@ const onboardingPages = <OnboardingPageData>[
   ),
 ];
 
+/// 온보딩 화면 상수.
 abstract final class OnboardingConstants {
+  // ── Spacing ───────────────────────────────────────
+  static const double imageBoxHeight = 320.0;
+  static const double spacingImageToIndicator = 32.0;
+  static const double spacingIndicatorToText = 18.0;
+
+  // ── Animation ─────────────────────────────────────
   static const pageAnimationDuration = Duration(milliseconds: 300);
-  static const imageBoxHeight = 320.0;
-  static const spacingImageToIndicator = 32.0;
-  static const spacingIndicatorToText = 18.0;
 
   static const backgroundGradient = LinearGradient(
     begin: Alignment.topCenter,

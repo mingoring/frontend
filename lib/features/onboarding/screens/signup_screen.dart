@@ -278,14 +278,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                     ? SignupScreenConstants.interestSubtitleText
                                     : SignupScreenConstants.referralSubtitleText;
                         final gap = _currentStep == 1
-                            ? SignupScreenConstants.nameSubtitleToInputGap
+                            ? SignupScreenConstants.subtitleToInputGap
                             : _currentStep == 2
                                 ? SignupScreenConstants.levelSubtitleToListGap
                                 : _currentStep == 3
                                     ? SignupScreenConstants
                                         .interestSubtitleToListGap
                                     : SignupScreenConstants
-                                        .referralSubtitleToInputGap;
+                                        .subtitleToInputGap;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

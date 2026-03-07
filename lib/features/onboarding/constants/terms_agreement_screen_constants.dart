@@ -11,24 +11,17 @@ class TermsItem {
   final String? url; // 링크 URL (null이면 View Full 버튼 없음)
 }
 
-/// 약관동의 화면 전용 상수
+/// 약관동의 화면 상수
 abstract final class TermsAgreementScreenConstants {
   TermsAgreementScreenConstants._();
 
-  // ─── Layout ─────────────────────────────────────────────────────────────
-
-  static const double contentWidth = 330.0;
+  // ── Spacing ───────────────────────────────────────
+  static const double headerToTitleGap = 32.0;
+  static const double titleToCardAreaGap = 32.0;
   static const double titleCardGap = 20.0;
   static const double cardListGap = 7.0;
 
-  /// 헤더와 화면 제목 사이의 세로 간격
-  static const double headerToTitleGap = 32.0;
-
-  /// 화면 제목과 체크박스 카드 영역 사이의 세로 간격
-  static const double titleToCardAreaGap = 32.0;
-
-  // ─── URLs ───────────────────────────────────────────────────────────────
-
+  // ── URLs ──────────────────────────────────────────
   static const String termsOfServiceUrl =
       'https://mingoring.com/terms-of-service.html';
   static const String privacyPolicyUrl =
@@ -36,8 +29,7 @@ abstract final class TermsAgreementScreenConstants {
   static const String marketingUrl =
       'https://mingoring.com/marketing-consent.html';
 
-  // ─── Copy ───────────────────────────────────────────────────────────────
-
+  // ── Copy ──────────────────────────────────────────
   static const String titleText = 'Review and accept\nthe terms to continue...';
   static const String buttonTextContinue = 'Continue';
 
@@ -51,8 +43,7 @@ abstract final class TermsAgreementScreenConstants {
   static const String marketingTitle =
       'I agree to receive\nmarketing updates and promotions';
 
-  // ─── Items ──────────────────────────────────────────────────────────────
-
+  // ── Items ─────────────────────────────────────────
   static const List<TermsItem> items = [
     TermsItem(
       title: termsOfServiceTitle,

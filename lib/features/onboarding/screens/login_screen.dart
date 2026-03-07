@@ -8,6 +8,7 @@ import '../../../core/constants/app_images.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/router/route_names.dart';
+import '../constants/login_screen_constants.dart';
 import '../widgets/social_icon_button.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -29,15 +30,15 @@ class LoginScreen extends StatelessWidget {
           children: [
             const Spacer(flex: 17),
             Text(
-              'Learn with\nthe videos you love!',
+              LoginScreenConstants.titleText,
               style: AppLogoTypography.logoEb3.copyWith(
                 color: AppColors.pink50,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: LoginScreenConstants.titleToSubtitleGap),
             Text(
-              'Sign in to add any YouTube video you want',
+              LoginScreenConstants.subtitleText,
               style: AppTextStyles.body5Sb15.copyWith(
                 color: AppColors.pink50,
                 height: 1.2,
@@ -71,7 +72,7 @@ class LoginScreen extends StatelessWidget {
                       horizontal: _dividerTextGap,
                     ),
                     child: Text(
-                      'sign in with',
+                      LoginScreenConstants.dividerText,
                       style: AppTextStyles.detail6Md12.copyWith(
                         color: AppColors.pink400,
                         height: 1.2,
@@ -88,7 +89,7 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: LoginScreenConstants.dividerToSocialGap),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -105,11 +106,11 @@ class LoginScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: LoginScreenConstants.socialToGuestGap),
             InkWell(
               onTap: () {},
               child: Text(
-                'Explore as Guest',
+                LoginScreenConstants.guestText,
                 style: AppTextStyles.body4B15.copyWith(
                   color: AppColors.pink50,
                   height: 1.2,
