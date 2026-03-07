@@ -5,12 +5,13 @@
 
 ## 0. 최우선 원칙
 - 매직넘버는 상수화하세요.
-- 새로운 컴포넌트를 만들기 전에 constants 과 widgets 을 먼저 확인하세요. (재사용성 중요)
+- 새로운 컴포넌트를 만들기 전에 전역 constants 과 widgets 을 먼저 확인하세요. (재사용성 중요)
 
+--
 
 ## 1. 핵심 기술 스택
 
-### 버전 정보
+#### 버전 정보
 - **언어**: Dart 3.6.0
 - **프레임워크**: Flutter 3.27.0
 - **상태 관리**:
@@ -30,193 +31,180 @@
 
 ---
 
-## 2. 프론트엔드 코드 컨벤션 요약
-당신이 코드를 생성하거나 수정할 때 반드시 따라야 할 핵심 규칙입니다.
+## 2. 프론트엔드 디렉토리 구조 (기준안)
+당신이 코드를 생성하거나 수정할 때 반드시 따라야 할 핵심 구조입니다.
 
-### 디렉토리 구조 (기준안)
-```
+```text
 lib/
-├── main.dart
-├── core/                    # 전역 공유 코드
-│   ├── network/             # Dio, API Client 설정, 서버 통신 관련
-│   ├── di/                  # 의존성 주입 (service_locator.dart 등)
-│   ├── router/              # 화면 이동 관리, 라우팅 설정
-│   ├── errors/              # 공통 에러 정의
-│   ├── constants/           # 상수 (색상, 문자열, 사이즈 등)
-│   ├── utils/               # 유틸 함수
-│   ├── extensions/          # extension 메서드
-│   └── widgets/             # 공통 위젯
-│       ├── badges/          # 입력 없는 라벨 칩 요소들
-│       ├── buttons/         # 클릭 가능한 요소들
-│       ├── inputs/          # 입력받는 요소들 (텍스트필드, 체크박스 등)
-│       ├── dialogs/         # 팝업, 알럿, 바텀시트
-│       ├── indicators/      # 로딩, 상태 표시
-│       └── layouts/         # 배치, 구분선, 스캐폴드
-├── features/
-│   ├── auth/                    # [기능별로 폴더링]
-│   │   ├── data/                # 데이터 계층 (구현 중심)
-│   │   │   ├── models/          # DTO / 데이터 모델 (JSON 직렬화)
-│   │   │   ├── repositories/    # Repository 구현체 (Domain의 인터페이스 구현)
-│   │   │   └── datasources/     # 데이터 소스 (API, Local DB)
-│   │   │       ├── remote       # 원격 API 호출
-│   │   │       └── local        # 로컬 저장소
-│   │   ├── domain/              # 비즈니스 로직 계층
-│   │   │   ├── entities/        # 순수 비즈니스 엔티티 (JSON 의존성 X)
-│   │   │   ├── repositories/    # Repository 인터페이스 (추상)
-│   │   │   └── usecases/        # 유스케이스 (행동 단위)
-│   │   └── presentation/        # UI 계층
-│   │       ├── screens/         # 화면(Page)
-│   │       ├── widgets/         # 재사용 UI 컴포넌트
-│   │       └── viewmodels/      # 상태 관리 (MVVM)
-│   ├── study/                   # [기능별로 폴더링]
-│   │   ├── data/                # 데이터 계층 (구현 중심)
-│   │   ├── domain/              # 비즈니스 로직 계층
-│   │   └── presentation/        # UI 계층
-
-test/                            # [테스트 구조 일치 시키기]
+├── core/
+│   ├── router/
+│   │   ├── app_router.dart                 # 전체 라우터 설정
+│   │   ├── route_names.dart                # 라우트 이름 상수
+│   │   └── route_guards.dart               # 인증/권한 기반 라우트 가드
+│   ├── theme/
+│   │   ├── app_theme.dart                  # 앱 전체 ThemeData 설정
+│   │   ├── app_colors.dart                 # 공통 색상 토큰
+│   │   ├── app_text_styles.dart            # 공통 텍스트 스타일
+│   │   ├── app_spacing.dart                # 공통 spacing/sizing 토큰
+│   ├── constants/
+│   │   ├── api_constants.dart              # API baseUrl, timeout 등 네트워크 상수
+│   │   ├── storage_keys.dart               # 로컬 저장소 key 모음
+│   │   └── app_constants.dart              # 앱 전역 상수
+│   ├── errors/
+│   │   ├── app_exception.dart              # 앱 공통 예외 타입
+│   │   ├── failure.dart                    # 앱 전체 UI/도메인 레벨 failure 정의
+│   │   └── error_mapper.dart               # 서버/예외를 사용자용 에러로 변환
+│   ├── network/
+│   │   ├── dio_client.dart                 # Dio 인스턴스 생성 및 기본 설정
+│   │   ├── interceptors/
+│   │   │   ├── auth_interceptor.dart       # 토큰 첨부 처리
+│   │   │   ├── logging_interceptor.dart    # 요청/응답 로깅
+│   │   │   └── error_interceptor.dart      # 공통 에러 가공
+│   │   ├── api_response.dart               # 공통 응답 래퍼 모델
+│   │   └── network_exception.dart          # 네트워크 예외 정의
+│   ├── storage/
+│   │   ├── secure_storage_service.dart     # 토큰/민감정보 저장
+│   │   ├── local_storage_service.dart      # 일반 로컬 저장소 래퍼
+│   │   └── cache_manager.dart              # 캐시 저장/조회 정책
+│   ├── utils/            # utils, extensions
+│   │   ├── context_extension.dart          # BuildContext 확장
+│   │   ├── string_extension.dart           # String 확장
+│   │   ├── logger.dart                     # 로그 출력 유틸
+│   │   ├── validator.dart                  # 공통 입력값 검증 유틸
+│   │   ├── date_time_utils.dart            # 날짜/시간 포맷 유틸
+│   │   └── debounce.dart                   # 입력 debounce 등 보조 유틸
+│   ├── widgets/         # 앱 전역에서 재사용하는 UI 컴포넌트
+│   │   ├── badges/
+│   │   ├── buttons/
+│   │   ├── dialogs/
+│   │   ├── indicators/
+│   │   ├── inputs/
+│   │   └── layouts/
+│   │       ├── back_header.dart
+│   │       ├── bottom_action_layout.dart
+│   │       └── page_frame.dart
+│   └── services/
+│       ├── analytics_service.dart          # 공통 이벤트 로깅 서비스
+│       └── connectivity_service.dart       # 네트워크 상태 서비스
+│
+├── features/              # 기능별 모듈
+│   ├── auth/              # 로그인/회원가입
+│   │   ├── dto/                  # API 요청 DTO, 응답 DTO (서버와 통신하기 위한 데이터 구조): 서버 기준
+│   │   ├── models/               # 앱 내부 비즈니스/UI에서 쓰는 모델: 앱 기준
+│   │   ├── repositories/         # 데이터 액세스 계층 (외부 서버 통신 API 호출, 로컬 DB 접근)
+│   │   ├── providers/            # Riverpod 프로바이더
+│   │   ├── screens/              # 화면
+│   │   ├── constants/            # feature 내부에서만 사용하는 상수
+│   │   ├── widgets/              # feature 내부에서만 재사용하는 UI 컴포넌트
+│   │   └── errors/               # feature 내부에서만 쓰이는 auth 도메인 에러 타입 (필요할때만 생성)
+│   │       ├── auth_failure.dart        # auth 전용 에러 타입 정의 (UI, provider, state가 이 타입을 기준으로 분기)
+│   │       └── auth_error_mapper.dart   # 서버 응답 -> auth 에러 매핑 (서버 응답을 읽어서 AuthFailure로 변환)
+│   ├── onboarding/        # 초기 온보딩
+│   ├── home/              # 홈 화면
+│   ├── lesson/            # 학습 카드/시청 화면
+│   ├── library/           # 내 레슨 목록
+│   ├── bookmarks/         # 북마크 목록
+│   ├── credits/           # 시간 크레딧/광고 보상
+│   ├── profile/           # 내 정보
+│   └── settings/          # 설정
+│
+└── main.dart
+     
+test/                      # [테스트 구조 일치 시키기]
 ├── core/
 └── features/
-├── auth/
-└── study/
-
+    ├── auth/
+    ├── onboarding/
+    ├── home/
+    ├── lesson/
+    ├── library/
+    ├── bookmarks/
+    ├── credits/
+    ├── profile/
+    └── settings/
+    
 assets/                       # 정적 파일 저장소
 ├── images/                   # 이미지 리소스
 ├── fonts/                    # 폰트 파일
 └── icons/                    # 아이콘 파일
 ```
 
-### 구현 규칙
+--
+## 3. 구현 규칙
+당신이 코드를 생성하거나 수정할 때 반드시 따라야 할 핵심 규칙입니다.
+
 #### 1. 디렉토리 구조 원칙
-- Feature-first: 모든 기능은 features/ 폴더 아래 기능별(auth, study 등)로 격리하여 관리합니다.
-- Layered Structure: 각 Feature 내부는 data, domain, presentation 3계층으로 철저히 분리합니다.
-- Pragmatic Core: 전역으로 사용되는 공통 요소는 core/ 내부에 명확한 역할별(network, di, widgets 등)로 분류합니다.
+* Feature-First (기능 중심): 앱의 모든 비즈니스 기능은 features/ 폴더 아래 독립적인 모듈(예: auth, home, lesson)로 완전히 격리하여 관리합니다.
+* Core & Feature 이분화: 디렉토리 루트는 앱 전체의 기반이 되는 core/ 와 개별 비즈니스 로직이 담긴 features/ 로 심플하게 나누어 멘탈 모델을 단순화합니다.
+* 실용적 계층 분리 (Pragmatic Layering): 각 Feature 내부는 복잡한 계층 분리를 피하고, 데이터 통신(dto), 앱 로직(models, repositories), 상태 관리(providers), 화면(screens, widgets)으로 명확하고 실용적으로 분리합니다.
 
-#### 2. 계층별 책임 (Layer Responsibilities)
-- core/ (전역 공유 및 인프라)
-  - 앱의 뼈대가 되는 인프라와 모든 기능에서 공통으로 쓰는 자원입니다.
-  - 특정 Feature의 비즈니스 로직을 알면 안 됩니다. (Feature → Core 의존만 가능)
+#### 2. 계층 및 폴더별 책임 (Responsibilities)
 
-- domain/ (비즈니스 로직 - Feature 내부)
-  - 앱의 핵심 "규칙"과 "데이터 구조"를 정의합니다.
-  - 가장 안쪽 계층으로, 아무런 외부 라이브러리(Flutter UI, Data Layer 등)에 의존하지 않습니다.
+* `core/`
+   * 앱의 초기 설정, 라우팅(router/), 전역 디자인 시스템(theme/), 네트워크 통신(Dio), 로컬 스토리지, 전역 에러 및 공통 위젯 등 특정 기능에 종속되지 않는 모든 공통 자원을 위치시킵니다.
+   * 어떤 특정 Feature(예: 로그인 로직)의 비즈니스 코드도 이곳에 포함되어서는 안 됩니다.
 
-- data/ (데이터 구현 - Feature 내부)
-  - 실제 데이터를 가져오고 변환하는 역할을 합니다.
-  - Domain 계층의 인터페이스를 실제 코드로 구현합니다.
+* `features/`
+   * `features/{feature}/dto/`: 서버와 통신하기 위한 **서버 기준**의 데이터 구조입니다. (API 요청/응답용)
+   * `features/{feature}/models/`: 앱 내부 비즈니스 로직과 UI에서 사용하는 **앱 기준**의 데이터 구조입니다.
+   * `features/{feature}/repositories/`: 외부 API(`dto` 활용)나 로컬 DB를 호출하여 데이터를 가져오고, 이를 앱에서 쓸 `models`로 변환하여 반환하는 역할을 합니다.
+   * `features/{feature}/providers/`: Riverpod을 활용한 상태 관리 및 비즈니스 로직 처리를 담당합니다. `repositories`를 호출해 데이터를 가져와 UI에 상태를 제공합니다.
+   * `features/{feature}/screens/`: 상태(`providers`)를 구독(watch)하여 화면을 그리고 사용자 인터랙션을 처리합니다.
+   * `features/{feature}/widgets/`: features 내부에서만 쓰이는 UI 컴포넌트를 정의합니다.
+   * `features/{feature}/errors/`: 해당 기능에서만 발생하는 특화된 에러 타입과 매퍼를 정의합니다. (예: `AuthFailure`)
 
-- presentation/ (UI 및 상태 - Feature 내부)
-  - 사용자에게 화면을 보여주고 입력을 받습니다.
-  - 유일하게 BuildContext와 Flutter UI 패키지를 사용합니다.
+
 
 #### 3. 의존성 규칙 (Dependency Rules)
-- 단방향 의존: Presentation → Domain ← Data (Data와 Presentation은 서로 모릅니다.)
-- 역방향 금지: Data 계층이 Presentation 코드를 import 하거나, Domain이 Data 코드를 import 하면 안 됩니다.
-- Feature 격리: 원칙적으로 features/auth가 features/study를 직접 import 하지 않습니다. (필요 시 Core의 Interface나 Router 활용)
 
-#### 4. 데이터 변환 흐름 (Data Flow)
-- Model: freezed + json_serializable 사용 (fromJson, toJson 포함)
-- Entity: freezed 사용 (JSON 의존성 없음, 순수 Dart 객체)
+* **단방향 데이터 흐름:** UI(`screens`) → State(`providers`) → Data Access(`repositories`) → Network/Local 순으로 의존해야 합니다. 역방향 호출은 엄격히 금지합니다.
+* **데이터 변환 의존성:** UI와 `providers`는 반드시 `models/`에 정의된 데이터만 사용해야 합니다. API 응답 원본인 `dto/` 객체가 UI 화면까지 바로 넘어와서는 안 되며, 반드시 `repositories` 계층에서 `models`로 변환(Mapping)되어야 합니다.
+* **Feature 격리:** 원칙적으로 특정 피처(`features/auth`)가 다른 피처(`features/home`)의 내부 코드를 직접 import 하지 않습니다. 피처 간 이동은 `core/router/`를 통해, 공통 데이터는 `core/`를 통해 해결합니다.
 
-#### 5. 상태 관리 (State Management)
-- Library: Riverpod (2.0+) 사용
-- ViewModel: AsyncNotifierProvider 또는 NotifierProvider로 관리
-- Pattern: UI는 ViewModel의 상태를 ref.watch로 구독, 비동기 로직(API 호출 등)은 AsyncValue (data, loading, error)로 처리
+#### 4. 상태 관리 (State Management)
 
-#### 6. 계층별 상세 가이드
-- `core/` : 공통 요소
-  - network/
-    - Dio 설정, Interceptors(토큰/로깅), ApiResponse 공통 DTO
-  - di/
-    - GetIt 설정, ServiceLocator(의존성 주입 진입점)
-  - router/
-    - GoRouter 설정, RoutePaths(경로 상수), Guards(접근 제어)
-  - widgets/
-    - 전역 공통 위젯
-  - utils/
-    - 포맷터 등 순수 헬퍼 함수
-
-- `features/**/domain` : 비즈니스 코어
-  - entities/
-    - 비즈니스 모델 (예: User, StudyGroup)
-    - JSON/플랫폼 의존성 없음
-  - repositories/
-    - 데이터 접근 추상 인터페이스 (예: AuthRepository)
-  - usecases/
-    - 사용자 행동 단위 (예: LoginUseCase, GetStudyListUseCase)
-
-- `features/**/data` : 구현 상세
-  - models/
-    - 서버 응답 DTO (예: UserResponse, UserRequest)
-    - Entity 변환 메서드 포함 (toDomain)
-  - datasources/
-    - remote/
-      - API 호출 (Dio Client 등)
-    - local/
-      - DB, SharedPreferences 접근
-  - repositories/
-    - Domain Repository 구현체
-    - Datasource 조합 및 에러 처리
-
-- `features/**/presentation` : 화면 및 인터랙션
-  - screens/
-    - 실제 페이지 (Scaffold 단위, StatelessWidget 권장)
-  - viewmodels/
-    - Riverpod Notifier
-    - 비즈니스 로직 수행 및 상태 관리
-  - widgets/
-    - 해당 Feature 전용 UI 컴포넌트
-
-
-### 네이밍 컨벤션
-#### 파일명
-- snake_case 사용
-- 파일명에 역할을 명시 (screen / view_model / repository / use_case)
-
-#### 클래스명
-- PascalCase 사용
-- 파일명 ↔ 클래스명 1:1 대응, suffix로 역할 구분
-- 예시
-  - Screen: `ProductListScreen`, `ProductDetailScreen`
-  - ViewModel: `ProductListViewModel`, `UserProfileViewModel`
-  - Repository: `ProductRepository`, `UserRepository`
-  - UseCase: `AddProductUseCase`, `GetProductsUseCase`
-  - Entity: `Product`, `User`
-  - Model: `ProductModel`, `UserModel`
-
-#### 변수명
-- camelCase 사용
-- bool 형은 is, has, can 접두사 명시
-- List 형은 복수형
-- Map은 기준 명확히 (예: favoriteStatusByProductId;)
-
-#### 메서드명
-```dart
-// UseCase
-Future<void> execute();
-Future<void> call(Product product);
-
-// ViewModel
-Future<void> loadProducts();     // 데이터 로딩 → load
-void onAddProductClicked();      // UI 이벤트 → on
-void updateQuantity(int value);  // 상태 변경 → 동사
-```
-
-### Provider 네이밍 (Riverpod 2.0+ 코드 생성)
-- `@riverpod` 어노테이션 사용, 자동 생성된 Provider 활용
+* **Library:** Riverpod (2.0 이상 코드 제너레이션 권장)
+* **ViewModel 역할:** `providers/` 내의 `Notifier` 또는 `AsyncNotifier`가 뷰모델 역할을 수행합니다.
+* **비동기 처리:** API 호출 등의 비동기 로직은 Riverpod의 `AsyncValue` (data, loading, error) 패턴을 적극 활용하여 UI에서 직관적으로 로딩/에러 분기 처리를 하도록 합니다.
 
 ---
 
-## 3. 추가 가이드
+## 4. 네이밍 컨벤션
 
-### Widget 설계 원칙
-- **재사용성**: 공통 UI는 `core/widgets/`에 분리
-- **단일 책임**: 하나의 Widget은 하나의 역할만
-- **const 생성자**: 가능한 `const` 사용 (성능 최적화)
+#### 파일명
 
-### 에러 처리
-- core/errors에 공통 에러 타입(AppException) 정의: AppException(sealed class) + 하위 타입들
-- error가 AppException이면 타입별 메시지/액션 제공, 그 외면 UnknownException으로 래핑 후 공통 처리
-- Data layer에서 Dio/파싱 에러를 AppException으로 매핑
-- Repository는 “도메인 규약”대로 실패를 던짐: throw AppException
-- ViewModel에서는 AsyncValue.guard 패턴
-- UI는 문자열 대신 “표준 에러 위젯”으로 처리
+* **snake_case** 사용을 원칙으로 합니다.
+* 파일명 끝에 해당 파일의 역할을 명확히 명시합니다. (예: `_screen.dart`, `_provider.dart`, `_repository.dart`)
+
+#### 클래스명
+
+* **PascalCase** 사용을 원칙으로 합니다.
+* 파일명 ↔ 클래스명 1:1 대응 원칙을 지킵니다.
+* **예시:**
+* Screen: `HomeScreen`, `LoginScreen`
+* Provider: `AuthNotifier`, `LessonListProvider`
+* Repository: `AuthRepository`, `UserRepository`
+* Model: `UserModel`, `LessonModel` (앱 내부용)
+* DTO: `LoginRequestDto`, `UserResponseDto` (서버 통신용)
+
+
+
+#### 변수 및 메서드명
+
+* **camelCase** 사용을 원칙으로 합니다.
+* `bool` 형은 `is`, `has`, `can`, `should` 등의 접두사를 명시합니다. (예: `isLoading`, `hasError`)
+* **메서드 네이밍 규칙:**
+* 데이터 로딩/조회: `fetch~` (네트워크 호출), `get~` (단순 조회)
+* 상태 변경 (Provider 내부): 동사형 (예: `updateProfile`, `deleteLesson`)
+* UI 이벤트 핸들러: `on~` 접두사 (예: `onLoginButtonPressed`)
+
+
+
+---
+
+## 5. 에러 처리 및 분기 (Error Handling)
+
+* **전역 에러 정의 (`core/errors/`):** 앱 전체에서 쓰이는 공통 예외(`AppException`)와 실패 타입(`Failure`)을 정의합니다. 네트워크 통신 오류, 타임아웃 등은 공통 `error_interceptor`에서 가공됩니다.
+* **기능별 특화 에러 (`features/**/errors/`):** 로그인 실패(비밀번호 불일치, 정지된 계정 등)와 같이 특정 기능에만 종속된 에러는 해당 피처 폴더 내에 정의합니다. (예: `AuthFailure`)
+* **에러 매핑 (`error_mapper`):** 서버에서 내려온 원시 에러 코드나 DioException을 앱 내부에서 이해할 수 있는 `Failure` 타입으로 변환합니다.
+* **UI 에러 노출:** `screens` 에서는 예외를 `try-catch`로 잡거나 Riverpod의 `AsyncValue.error` 상태를 감지하여, 날것의 Exception 메시지 대신 사용자 친화적인 알림(Dialog, SnackBar)이나 에러 전용 위젯을 띄워줍니다.
