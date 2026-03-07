@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_text_styles.dart';
 
 // stepper 사이즈
 enum MingoringProgressStepperSize { 
@@ -167,7 +167,7 @@ class _StepCircle extends StatelessWidget {
         child: Center(
           child: Text(
             '${index + 1}',
-            style: AppTypography.body7B14.copyWith(color: textColor),
+            style: AppTextStyles.body7B14.copyWith(color: textColor),
           ),
         ),
       ),

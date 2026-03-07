@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_text_styles.dart';
 
 // 배지 사이즈
 enum MingoringBadgeSize {
@@ -73,11 +73,11 @@ class MingoringBadge extends StatelessWidget {
       };
 
   TextStyle get _defaultLabelStyle => switch (size) {
-        MingoringBadgeSize.big => AppTypography.body8Sb14.copyWith(
+        MingoringBadgeSize.big => AppTextStyles.body8Sb14.copyWith(
             color: _foregroundColor,
             height: 1.2,
           ),
-        MingoringBadgeSize.small => AppTypography.detail5Sb12.copyWith(
+        MingoringBadgeSize.small => AppTextStyles.detail5Sb12.copyWith(
             color: _foregroundColor,
             height: 1.2,
           ),

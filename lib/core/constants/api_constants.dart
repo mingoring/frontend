@@ -1,0 +1,17 @@
+import 'dart:io';
+
+// 서버 API 설정 상수
+// TODO: 백엔드 구현 후 baseUrl 재지정 필요
+// 임시 Base URL (개발 환경)
+// - iOS 시뮬레이터 / macOS : http://localhost:8000
+// - Android 에뮬레이터      : http://10.0.2.2:8000  (에뮬레이터 내부에서 호스트 루프백)
+
+abstract final class ApiConstants {
+  ApiConstants._();
+
+  static const String _devBaseUrlIos = 'http://localhost:8000';
+  static const String _devBaseUrlAndroid = 'http://10.0.2.2:8000';
+
+  static String get baseUrl =>
+      Platform.isAndroid ? _devBaseUrlAndroid : _devBaseUrlIos;
+}

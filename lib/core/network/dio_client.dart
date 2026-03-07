@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'api_config.dart';
+import '../constants/api_constants.dart';
 
 part 'dio_client.g.dart';
 
@@ -10,7 +10,7 @@ part 'dio_client.g.dart';
 Dio dioClient(Ref ref) {
   return Dio(
     BaseOptions(
-      baseUrl: ApiConfig.baseUrl,
+      baseUrl: ApiConstants.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_text_styles.dart';
 
 // 텍스트 버튼 사이즈
 enum MingoringTextButtonSize {
@@ -14,8 +14,8 @@ enum MingoringTextButtonSize {
   final double height;
 
   TextStyle get _textStyle => switch (this) {
-        big => AppTypography.head6B18.copyWith(height: 1.2),
-        small || popup => AppTypography.body4B15.copyWith(height: 1.2),
+        big => AppTextStyles.head6B18.copyWith(height: 1.2),
+        small || popup => AppTextStyles.body4B15.copyWith(height: 1.2),
       };
 }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants/app_colors.dart';
+import '../../theme/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_text_styles.dart';
 
 // 시청(Watch) 버튼 사이즈
 enum MingoringWatchButtonSize {
@@ -54,7 +54,7 @@ class MingoringWatchButton extends StatelessWidget {
       disabledForegroundColor: AppColors.pink400,
       backgroundColor: AppColors.pink600,
       disabledBackgroundColor: AppColors.pink500,
-      textStyle: AppTypography.body4B15.copyWith(height: 1.2),
+      textStyle: AppTextStyles.body4B15.copyWith(height: 1.2),
       minimumSize: const Size(double.infinity, 50),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_text_styles.dart';
 
 // 검증(Verify) 액션에 사용되는 버튼
 class MingoringVerifyButton extends StatelessWidget {
@@ -41,7 +41,7 @@ class MingoringVerifyButton extends StatelessWidget {
       disabledForegroundColor: AppColors.gray400,
       backgroundColor: AppColors.pink200,
       disabledBackgroundColor: AppColors.gray200,
-      textStyle: AppTypography.body4B15.copyWith(height: 1.2),
+      textStyle: AppTextStyles.body4B15.copyWith(height: 1.2),
       minimumSize: const Size(0, _height),
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       shape: const RoundedRectangleBorder(borderRadius: _borderRadius),

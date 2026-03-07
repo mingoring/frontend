@@ -1,4 +1,4 @@
-/// 피그마 정의: mingo 캐릭터 에셋 (플라밍고)
+/// ingo 캐릭터 에셋
 ///
 /// 구조: mingo_idle / {pose} / {eyes}
 ///   - pose: main(한 발 서기), wings(날개 펼침)
