@@ -74,7 +74,8 @@ abstract final class SignupScreenConstants {
   static const double interestChipSpacing = 10.0; // horizontal gap
   static const double interestChipRunSpacing = 6.0; // vertical gap
 
-  /// 관심 분야 선택지 목록
+  /// 관심 분야 선택지 목록 (UI 표시용).
+  /// [interestCodes]와 인덱스가 1:1 대응한다.
   static const List<String> interestOptions = [
     'K-pop',
     'K-Drama & Movies',
@@ -86,6 +87,21 @@ abstract final class SignupScreenConstants {
     'Gaming',
     'Webtoon',
     'Trends & Slang',
+  ];
+
+  /// 관심 분야 API 코드 목록.
+  /// [interestOptions]와 인덱스가 1:1 대응한다.
+  static const List<String> interestCodes = [
+    'K_POP',
+    'K_DRAMA_MOVIES',
+    'DAILY_LIFE',
+    'TRAVEL',
+    'BUSINESS',
+    'BEAUTY_FASHION',
+    'K_FOOD',
+    'GAMING',
+    'WEBTOON',
+    'TRENDS_SLANG',
   ];
 
   // ── Step 4: Referral ──────────────────────────────

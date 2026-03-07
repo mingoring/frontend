@@ -43,3 +43,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+flutter-architecture.mdc
+flutter-conventions.mdc
+flutter-data.mdc
+flutter-riverpod.mdc
+flutter-ui.mdc
+
+# Freezed and JSON Serializable files
+*.freezed.dart
+*.g.dart
