@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-abstract final class TestToast {
+abstract final class DebugToast {
   static void show(
     BuildContext context, {
     required String message,
