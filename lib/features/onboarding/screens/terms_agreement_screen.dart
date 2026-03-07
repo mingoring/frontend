@@ -8,8 +8,7 @@ import '../../../core/router/route_names.dart';
 import '../../../core/widgets/dialogs/web_view_popup.dart';
 import '../../../core/widgets/inputs/mingoring_input_selection_card.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
-import '../../../core/utils/app_spacing.dart';
-import '../../../core/widgets/layouts/page_frame.dart';
+import '../../../core/constants/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/onboarding_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
@@ -56,83 +55,94 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MingoringAppBar(
+        onBack: () => context.pop(),
+      ),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: OnboardingConstants.backgroundGradient,
         ),
-        child: PageFrame(
-          topType: PageFrameTopType.backHeader,
-          topBackHeader: MingoringAppBar(
-            onBack: () => context.pop(),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                    height: TermsAgreementScreenConstants.headerToTitleGap),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.buttonHorizontalPadding,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      TermsAgreementScreenConstants.titleText,
-                      style: AppLogoTypography.logoEb5
-                          .copyWith(color: AppColors.pink600),
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                    height: TermsAgreementScreenConstants.titleToCardAreaGap),
-                TermsAgreementCheckboxCards(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    MingoringInputSelectionCard(
-                      type: InputSelectionCardType.primary,
-                      title: TermsAgreementScreenConstants.acceptAllTitle,
-                      subtitle:
-                          TermsAgreementScreenConstants.acceptAllSubtitle,
-                      value: _isAcceptAll,
-                      onChanged: _onAcceptAllChanged,
+                    const SizedBox(
+                        height: TermsAgreementScreenConstants.headerToTitleGap),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.contentHorizontalSpacing,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          TermsAgreementScreenConstants.titleText,
+                          style: AppLogoTypography.logoEb5
+                              .copyWith(color: AppColors.pink600),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
                     ),
                     const SizedBox(
-                        height: TermsAgreementScreenConstants.titleCardGap),
-                    for (int i = 0; i < _items.length; i++) ...[
-                      if (i > 0)
+                        height:
+                            TermsAgreementScreenConstants.titleToCardAreaGap),
+                    TermsAgreementCheckboxCards(
+                      children: [
+                        MingoringInputSelectionCard(
+                          type: InputSelectionCardType.primary,
+                          title: TermsAgreementScreenConstants.acceptAllTitle,
+                          subtitle:
+                              TermsAgreementScreenConstants.acceptAllSubtitle,
+                          value: _isAcceptAll,
+                          onChanged: _onAcceptAllChanged,
+                        ),
                         const SizedBox(
-                            height: TermsAgreementScreenConstants.cardListGap),
-                      MingoringInputSelectionCard(
-                        type: InputSelectionCardType.secondary,
-                        title: _items[i].title,
-                        optionalLabel: _items[i].isRequired
-                            ? InputSelectionCardLabel.required
-                            : InputSelectionCardLabel.optional,
-                        linkButton: _items[i].url != null
-                            ? InputSelectionCardLinkButton.viewFull
-                            : InputSelectionCardLinkButton.none,
-                        value: _accepted[i],
-                        onChanged: (v) => _onItemChanged(i, v),
-                        onLinkPressed: _items[i].url != null
-                            ? () => WebViewPopup.show(
-                                  context,
-                                  url: _items[i].url!,
-                                )
-                            : null,
-                      ),
-                    ],
+                            height:
+                                TermsAgreementScreenConstants.titleCardGap),
+                        for (int i = 0; i < _items.length; i++) ...[
+                          if (i > 0)
+                            const SizedBox(
+                                height:
+                                    TermsAgreementScreenConstants.cardListGap),
+                          MingoringInputSelectionCard(
+                            type: InputSelectionCardType.secondary,
+                            title: _items[i].title,
+                            optionalLabel: _items[i].isRequired
+                                ? InputSelectionCardLabel.required
+                                : InputSelectionCardLabel.optional,
+                            linkButton: _items[i].url != null
+                                ? InputSelectionCardLinkButton.viewFull
+                                : InputSelectionCardLinkButton.none,
+                            value: _accepted[i],
+                            onChanged: (v) => _onItemChanged(i, v),
+                            onLinkPressed: _items[i].url != null
+                                ? () => WebViewPopup.show(
+                                      context,
+                                      url: _items[i].url!,
+                                    )
+                                : null,
+                          ),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-          bottomType: PageFrameBottomType.actionButton,
-          bottomActionButton: MingoringTextButton(
-            onPressed: _canContinue ? _onContinue : null,
-            size: MingoringTextButtonSize.big,
-            child: Text(TermsAgreementScreenConstants.buttonTextContinue),
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.contentHorizontalSpacing,
+              ),
+              child: MingoringTextButton(
+                onPressed: _canContinue ? _onContinue : null,
+                size: MingoringTextButtonSize.big,
+                child: Text(TermsAgreementScreenConstants.buttonTextContinue),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.actionBottomSpacing),
+          ],
         ),
       ),
     );

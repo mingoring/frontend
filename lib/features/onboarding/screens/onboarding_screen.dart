@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/onboarding_constants.dart';
 import '../widgets/onboarding_center_content.dart';
 import '../../../core/router/route_names.dart';
-import '../../../core/widgets/layouts/page_frame.dart';
+import '../../../core/constants/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -56,21 +56,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         decoration: const BoxDecoration(
           gradient: OnboardingConstants.backgroundGradient,
         ),
-        child: PageFrame(
-          topType: PageFrameTopType.safeSpace,
-          content: Center(
-            child: OnboardingCenterContent(
-              pages: onboardingPages,
-              currentIndex: _currentIndex,
-              pageController: _pageController,
-              onPageChanged: _onPageViewChanged,
-            ),
-          ),
-          bottomType: PageFrameBottomType.actionButton,
-          bottomActionButton: MingoringTextButton(
-            onPressed: _onNextPressed,
-            size: MingoringTextButtonSize.big,
-            child: Text(isLastPage ? 'Start' : 'Next'),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: OnboardingCenterContent(
+                    pages: onboardingPages,
+                    currentIndex: _currentIndex,
+                    pageController: _pageController,
+                    onPageChanged: _onPageViewChanged,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.contentHorizontalSpacing,
+                ),
+                child: MingoringTextButton(
+                  onPressed: _onNextPressed,
+                  size: MingoringTextButtonSize.big,
+                  child: Text(isLastPage ? 'Start' : 'Next'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.actionBottomSpacing),
+            ],
           ),
         ),
       ),

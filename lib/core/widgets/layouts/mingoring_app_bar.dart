@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
-import '../../utils/app_spacing.dart';
+import '../../constants/app_spacing.dart';
 
 // 상단 AppBar 타입
 enum MingoringBackHeaderType {
@@ -12,24 +12,37 @@ enum MingoringBackHeaderType {
   title, // [뒤로가기] + [타이틀]
   titleWithSave, // [뒤로가기] + [타이틀] + [저장]
   titleWithEdit, // [뒤로가기] + [타이틀] + [수정]
+  titleOnly, // [타이틀]
 }
 
 class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
   // none 타입, title 타입 전용
   const MingoringAppBar({
     super.key,
-    required this.onBack,
+    required VoidCallback this.onBack,
     this.type = MingoringBackHeaderType.none,
     this.text,
     this.backgroundColor = Colors.transparent,
-    this.horizontalPadding = AppSpacing.buttonHorizontalPadding,
+    this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   })  : onActionPressed = null,
         assert(
           type != MingoringBackHeaderType.titleWithSave &&
-              type != MingoringBackHeaderType.titleWithEdit,
+              type != MingoringBackHeaderType.titleWithEdit &&
+              type != MingoringBackHeaderType.titleOnly,
           '액션 헤더는 MingoringAppBar.actionSave() 또는 '
-          'MingoringAppBar.actionEdit()를 사용하세요.',
+          'MingoringAppBar.actionEdit()를 사용하세요. '
+          'titleOnly는 MingoringAppBar.titleOnly()를 사용하세요.',
         );
+
+  // titleOnly 타입 전용
+  const MingoringAppBar.titleOnly({
+    super.key,
+    required String this.text,
+    this.backgroundColor = Colors.transparent,
+    this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
+  })  : type = MingoringBackHeaderType.titleOnly,
+        onBack = null,
+        onActionPressed = null;
 
   // titleWithSave 타입 전용
   const MingoringAppBar.actionSave({
@@ -38,7 +51,7 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required String this.text,
     required VoidCallback this.onActionPressed,
     this.backgroundColor = Colors.transparent,
-    this.horizontalPadding = AppSpacing.buttonHorizontalPadding,
+    this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   }) : type = MingoringBackHeaderType.titleWithSave;
 
   // titleWithEdit 타입 전용
@@ -48,10 +61,10 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required String this.text,
     required VoidCallback this.onActionPressed,
     this.backgroundColor = Colors.transparent,
-    this.horizontalPadding = AppSpacing.buttonHorizontalPadding,
+    this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   }) : type = MingoringBackHeaderType.titleWithEdit;
 
-  final VoidCallback onBack; // 뒤로가기 콜백
+  final VoidCallback? onBack; // 뒤로가기 콜백 (titleOnly 타입은 null)
   final MingoringBackHeaderType type; // 헤더 타입
   final String? text; // 타이틀 또는 액션 버튼 텍스트
   final VoidCallback? onActionPressed; // 우측 액션 버튼 클릭 콜백
@@ -66,13 +79,14 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTitleOnly = type == MingoringBackHeaderType.titleOnly;
     return AppBar(
       backgroundColor: backgroundColor,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       toolbarHeight: kToolbarHeight,
-      leadingWidth: horizontalPadding + _slotWidth,
+      leadingWidth: isTitleOnly ? 0 : horizontalPadding + _slotWidth,
       centerTitle: true,
       automaticallyImplyLeading: false,
       titleSpacing: 0,
@@ -84,6 +98,9 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 좌측 슬롯 — 뒤로가기 아이콘
   Widget _buildLeading() {
+    if (type == MingoringBackHeaderType.titleOnly) {
+      return const SizedBox.shrink();
+    }
     return Semantics(
       button: true,
       label: 'Back',
@@ -112,7 +129,9 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 중앙 타이틀 영역
   Widget _buildTitle() {
-    if (type == MingoringBackHeaderType.title && text != null) {
+    if ((type == MingoringBackHeaderType.title ||
+            type == MingoringBackHeaderType.titleOnly) &&
+        text != null) {
       return Text(
         text!,
         style: AppTextStyles.body7B14.copyWith(
@@ -129,6 +148,9 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 우측 슬롯 — 액션 텍스트 버튼
   Widget _buildTrailing() {
+    if (type == MingoringBackHeaderType.titleOnly) {
+      return const SizedBox.shrink();
+    }
     final Color? actionColor = switch (type) {
       MingoringBackHeaderType.titleWithSave => AppColors.pink600,
       MingoringBackHeaderType.titleWithEdit => AppColors.gray700,

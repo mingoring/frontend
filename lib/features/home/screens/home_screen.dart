@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../onboarding/constants/signup_screen_constants.dart';
 import '../../onboarding/providers/signup_provider.dart';
 
@@ -20,7 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final response = state.signupResponse;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: const MingoringAppBar.titleOnly(text: 'Home'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
