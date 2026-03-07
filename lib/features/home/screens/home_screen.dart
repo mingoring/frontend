@@ -22,9 +22,10 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: const MingoringAppBar.titleOnly(text: 'Home'),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _SectionTitle('회원가입 입력 정보'),
@@ -64,6 +65,7 @@ class HomeScreen extends ConsumerWidget {
               _InfoRow('refreshToken', response.refreshToken),
             ],
           ],
+        ),
         ),
       ),
     );

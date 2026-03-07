@@ -234,7 +234,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         appBar: MingoringAppBar(onBack: _onBack),
         backgroundColor: AppColors.white,
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: SafeArea(
+          child: Column(
             children: [
               Expanded(
                 child: Padding(
@@ -366,6 +367,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               const SizedBox(height: AppSpacing.actionBottomSpacing),
             ],
           ),
+        ),
         ),
     );
   }

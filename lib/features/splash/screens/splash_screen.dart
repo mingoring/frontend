@@ -96,8 +96,9 @@ class _SplashScreenState extends State<SplashScreen>
 
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: Center(
-        child: Transform.translate(
+      body: SafeArea(
+        child: Center(
+          child: Transform.translate(
           offset: logoOffset,
           child: AnimatedBuilder(
             animation: _controller,
@@ -126,6 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
               );
             },
           ),
+        ),
         ),
       ),
     );
