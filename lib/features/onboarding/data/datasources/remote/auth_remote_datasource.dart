@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../../core/errors/app_exception.dart';
+import '../../../../../core/network/dio_client.dart';
 import '../../../data/models/signup_request_model.dart';
 import '../../../data/models/signup_response_model.dart';
 
@@ -13,27 +16,43 @@ abstract interface class AuthRemoteDataSource {
 }
 
 /// [AuthRemoteDataSource] 구현체.
-// TODO(server): Dio 클라이언트 주입 후 아래 signup()을 실제 API 호출로 교체.
-//   - POST /api/v1/auth/signup
-//   - request.toJson()을 body로 전송
-//   - 201 응답 → SignupResponseModel.fromJson(response.data)
-//   - 400/500 응답 → ServerException / NetworkException 으로 매핑
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  const AuthRemoteDataSourceImpl();
+  const AuthRemoteDataSourceImpl(this._dio);
+
+  final Dio _dio;
 
   @override
   Future<SignupResponseModel> signup(SignupRequestModel request) async {
-    // TODO(server): 아래 mock 반환을 제거하고 Dio 호출로 교체.
-    return const SignupResponseModel(
-      userId: 0,
-      accessToken: '',
-      refreshToken: '',
-      agreedAt: '',
-    );
+    try {
+      final response = await _dio.post(
+        '/api/v1/auth/signup',
+        data: request.toJson(),
+      );
+      return SignupResponseModel.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw const NetworkException();
+      }
+
+      final data = e.response?.data;
+      if (data is Map<String, dynamic>) {
+        throw ServerException(
+          code: data['code'] as String? ?? 'UNKNOWN',
+          message: data['message'] as String? ?? '서버 오류가 발생했습니다.',
+        );
+      }
+
+      throw const UnknownException();
+    }
   }
 }
 
 @riverpod
 AuthRemoteDataSource authRemoteDataSource(Ref ref) {
-  return const AuthRemoteDataSourceImpl();
+  return AuthRemoteDataSourceImpl(ref.watch(dioClientProvider));
 }
