@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_text_styles.dart';
 
 // 칩 사이즈 종류
 enum InputSelectionChipSize {
@@ -51,7 +51,7 @@ class MingoringInputSelectionChip extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: AppTypography.body4B15.copyWith(
+            style: AppTextStyles.body4B15.copyWith(
               color: textColor,
               height: 1.2,
               letterSpacing: -0.3,
@@ -87,7 +87,7 @@ class MingoringInputSelectionChip extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: AppTypography.body8Sb14.copyWith(
+                style: AppTextStyles.body8Sb14.copyWith(
                   color: textColor,
                   height: 1.2,
                   letterSpacing: -0.28,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_colors.dart';
-import '../../constants/app_logo_typography.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_logo_typography.dart';
 import '../../constants/app_mingo_assets.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_text_styles.dart';
 import '../buttons/mingoring_text_button.dart';
 
 /// 에러 팝업 다이얼로그
@@ -41,8 +41,7 @@ class ErrorPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     final firstLine =
         errorMessage != null ? errorMessage! : 'Something went wrong.';
-    final message =
-        '$firstLine\nPlease try again.\nIf the problem persists, contact us.';
+    final message = '$firstLine\nIf the problem persists, contact us.';
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -76,7 +75,7 @@ class ErrorPopup extends StatelessWidget {
             const SizedBox(height: _titleToMessageGap),
             Text(
               message,
-              style: AppTypography.body9Md14.copyWith(
+              style: AppTextStyles.body9Md14.copyWith(
                 color: AppColors.gray500,
                 height: 1.2,
               ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants/app_colors.dart';
+import '../../theme/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_text_styles.dart';
 
 // 검증 결과 상태
 enum MingoringValidationStatus {
@@ -245,7 +245,7 @@ class _MingoringInputTextfieldVerifyState
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       maxLength: widget.maxLength,
-      style: AppTypography.body3Md16.copyWith(
+      style: AppTextStyles.body3Md16.copyWith(
         color: _textColor,
       ),
       decoration: InputDecoration(
@@ -255,7 +255,7 @@ class _MingoringInputTextfieldVerifyState
         enabledBorder: InputBorder.none,
         disabledBorder: InputBorder.none,
         hintText: widget.hintText,
-        hintStyle: AppTypography.body3Md16.copyWith(
+        hintStyle: AppTextStyles.body3Md16.copyWith(
           color: AppColors.gray400,
         ),
         counterText: '',
@@ -341,7 +341,7 @@ class _MingoringInputTextfieldVerifyState
       return const SizedBox.shrink();
     }
 
-    final helperStyle = AppTypography.detail6Md12.copyWith(
+    final helperStyle = AppTextStyles.detail6Md12.copyWith(
       color: AppColors.pink600,
       height: 1.4,
     );

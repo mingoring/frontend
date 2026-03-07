@@ -1,38 +1,42 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/onboarding/presentation/screens/login_screen.dart';
-import '../../features/onboarding/presentation/screens/signup_screen.dart';
-import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
-import '../../features/onboarding/presentation/screens/terms_agreement_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/splash/presentation/screens/splash_screen.dart';
-import 'route_paths.dart';
+import '../../features/onboarding/screens/login_screen.dart';
+import '../../features/onboarding/screens/signup_screen.dart';
+import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../../features/onboarding/screens/terms_agreement_screen.dart';
+import '../../features/home/screens/home_screen.dart';
+import '../../features/splash/screens/splash_screen.dart';
+import 'route_names.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: RoutePaths.splash,
+  navigatorKey: navigatorKey,
+  initialLocation: RouteNames.splash,
   routes: <RouteBase>[
     GoRoute(
-      path: RoutePaths.splash,
+      path: RouteNames.splash,
       builder: (_, __) => const SplashScreen(),
     ),
     GoRoute(
-      path: RoutePaths.onboarding,
+      path: RouteNames.onboarding,
       builder: (_, __) => const OnboardingScreen(),
     ),
     GoRoute(
-      path: RoutePaths.terms,
+      path: RouteNames.terms,
       builder: (_, __) => const TermsAgreementScreen(),
     ),
     GoRoute(
-      path: RoutePaths.signup,
+      path: RouteNames.signup,
       builder: (_, __) => const SignupScreen(),
     ),
     GoRoute(
-      path: RoutePaths.login,
+      path: RouteNames.login,
       builder: (_, __) => const LoginScreen(),
     ),
     GoRoute(
-      path: RoutePaths.home,
+      path: RouteNames.home,
       builder: (_, __) => const HomeScreen(),
     ),
   ],

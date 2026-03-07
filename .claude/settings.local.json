@@ -6,7 +6,8 @@
       "mcp__ide__getDiagnostics",
       "Bash(dart run:*)",
       "Bash(flutter analyze:*)",
-      "mcp__figma-remote-mcp__get_design_context"
+      "mcp__figma-remote-mcp__get_design_context",
+      "Bash(xargs sed:*)"
     ]
   }
 }

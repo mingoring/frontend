@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants/app_colors.dart';
+import '../../theme/app_colors.dart';
 import '../../constants/app_icon_assets.dart';
-import '../../constants/app_typography.dart';
+import '../../theme/app_text_styles.dart';
 
 // 입력 카드 타입 (타입에 따라 디자인 다름)
 enum InputSelectionCardType {
@@ -115,7 +115,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
                                   : _contentGap),
                       Text(
                         subtitle!,
-                        style: AppTypography.detail3Md13.copyWith(
+                        style: AppTextStyles.detail3Md13.copyWith(
                           color: AppColors.gray400,
                           height: 1.2,
                         ),
@@ -135,7 +135,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
                           ),
                           child: Text(
                             linkText,
-                            style: AppTypography.detail3Md13.copyWith(
+                            style: AppTextStyles.detail3Md13.copyWith(
                               color: AppColors.gray400,
                               height: 1.2,
                               decoration: TextDecoration.underline,
@@ -168,7 +168,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
       if (optionalLabel == InputSelectionCardLabel.none) {
         return Text(
           title,
-          style: AppTypography.head6B18.copyWith(
+          style: AppTextStyles.head6B18.copyWith(
             color: AppColors.pink600,
             height: 1.2,
           ),
@@ -182,18 +182,18 @@ class MingoringInputSelectionCard extends StatelessWidget {
           : AppColors.gray600;
       return RichText(
         text: TextSpan(
-          style: AppTypography.head6B18.copyWith(height: 1.2),
+          style: AppTextStyles.head6B18.copyWith(height: 1.2),
           children: [
             TextSpan(
               text: labelText,
-              style: AppTypography.head6B18.copyWith(
+              style: AppTextStyles.head6B18.copyWith(
                 color: labelColor,
                 height: 1.2,
               ),
             ),
             TextSpan(
               text: title,
-              style: AppTypography.head6B18.copyWith(
+              style: AppTextStyles.head6B18.copyWith(
                 color: AppColors.pink600,
                 height: 1.2,
               ),
@@ -207,7 +207,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
       final bodyColor = value ? AppColors.pink600 : AppColors.black;
       return Text(
         title,
-        style: AppTypography.body4B15.copyWith(
+        style: AppTextStyles.body4B15.copyWith(
           color: bodyColor,
           height: 1.2,
         ),
@@ -226,19 +226,19 @@ class MingoringInputSelectionCard extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: AppTypography.body5Sb15.copyWith(height: 1.2),
+        style: AppTextStyles.body5Sb15.copyWith(height: 1.2),
         children: [
           if (labelText.isNotEmpty)
             TextSpan(
               text: labelText,
-              style: AppTypography.body5Sb15.copyWith(
+              style: AppTextStyles.body5Sb15.copyWith(
                 color: labelColor,
                 height: 1.2,
               ),
             ),
           TextSpan(
             text: title,
-            style: AppTypography.body5Sb15.copyWith(
+            style: AppTextStyles.body5Sb15.copyWith(
               color: bodyColor,
               height: 1.2,
             ),
