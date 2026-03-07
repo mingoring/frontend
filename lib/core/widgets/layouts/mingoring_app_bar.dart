@@ -22,7 +22,7 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required VoidCallback this.onBack,
     this.type = MingoringBackHeaderType.none,
     this.text,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = AppColors.white,
     this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   })  : onActionPressed = null,
         assert(
@@ -38,7 +38,7 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MingoringAppBar.titleOnly({
     super.key,
     required String this.text,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = AppColors.white,
     this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   })  : type = MingoringBackHeaderType.titleOnly,
         onBack = null,
@@ -50,7 +50,7 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onBack,
     required String this.text,
     required VoidCallback this.onActionPressed,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = AppColors.white,
     this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   }) : type = MingoringBackHeaderType.titleWithSave;
 
@@ -60,7 +60,7 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onBack,
     required String this.text,
     required VoidCallback this.onActionPressed,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = AppColors.white,
     this.horizontalPadding = AppSpacing.contentHorizontalSpacing,
   }) : type = MingoringBackHeaderType.titleWithEdit;
 

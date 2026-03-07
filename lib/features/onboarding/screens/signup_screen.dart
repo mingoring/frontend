@@ -232,12 +232,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       },
       child: Scaffold(
         appBar: MingoringAppBar(onBack: _onBack),
+        backgroundColor: AppColors.white,
         resizeToAvoidBottomInset: false,
-        body: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-          ),
-          child: Column(
+        body: Column(
             children: [
               Expanded(
                 child: Padding(
@@ -370,7 +367,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 }

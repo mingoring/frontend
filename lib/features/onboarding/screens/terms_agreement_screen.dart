@@ -55,14 +55,18 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: MingoringAppBar(
         onBack: () => context.pop(),
+        backgroundColor: Colors.transparent,
       ),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: OnboardingConstants.backgroundGradient,
         ),
-        child: Column(
+        child: SafeArea(
+          bottom: false,
+          child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -143,6 +147,7 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
             ),
             const SizedBox(height: AppSpacing.actionBottomSpacing),
           ],
+        ),
         ),
       ),
     );
