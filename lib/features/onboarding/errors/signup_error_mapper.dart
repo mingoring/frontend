@@ -8,6 +8,8 @@ AppException mapSignupErrorCode(String code, String serverMessage) {
     'CONSENT_REQUIRED' => const ConsentRequiredFailure(),
     'INVALID_REQUEST' => const InvalidRequestFailure(),
     'INVALID_NICKNAME' => const InvalidNameFailure(),
+    'INVALID_LEVEL' => const InvalidLevelFailure(),
+    'INVALID_INTERESTS' => const InvalidInterestsFailure(),
     _ => ServerException(serverMessage),
   };
 }

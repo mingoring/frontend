@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../dto/signup_request_dto.dart';
@@ -19,6 +20,7 @@ abstract interface class AuthRepository {
     required String nickname,
     required int level,
     required List<String> interests,
+    String? referralCode,
   });
 }
 
@@ -34,6 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String nickname,
     required int level,
     required List<String> interests,
+    String? referralCode,
   }) async {
     try {
       final request = SignupRequestDto(
@@ -44,9 +47,10 @@ class AuthRepositoryImpl implements AuthRepository {
         nickname: nickname,
         level: level,
         interests: interests,
+        referralCode: referralCode,
       );
       final response = await _dio.post(
-        '/api/v1/auth/signup',
+        ApiConstants.signupPath,
         data: request.toJson(),
       );
       return SignupResponseDto.fromJson(

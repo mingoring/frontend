@@ -103,12 +103,9 @@ abstract final class SignupScreenConstants {
   static const String referralTitleText =
       'Do you have a referral code?\nEnter it below';
   static const String referralSubtitleText =
-      'Instant check. If valid, you\'ll get +40 minutes';
+      'Instant check. If valid, you\'ll get +60 minutes';
   static const String referralHintText = '8 characters';
   static const String referralSuccessText = 'code applied!';
   static const String referralErrorText = 'Invalid code!';
   static const int referralMaxLength = 8;
-
-  // TODO: (임시) 테스트용 추천인 코드
-  static const String tempValidReferralCode = 'AAAAAAAA';
 }

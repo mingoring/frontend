@@ -22,3 +22,15 @@ final class InvalidNameFailure extends SignupFailure {
   const InvalidNameFailure()
       : super('Your name is invalid. Please enter only allowed characters.');
 }
+
+// 레벨 값 오류 (1~5 범위 벗어남)
+final class InvalidLevelFailure extends SignupFailure {
+  const InvalidLevelFailure()
+      : super('Invalid level value. Please select a level between 1 and 5.');
+}
+
+// 관심분야 코드 오류 (허용되지 않은 코드 포함)
+final class InvalidInterestsFailure extends SignupFailure {
+  const InvalidInterestsFailure()
+      : super('Invalid interest selection. Please choose from the available options.');
+}

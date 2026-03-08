@@ -10,7 +10,7 @@ sealed class AppException implements Exception {
 // 네트워크 연결 오류 (타임아웃, 연결 끊김 등)
 final class NetworkException extends AppException {
   const NetworkException(
-      [super.message = 'Check your internet connection and try again.']);
+      [super.message = 'There is a problem with the internet connection.']);
 }
 
 // 백엔드 서버가 반환한 에러

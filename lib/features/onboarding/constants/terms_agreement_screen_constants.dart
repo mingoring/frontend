@@ -43,6 +43,12 @@ abstract final class TermsAgreementScreenConstants {
   static const String marketingTitle =
       'I agree to receive\nmarketing updates and promotions';
 
+  // ── Term Agreement Indexes ────────────────────────
+  static const int termsOfServiceIndex = 0;
+  static const int privacyPolicyIndex = 1;
+  static const int pushIndex = 2;
+  static const int marketingIndex = 3;
+
   // ── Items ─────────────────────────────────────────
   static const List<TermsItem> items = [
     TermsItem(

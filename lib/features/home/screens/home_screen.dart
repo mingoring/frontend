@@ -50,6 +50,7 @@ class HomeScreen extends ConsumerWidget {
                       .join(', ')
                   : '-',
             ),
+            _InfoRow('추천인 코드', state.referralCode ?? '-'),
             const SizedBox(height: 24),
             _SectionTitle('약관 동의'),
             for (int i = 0; i < state.termAgreements.length; i++)
@@ -63,6 +64,7 @@ class HomeScreen extends ConsumerWidget {
               _InfoRow('userId', '${response.userId}'),
               _InfoRow('accessToken', response.accessToken),
               _InfoRow('refreshToken', response.refreshToken),
+              _InfoRow('Referral Code Status', response.referralCodeStatus),
             ],
           ],
         ),
