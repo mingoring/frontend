@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../onboarding/constants/signup_screen_constants.dart';
 import '../../onboarding/providers/signup_provider.dart';
@@ -19,6 +20,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(signupNotifierProvider);
     final response = state.signupResponse;
+    final savedNickname = ref
+        .watch(localStorageServiceProvider)
+        .valueOrNull
+        ?.getNickname();
 
     return Scaffold(
       appBar: const MingoringAppBar.titleOnly(text: 'Home'),
@@ -29,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _SectionTitle('회원가입 입력 정보'),
-            _InfoRow('닉네임', state.nickname ?? '-'),
+            _InfoRow('닉네임', savedNickname ?? state.nickname ?? '-'),
             _InfoRow(
               '레벨',
               state.level != null
