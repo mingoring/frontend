@@ -151,7 +151,7 @@ assets/                       # 정적 파일 저장소
    * `features/{feature}/providers/`: Riverpod을 활용한 상태 관리 및 비즈니스 로직 처리를 담당합니다. `repositories`를 호출해 데이터를 가져와 UI에 상태를 제공합니다.
    * `features/{feature}/screens/`: 상태(`providers`)를 구독(watch)하여 화면을 그리고 사용자 인터랙션을 처리합니다.
    * `features/{feature}/widgets/`: features 내부에서만 쓰이는 UI 컴포넌트를 정의합니다.
-   * `features/{feature}/errors/`: 해당 기능에서만 발생하는 특화된 에러 타입과 매퍼를 정의합니다. (예: `AuthFailure`)
+   * `features/{feature}/errors/`: 필요한 경우, 해당 기능에서만 발생하는 특화된 에러 타입과 매퍼를 정의합니다. (예: `auth_failure`, `auth_error_mapper`)
 
 
 
@@ -204,7 +204,7 @@ assets/                       # 정적 파일 저장소
 
 ## 5. 에러 처리 및 분기 (Error Handling)
 
-* **전역 에러 정의 (`core/errors/`):** 앱 전체에서 쓰이는 공통 예외(`AppException`)와 실패 타입(`Failure`)을 정의합니다. 네트워크 통신 오류, 타임아웃 등은 공통 `error_interceptor`에서 가공됩니다.
-* **기능별 특화 에러 (`features/**/errors/`):** 로그인 실패(비밀번호 불일치, 정지된 계정 등)와 같이 특정 기능에만 종속된 에러는 해당 피처 폴더 내에 정의합니다. (예: `AuthFailure`)
-* **에러 매핑 (`error_mapper`):** 서버에서 내려온 원시 에러 코드나 DioException을 앱 내부에서 이해할 수 있는 `Failure` 타입으로 변환합니다.
-* **UI 에러 노출:** `screens` 에서는 예외를 `try-catch`로 잡거나 Riverpod의 `AsyncValue.error` 상태를 감지하여, 날것의 Exception 메시지 대신 사용자 친화적인 알림(Dialog, SnackBar)이나 에러 전용 위젯을 띄워줍니다.
+* **에러 정의 및 매핑**: 전역(core/errors/) 및 기능별(features/**/errors/) 예외를 정의하며, error_mapper를 통해 서버 에러나 DioException을 내부 AppException 타입으로 변환합니다.
+* **비즈니스 로직 에러 (Provider 담당)**: 아이디 중복, 조건 미달 등 로직 에러는 Provider에서 AppException을 throw하여 **상태(state)**로 알립니다. UI(Screen)는 이 상태를 리스닝(ref.listen)하여 자동으로 팝업을 띄웁니다.
+* **순수 UI 레벨 체크 (Screen 담당)**: **단순 버튼 클릭 전 확인 등은 Screen 내에서 ErrorPopup.show()를 직접 호출합니다. (로직 복잡화 시 Provider로 이관)
+* **UI 에러 노출**: 별도의 정의된 표시 영역이 없는 경우 ErrorPopup.show 메소드를 호출하여 팝업으로 에러를 알리는 것을 기본 원칙으로 합니다. 만약, TextField의 errorText와 같이 특정 입력 필드에 종속된 에러이거나, UI 내에 에러 메시지 전용 공간이 마련된 경우에는 popup이 아닌, 해당 영역에 표시합니다. AsyncValue.error 등을 감지하여 위 두 방식 중 적절한 방법을 선택해 사용자 친화적인 메시지를 노출합니다.

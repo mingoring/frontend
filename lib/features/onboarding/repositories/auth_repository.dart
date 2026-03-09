@@ -66,17 +66,16 @@ class AuthRepositoryImpl implements AuthRepository {
         throw const NetworkException();
       }
 
+      final statusCode = e.response?.statusCode ?? 0;
       final data = e.response?.data;
       if (data is Map<String, dynamic>) {
-        final code = data['code'] as String? ?? '';
-        final message = data['message'] as String? ?? '서버 오류가 발생했습니다.';
-        throw mapSignupErrorCode(code, message);
+        throw mapSignupError(statusCode, data);
       }
 
       throw const UnknownException();
     } catch (e, st) {
       Error.throwWithStackTrace(
-        UnknownException('예상치 못한 오류가 발생했습니다. (${e.runtimeType})'),
+        UnknownException(),
         st,
       );
     }
