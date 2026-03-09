@@ -70,15 +70,15 @@ class SignupFormState with _$SignupFormState {
 
   // ── Computed: Referral ────────────────────────────────────────────────────
 
-  bool get isReferralVerified => referralCodeValidationState.value == true;
+  bool get isReferralVerified => referralCodeValidationState.valueOrNull == true;
 
   bool get isReferralValid =>
-      referralCodeInput.isEmpty || referralCodeValidationState.value == true;
+      referralCodeInput.isEmpty || referralCodeValidationState.valueOrNull == true;
 
   bool get canVerifyReferral =>
       referralCodeInput.length == SignupScreenConstants.referralMaxLength &&
       !referralCodeValidationState.isLoading &&
-      referralCodeValidationState.value != true;
+      referralCodeValidationState.valueOrNull != true;
 
   MingoringValidationStatus get referralValidationStatus =>
       referralCodeValidationState.when(

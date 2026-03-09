@@ -226,7 +226,7 @@ assets/                       # 정적 파일 저장소
 
 * **상태 정의**: 모든 상태는 Freezed를 사용하여 불변(Immutable) 객체로 정의합니다.
 * **비즈니스 로직 분리**: 상태 변경 및 화면 동작에 필요한 로직은 Notifier 내부 메서드로 관리하며, 상태 업데이트는 항상 `state = state.copyWith(...)`를 통해 수행합니다.
-* **AsyncValue 활용**: API 통신뿐만 아니라, 비동기 유효성 검사(예: 추천인 코드 확인) 및 제출 상태(submitState) 관리에도 AsyncValue를 사용합니다.
+* **AsyncValue 활용**: API 통신뿐만 아니라, 비동기 유효성 검사(예: 추천인 코드 확인) 및 제출 상태(submitState) 관리에도 AsyncValue를 사용합니다. 단, `AsyncError` 상태에서 예외를 다시 throw하여 위젯 트리 전체가 crash되는 것을 방지하기 위해서 빌드 메서드나 Getter에서 `AsyncValue`의 값을 읽을 때는 `.value` 대신 반드시 `.valueOrNull`을 사용합니다.
 
 
 #### 상태 구조 및 파생 상태 (State Structure & Computed State)
