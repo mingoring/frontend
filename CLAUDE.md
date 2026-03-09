@@ -12,6 +12,7 @@
 ## 1. 핵심 기술 스택
 
 #### 버전 정보
+
 - **언어**: Dart 3.6.0
 - **프레임워크**: Flutter 3.27.0
 - **상태 관리**:
@@ -138,6 +139,7 @@ assets/                       # 정적 파일 저장소
 * Core & Feature 이분화: 디렉토리 루트는 앱 전체의 기반이 되는 core/ 와 개별 비즈니스 로직이 담긴 features/ 로 심플하게 나누어 멘탈 모델을 단순화합니다.
 * 실용적 계층 분리 (Pragmatic Layering): 각 Feature 내부는 복잡한 계층 분리를 피하고, 데이터 통신(dto), 앱 로직(models, repositories), 상태 관리(providers), 화면(screens, widgets)으로 명확하고 실용적으로 분리합니다.
 
+
 #### 2. 계층 및 폴더별 책임 (Responsibilities)
 
 * `core/`
@@ -154,12 +156,12 @@ assets/                       # 정적 파일 저장소
    * `features/{feature}/errors/`: 필요한 경우, 해당 기능에서만 발생하는 특화된 에러 타입과 매퍼를 정의합니다. (예: `auth_failure`, `auth_error_mapper`)
 
 
-
 #### 3. 의존성 규칙 (Dependency Rules)
 
 * **단방향 데이터 흐름:** UI(`screens`) → State(`providers`) → Data Access(`repositories`) → Network/Local 순으로 의존해야 합니다. 역방향 호출은 엄격히 금지합니다.
 * **데이터 변환 의존성:** UI와 `providers`는 반드시 `models/`에 정의된 데이터만 사용해야 합니다. API 응답 원본인 `dto/` 객체가 UI 화면까지 바로 넘어와서는 안 되며, 반드시 `repositories` 계층에서 `models`로 변환(Mapping)되어야 합니다.
 * **Feature 격리:** 원칙적으로 특정 피처(`features/auth`)가 다른 피처(`features/home`)의 내부 코드를 직접 import 하지 않습니다. 피처 간 이동은 `core/router/`를 통해, 공통 데이터는 `core/`를 통해 해결합니다.
+
 
 #### 4. 상태 관리 (State Management)
 
@@ -175,6 +177,8 @@ assets/                       # 정적 파일 저장소
 
 * **snake_case** 사용을 원칙으로 합니다.
 * 파일명 끝에 해당 파일의 역할을 명확히 명시합니다. (예: `_screen.dart`, `_provider.dart`, `_repository.dart`)
+* 코드 생성 파일 (part 선언): 코드 생성이 필요한 파일(Freezed, Riverpod)은 클래스 정의 상단에 반드시 part '파일명.freezed.dart';, part '파일명.g.dart';를 선언합니다.
+
 
 #### 클래스명
 
@@ -186,7 +190,6 @@ assets/                       # 정적 파일 저장소
 * Repository: `AuthRepository`, `UserRepository`
 * Model: `UserModel`, `LessonModel` (앱 내부용)
 * DTO: `LoginRequestDto`, `UserResponseDto` (서버 통신용)
-
 
 
 #### 변수 및 메서드명
@@ -202,9 +205,60 @@ assets/                       # 정적 파일 저장소
 
 ---
 
-## 5. 에러 처리 및 분기 (Error Handling)
+## 5. 에러 핸들링
 
 * **에러 정의 및 매핑**: 전역(core/errors/) 및 기능별(features/**/errors/) 예외를 정의하며, error_mapper를 통해 서버 에러나 DioException을 내부 AppException 타입으로 변환합니다.
 * **비즈니스 로직 에러 (Provider 담당)**: 아이디 중복, 조건 미달 등 로직 에러는 Provider에서 AppException을 throw하여 **상태(state)**로 알립니다. UI(Screen)는 이 상태를 리스닝(ref.listen)하여 자동으로 팝업을 띄웁니다.
 * **순수 UI 레벨 체크 (Screen 담당)**: **단순 버튼 클릭 전 확인 등은 Screen 내에서 ErrorPopup.show()를 직접 호출합니다. (로직 복잡화 시 Provider로 이관)
 * **UI 에러 노출**: 별도의 정의된 표시 영역이 없는 경우 ErrorPopup.show 메소드를 호출하여 팝업으로 에러를 알리는 것을 기본 원칙으로 합니다. 만약, TextField의 errorText와 같이 특정 입력 필드에 종속된 에러이거나, UI 내에 에러 메시지 전용 공간이 마련된 경우에는 popup이 아닌, 해당 영역에 표시합니다. AsyncValue.error 등을 감지하여 위 두 방식 중 적절한 방법을 선택해 사용자 친화적인 메시지를 노출합니다.
+
+---
+
+## 6. 상태 관리 및 Provider (Riverpod)
+
+#### 핵심 원칙
+
+* **상태 정의**: 모든 상태는 Freezed를 사용하여 불변(Immutable) 객체로 정의합니다.
+* **비즈니스 로직 분리**: 상태 변경 및 화면 동작에 필요한 로직은 Notifier 내부 메서드로 관리하며, 상태 업데이트는 항상 `state = state.copyWith(...)`를 통해 수행합니다.
+* **AsyncValue 활용**: API 통신뿐만 아니라, 비동기 유효성 검사(예: 추천인 코드 확인) 및 제출 상태(submitState) 관리에도 AsyncValue를 사용합니다.
+
+
+#### 상태 구조 및 파생 상태 (State Structure & Computed State)
+
+* **UI State**
+  - 사용자의 입력값(input)과 그에 따른 즉각적인 유효성 상태(status, errorMessage)를 관리합니다.
+
+* **Submit Snapshot**
+  - 서버 요청에 사용될 최종 가공 데이터나 응답 결과(response)를 상태 내부에 별도로 보유하여 데이터 일관성을 유지합니다.
+
+* **Computed State (파생 상태)**
+  - UI에서 조건 판단 로직(예: 버튼 활성화 여부)을 직접 작성하지 않습니다.
+  - 대신 상태 클래스 내부에 Getter를 정의하여 파생된 상태를 제공합니다.
+  - 이를 통해 UI 코드를 단순하게 유지하고 상태 판단 로직을 한 곳에 집중시킵니다.
+
+
+#### 비동기 로직 처리 (AsyncValue.guard)
+
+* **일반적인 비동기 상태 관리**
+    - Repository 등 외부 비동기 호출 결과는 `AsyncValue.guard`를 활용하여 `loading / data / error` 상태로 일관되게 관리합니다.
+    - 이를 통해 반복적인 try-catch를 줄이고, 비동기 결과를 상태(State)에 안전하게 반영합니다.
+* **결과값을 직접 반환해야 하는 경우**
+    - 호출 결과를 즉시 반환하여 후속 제어 흐름(예: 화면 이동, 다음 단계 진행 여부 판단)에 사용해야 하는 경우에는 `try-catch`를 사용하여 상태 업데이트와 결과 반환을 함께 처리할 수 있습니다.
+
+#### Repository 계층
+
+* **인터페이스 정의**: abstract interface class를 사용하여 테스트와 교체가 용이하도록 합니다.
+* **에러 매핑**: DioException 등 외부 예외를 그대로 노출하지 않고, core(또는 feature) error mapper를 통해 도메인 예외(AppException)로 변환하여 처리합니다.
+
+---
+
+## 7. UI-Provider 통신 패턴 (Screen에서 Provider 상태 사용 패턴)
+
+* **상태 구독 (watch)**  
+  - ref.watch를 사용하여 Provider의 상태를 구독하고, 상태가 변경될 때 UI가 자동으로 rebuild되도록 합니다.  
+  - 이는 화면에 표시되는 데이터나 UI 상태(버튼 활성화, 로딩 표시 등)를 반응형으로 업데이트할 때 사용합니다.
+
+* **상태 변화 리스닝 (listen)**  
+  - ref.listen을 사용하여 특정 상태 변화에 반응하는 **side effect**를 처리합니다.  
+  - 예: 네비게이션 이동, 팝업/토스트 표시, 스낵바, 로그 기록, 애니메이션 트리거 등.  
+  - 이러한 로직은 UI rebuild와 분리하여 `ref.listen` 기반의 side effect 처리로 관리합니다.
