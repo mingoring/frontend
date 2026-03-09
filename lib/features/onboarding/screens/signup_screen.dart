@@ -6,7 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/widgets/dialogs/error_popup.dart';
-import '../../../core/constants/app_spacing.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../constants/signup_screen_constants.dart';
