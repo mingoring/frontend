@@ -19,9 +19,12 @@ abstract final class NicknameTypographyCache {
     required double maxWidth,
   }) {
     final availableWidth = maxWidth.isFinite && maxWidth > 0 ? maxWidth : 0.0;
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    const textScaleBucketPrecision = 100;
     final key = _NicknameStyleCacheKey(
       text: '$nickname!',
       widthBucket: availableWidth.round(),
+      textScaleBucket: (textScale * textScaleBucketPrecision).round(),
     );
 
     final cached = _cache[key];
@@ -59,8 +62,10 @@ abstract final class NicknameTypographyCache {
       )..layout(maxWidth: maxWidth);
 
       if (!painter.didExceedMaxLines) {
+        painter.dispose();
         return style;
       }
+      painter.dispose();
     }
 
     return AppLogoTypography.logoEb5;
@@ -71,19 +76,22 @@ class _NicknameStyleCacheKey {
   const _NicknameStyleCacheKey({
     required this.text,
     required this.widthBucket,
+    required this.textScaleBucket,
   });
 
   final String text;
   final int widthBucket;
+  final int textScaleBucket;
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is _NicknameStyleCacheKey &&
         other.text == text &&
-        other.widthBucket == widthBucket;
+        other.widthBucket == widthBucket &&
+        other.textScaleBucket == textScaleBucket;
   }
 
   @override
-  int get hashCode => Object.hash(text, widthBucket);
+  int get hashCode => Object.hash(text, widthBucket, textScaleBucket);
 }
