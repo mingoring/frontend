@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/constants/app_images.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/router/route_names.dart';
-import '../../../core/constants/storage_keys.dart';
 import '../constants/login_screen_constants.dart';
 import '../widgets/social_icon_button.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
 
   static const _characterWidth = 270.0;
@@ -24,14 +24,14 @@ class LoginScreen extends StatelessWidget {
   static const _dividerThickness = 1.0;
   static const _guestNickname = 'Guest';
 
-  Future<void> _onGuestPressed(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(StorageKeys.nickname, _guestNickname);
+  Future<void> _onGuestPressed(BuildContext context, WidgetRef ref) async {
+    final localStorageService = await ref.read(localStorageServiceProvider.future);
+    await localStorageService.saveNickname(_guestNickname);
     if (context.mounted) context.go(RouteNames.home);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.pink600,
       body: SafeArea(
@@ -117,7 +117,7 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: LoginScreenConstants.socialToGuestGap),
             InkWell(
-              onTap: () => _onGuestPressed(context),
+              onTap: () => _onGuestPressed(context, ref),
               child: Text(
                 LoginScreenConstants.guestText,
                 style: AppTextStyles.body4B15.copyWith(
