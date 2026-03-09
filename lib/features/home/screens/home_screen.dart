@@ -10,6 +10,7 @@ import '../../../core/utils/nickname_typography_cache.dart';
 import '../../../core/widgets/badges/day_of_the_week_badge.dart';
 import '../../../core/widgets/cards/home_action_card.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
+import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -55,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
     final nickname =
         ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
             '-';
+    final greetingText = HomeGreetingTextConstants.resolve();
 
     return Scaffold(
       body: GradientBackground(
@@ -86,7 +88,10 @@ class HomeScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: contentTopPadding),
-                          _GreetingSection(nickname: nickname),
+                          _GreetingSection(
+                            nickname: nickname,
+                            greetingText: greetingText,
+                          ),
                           const SizedBox(height: _greetingToCalendarSpacing),
                           SizedBox(
                             width: _calendarCardWidth,
@@ -133,9 +138,13 @@ class HomeScreen extends ConsumerWidget {
 // ──────────────────────────────────────────────────────────────────
 
 class _GreetingSection extends StatelessWidget {
-  const _GreetingSection({required this.nickname});
+  const _GreetingSection({
+    required this.nickname,
+    required this.greetingText,
+  });
 
   final String nickname;
+  final String greetingText;
 
   @override
   Widget build(BuildContext context) {
@@ -175,8 +184,8 @@ class _GreetingSection extends StatelessWidget {
         ),
         const SizedBox(height: 11),
         Text(
-          HomeConstants.greetingText,
-          style: AppTextStyles.head1Sb24.copyWith(
+          greetingText,
+          style: AppTextStyles.head4Sb20.copyWith(
             color: AppColors.gray500,
           ),
         ),
