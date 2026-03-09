@@ -5,8 +5,8 @@ import '../../../core/constants/app_mingo_assets.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/nickname_typography_cache.dart';
 import '../../../core/widgets/badges/day_of_the_week_badge.dart';
 import '../../../core/widgets/cards/home_action_card.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
@@ -146,41 +146,42 @@ class _GreetingSection extends StatelessWidget {
   final String nickname;
   final String greetingText;
 
+  static const _nicknameStyle = AppLogoTypography.logoEb2;
+  static const _nicknameFallbackStyle = AppLogoTypography.logoEb3;
+
   @override
   Widget build(BuildContext context) {
+    final nicknameText = '$nickname!';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Hello,',
-              style: AppTextStyles.head7Sb18.copyWith(
-                color: AppColors.pink600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final resolvedStyle = NicknameTypographyCache.resolve(
-                  context: context,
-                  nickname: nickname,
-                  maxWidth: constraints.maxWidth,
-                ).copyWith(color: AppColors.pink600);
+        Text(
+          'Hello,',
+          style: AppTextStyles.head7Sb18.copyWith(
+            color: AppColors.pink600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final style = _fitsInOneLine(
+              context: context,
+              text: nicknameText,
+              style: _nicknameStyle,
+              maxWidth: constraints.maxWidth,
+            )
+                ? _nicknameStyle
+                : _nicknameFallbackStyle;
 
-                return Text(
-                  '$nickname!',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  style: resolvedStyle,
-                );
-              },
-            ),
-          ],
+            return Text(
+              nicknameText,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: style.copyWith(color: AppColors.pink600),
+            );
+          },
         ),
         const SizedBox(height: 11),
         Text(
@@ -191,5 +192,23 @@ class _GreetingSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static bool _fitsInOneLine({
+    required BuildContext context,
+    required String text,
+    required TextStyle style,
+    required double maxWidth,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout(maxWidth: maxWidth);
+
+    final fits = !painter.didExceedMaxLines;
+    painter.dispose();
+    return fits;
   }
 }
