@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-
-import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_images.dart';
 
 class OnboardingPageData {
@@ -42,10 +39,4 @@ abstract final class OnboardingConstants {
 
   // ── Animation ─────────────────────────────────────
   static const pageAnimationDuration = Duration(milliseconds: 300);
-
-  static const backgroundGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [AppColors.pink200, AppColors.white],
-  );
 }

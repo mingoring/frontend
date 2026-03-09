@@ -7,10 +7,10 @@ import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/widgets/dialogs/web_view_popup.dart';
 import '../../../core/widgets/inputs/mingoring_input_selection_card.dart';
+import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
-import '../constants/onboarding_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
 import '../providers/signup_provider.dart';
 import '../widgets/terms_agreement_checkbox_cards.dart';
@@ -60,10 +60,7 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
         onBack: () => context.pop(),
         backgroundColor: Colors.transparent,
       ),
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: OnboardingConstants.backgroundGradient,
-        ),
+      body: GradientBackground(
         child: SafeArea(
           bottom: false,
           child: Column(
