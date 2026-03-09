@@ -6,6 +6,7 @@ import '../widgets/onboarding_center_content.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
+import '../../../core/widgets/layouts/gradient_background.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -52,10 +53,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final isLastPage = _currentIndex == onboardingPages.length - 1;
 
     return Scaffold(
-      body: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: OnboardingConstants.backgroundGradient,
-        ),
+      body: GradientBackground(
         child: SafeArea(
           child: Column(
             children: [

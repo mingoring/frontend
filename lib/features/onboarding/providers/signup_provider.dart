@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../constants/signup_screen_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
@@ -190,6 +191,10 @@ class SignupNotifier extends _$SignupNotifier {
             interests: interestCodes,
             referralCode: referralCode,
           );
+
+      final localStorageService =
+          await ref.read(localStorageServiceProvider.future);
+      await localStorageService.saveNickname(state.nicknameInput);
 
       state = state.copyWith(
         submitState: const AsyncValue.data(null),
