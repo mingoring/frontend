@@ -47,8 +47,12 @@ lib/
 │   │   ├── app_colors.dart                 # 공통 색상 토큰
 │   │   ├── app_text_styles.dart            # 공통 텍스트 스타일
 │   │   ├── app_spacing.dart                # 공통 spacing/sizing 토큰
+│   │   └── app_logo_typography.dart        # 로고 전용 타이포그래피 토큰
 │   ├── constants/
 │   │   ├── api_constants.dart              # API baseUrl, timeout 등 네트워크 상수
+│   │   ├── app_images.dart                 # 이미지 에셋 경로 상수
+│   │   ├── app_icon_assets.dart            # 아이콘 에셋 경로 상수
+│   │   ├── app_mingo_assets.dart           # 밍고 캐릭터 에셋 경로 상수
 │   │   ├── storage_keys.dart               # 로컬 저장소 key 모음
 │   │   └── app_constants.dart              # 앱 전역 상수
 │   ├── errors/
@@ -68,6 +72,7 @@ lib/
 │   │   ├── local_storage_service.dart      # 일반 로컬 저장소 래퍼
 │   │   └── cache_manager.dart              # 캐시 저장/조회 정책
 │   ├── utils/            # utils, extensions
+│   │   ├── debug_toast.dart                # 디버그용 토스트 출력 유틸
 │   │   ├── context_extension.dart          # BuildContext 확장
 │   │   ├── string_extension.dart           # String 확장
 │   │   ├── logger.dart                     # 로그 출력 유틸
@@ -81,7 +86,7 @@ lib/
 │   │   ├── indicators/
 │   │   ├── inputs/
 │   │   └── layouts/
-│   │       ├── back_header.dart
+│   │       ├── mingoring_app_bar.dart      # 앱 공통 앱바 (back/title 등 타입 지원)
 │   │       ├── bottom_action_layout.dart
 │   │       └── page_frame.dart
 │   └── services/
@@ -89,18 +94,19 @@ lib/
 │       └── connectivity_service.dart       # 네트워크 상태 서비스
 │
 ├── features/              # 기능별 모듈
-│   ├── auth/              # 로그인/회원가입
+│   ├── {feature}/         # 기능 이름
 │   │   ├── dto/                  # API 요청 DTO, 응답 DTO (서버와 통신하기 위한 데이터 구조): 서버 기준
 │   │   ├── models/               # 앱 내부 비즈니스/UI에서 쓰는 모델: 앱 기준
 │   │   ├── repositories/         # 데이터 액세스 계층 (외부 서버 통신 API 호출, 로컬 DB 접근)
-│   │   ├── providers/            # Riverpod 프로바이더
+│   │   ├── providers/            # Riverpod 프로바이더 (Notifier)
 │   │   ├── screens/              # 화면
 │   │   ├── constants/            # feature 내부에서만 사용하는 상수
 │   │   ├── widgets/              # feature 내부에서만 재사용하는 UI 컴포넌트
 │   │   └── errors/               # feature 내부에서만 쓰이는 auth 도메인 에러 타입 (필요할때만 생성)
-│   │       ├── auth_failure.dart        # auth 전용 에러 타입 정의 (UI, provider, state가 이 타입을 기준으로 분기)
-│   │       └── auth_error_mapper.dart   # 서버 응답 -> auth 에러 매핑 (서버 응답을 읽어서 AuthFailure로 변환)
-│   ├── onboarding/        # 초기 온보딩
+│   │       ├── {feature}_failure.dart        # auth 전용 에러 타입 정의 (UI, provider, state가 이 타입을 기준으로 분기)
+│   │       └── {feature}_error_mapper.dart   # 서버 응답 -> auth 에러 매핑 (서버 응답을 읽어서 AuthFailure로 변환)
+│   ├── onboarding/        # 회원가입/로그인/온보딩
+│   ├── splash/            # 스플래시 화면
 │   ├── home/              # 홈 화면
 │   ├── lesson/            # 학습 카드/시청 화면
 │   ├── library/           # 내 레슨 목록
@@ -114,8 +120,8 @@ lib/
 test/                      # [테스트 구조 일치 시키기]
 ├── core/
 └── features/
-    ├── auth/
     ├── onboarding/
+    ├── splash/
     ├── home/
     ├── lesson/
     ├── library/
