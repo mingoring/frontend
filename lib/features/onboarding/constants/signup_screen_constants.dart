@@ -25,10 +25,6 @@ abstract final class SignupScreenConstants {
   static const String nameHintText = 'Enter your name';
   static const int nameMaxLength = 10;
   static final RegExp nameValidChars = RegExp(r'^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z]+$');
-  static final RegExp nameSpecialChars =
-      RegExp(r'''[!@#$%^&*(),.?":{}|<>~`\-_=+\[\]\\/;'0-9]''');
-  static const String nameErrorSpecialChars =
-      'Special characters and numbers are not allowed.';
   static const String nameErrorInvalidInput =
       'Only Korean and English letters are allowed.';
 

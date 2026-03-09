@@ -23,9 +23,7 @@ part 'signup_provider.g.dart';
   if (!SignupScreenConstants.nameValidChars.hasMatch(value)) {
     return (
       status: MingoringValidationStatus.error,
-      message: SignupScreenConstants.nameSpecialChars.hasMatch(value)
-          ? SignupScreenConstants.nameErrorSpecialChars
-          : SignupScreenConstants.nameErrorInvalidInput,
+      message: SignupScreenConstants.nameErrorInvalidInput,
     );
   }
   return (status: MingoringValidationStatus.success, message: null);
