@@ -14,4 +14,11 @@ abstract final class ApiConstants {
 
   static String get baseUrl =>
       Platform.isAndroid ? _devBaseUrlAndroid : _devBaseUrlIos;
+
+  // ── Auth ──────────────────────────────────────────
+  static const String signupPath = '/api/v1/auth/signup';
+
+  // ── Credits / Referral ────────────────────────────
+  static const String referralVerifyPath =
+      '/api/v1/credits/rewards/referral/verify';
 }

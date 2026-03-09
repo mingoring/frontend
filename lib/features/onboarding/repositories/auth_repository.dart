@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/constants/api_constants.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../dto/signup_request_dto.dart';
@@ -19,6 +20,7 @@ abstract interface class AuthRepository {
     required String nickname,
     required int level,
     required List<String> interests,
+    String? referralCode,
   });
 }
 
@@ -34,6 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String nickname,
     required int level,
     required List<String> interests,
+    String? referralCode,
   }) async {
     try {
       final request = SignupRequestDto(
@@ -44,9 +47,10 @@ class AuthRepositoryImpl implements AuthRepository {
         nickname: nickname,
         level: level,
         interests: interests,
+        referralCode: referralCode,
       );
       final response = await _dio.post(
-        '/api/v1/auth/signup',
+        ApiConstants.signupPath,
         data: request.toJson(),
       );
       return SignupResponseDto.fromJson(
@@ -62,17 +66,16 @@ class AuthRepositoryImpl implements AuthRepository {
         throw const NetworkException();
       }
 
+      final statusCode = e.response?.statusCode ?? 0;
       final data = e.response?.data;
       if (data is Map<String, dynamic>) {
-        final code = data['code'] as String? ?? '';
-        final message = data['message'] as String? ?? '서버 오류가 발생했습니다.';
-        throw mapSignupErrorCode(code, message);
+        throw mapSignupError(statusCode, data);
       }
 
       throw const UnknownException();
     } catch (e, st) {
       Error.throwWithStackTrace(
-        UnknownException('예상치 못한 오류가 발생했습니다. (${e.runtimeType})'),
+        UnknownException(),
         st,
       );
     }

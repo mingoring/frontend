@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../constants/onboarding_constants.dart';
 import '../widgets/onboarding_center_content.dart';
 import '../../../core/router/route_names.dart';
-import '../../../core/constants/app_spacing.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 
 class OnboardingScreen extends StatefulWidget {

@@ -9,5 +9,6 @@ class SignupResponseModel with _$SignupResponseModel {
     required int userId,
     required String accessToken,
     required String refreshToken,
+    required String referralCodeStatus,
   }) = _SignupResponseModel;
 }

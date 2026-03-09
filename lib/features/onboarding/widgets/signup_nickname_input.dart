@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../constants/signup_screen_constants.dart';
 
-/// Name 입력 영역 위젯.
+/// Nickname 입력 영역 위젯.
 /// [MingoringInputTextfieldVerify] 로 구성.
-class SignupNameInput extends StatelessWidget {
-  const SignupNameInput({
+class SignupNicknameInput extends StatelessWidget {
+  const SignupNicknameInput({
     super.key,
     required this.controller,
     required this.validationStatus,

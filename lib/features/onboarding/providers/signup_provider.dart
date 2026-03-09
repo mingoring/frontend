@@ -1,56 +1,104 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/errors/app_exception.dart';
+import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
+import '../constants/signup_screen_constants.dart';
+import '../constants/terms_agreement_screen_constants.dart';
 import '../models/terms_info_model.dart';
 import '../models/signup_response_model.dart';
 import '../repositories/auth_repository.dart';
+import '../repositories/referral_repository.dart';
 
+part 'signup_provider.freezed.dart';
 part 'signup_provider.g.dart';
+
+// ── Nickname Validation ───────────────────────────────────────────────────────
+
+({MingoringValidationStatus status, String? message}) _validateNickname(
+    String value) {
+  if (value.isEmpty) {
+    return (status: MingoringValidationStatus.none, message: null);
+  }
+  if (!SignupScreenConstants.nameValidChars.hasMatch(value)) {
+    return (
+      status: MingoringValidationStatus.error,
+      message: SignupScreenConstants.nameErrorInvalidInput,
+    );
+  }
+  return (status: MingoringValidationStatus.success, message: null);
+}
 
 // ── ViewModel State ───────────────────────────────────────────────────────────
 
 /// 회원가입 흐름 전체 상태.
-/// - [termAgreements]: 약관 동의 목록.
-///   index → [0: termsOfService, 1: privacyPolicy, 2: push, 3: marketing]
-/// - [submitState]: 회원가입 API 호출 비동기 상태.
-/// - [nickname], [level], [interestCodes]: 제출 성공 후 저장되는 입력 데이터.
-/// - [signupResponse]: 회원가입 성공 응답 데이터.
-class SignupFormState {
-  const SignupFormState({
-    this.termAgreements = const [false, false, false, false],
-    this.submitState = const AsyncValue.data(null),
-    this.nickname,
-    this.level,
-    this.interestCodes,
-    this.signupResponse,
-  });
+@freezed
+class SignupFormState with _$SignupFormState {
+  const SignupFormState._();
 
-  final List<bool> termAgreements;
-  final AsyncValue<void> submitState;
+  const factory SignupFormState({
+    // ── UI States (유저가 화면에서 보고 입력하는 것들) ───────────────────────────
+    @Default([false, false, false, false]) List<bool> termAgreements,
+    @Default('') String nicknameInput,
+    @Default(MingoringValidationStatus.none)
+    MingoringValidationStatus nicknameValidationStatus,
+    String? nicknameErrorMessage,
+    int? selectedLevelIndex,
+    @Default(<int>{}) Set<int> selectedInterestIndexes,
+    @Default('') String referralCodeInput,
+    @Default(AsyncValue<bool?>.data(null))
+    AsyncValue<bool?> referralCodeValidationState,
 
-  /// 회원가입 성공 후 채워지는 필드들
-  final String? nickname;
-  final int? level;
-  final List<String>? interestCodes;
-  final SignupResponseModel? signupResponse;
-
-  SignupFormState copyWith({
-    List<bool>? termAgreements,
-    AsyncValue<void>? submitState,
+    // ── Submit Snapshot (서버에 제출될 최종 데이터) ────────────────────────────
+    @Default(AsyncValue<void>.data(null)) AsyncValue<void> submitState,
     String? nickname,
     int? level,
     List<String>? interestCodes,
+    String? referralCode,
     SignupResponseModel? signupResponse,
-  }) {
-    return SignupFormState(
-      termAgreements: termAgreements ?? this.termAgreements,
-      submitState: submitState ?? this.submitState,
-      nickname: nickname ?? this.nickname,
-      level: level ?? this.level,
-      interestCodes: interestCodes ?? this.interestCodes,
-      signupResponse: signupResponse ?? this.signupResponse,
-    );
-  }
+  }) = _SignupFormState;
+
+  // ── Computed: Nickname ────────────────────────────────────────────────────
+
+  bool get isNicknameValid =>
+      nicknameValidationStatus == MingoringValidationStatus.success;
+
+  // ── Computed: Level / Interest ────────────────────────────────────────────
+
+  bool get isLevelValid => selectedLevelIndex != null;
+  bool get isInterestValid => selectedInterestIndexes.isNotEmpty;
+
+  // ── Computed: Referral ────────────────────────────────────────────────────
+
+  bool get isReferralVerified => referralCodeValidationState.valueOrNull == true;
+
+  bool get isReferralValid =>
+      referralCodeInput.isEmpty || referralCodeValidationState.valueOrNull == true;
+
+  bool get canVerifyReferral =>
+      referralCodeInput.length == SignupScreenConstants.referralMaxLength &&
+      !referralCodeValidationState.isLoading &&
+      referralCodeValidationState.valueOrNull != true;
+
+  MingoringValidationStatus get referralValidationStatus =>
+      referralCodeValidationState.when(
+        data: (isValid) {
+          if (isValid == null) return MingoringValidationStatus.none;
+          return isValid
+              ? MingoringValidationStatus.success
+              : MingoringValidationStatus.error;
+        },
+        error: (_, __) => MingoringValidationStatus.error,
+        loading: () => MingoringValidationStatus.none,
+      );
+
+  String? get referralErrorMessage => switch (referralValidationStatus) {
+        MingoringValidationStatus.success =>
+          SignupScreenConstants.referralSuccessText,
+        MingoringValidationStatus.error =>
+          SignupScreenConstants.referralErrorText,
+        MingoringValidationStatus.none => null,
+      };
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────
@@ -61,46 +109,97 @@ class SignupNotifier extends _$SignupNotifier {
   SignupFormState build() => const SignupFormState();
 
   /// TermsAgreementScreen에서 약관 동의 결과를 저장한다.
-  /// [agreements] 순서: [termsOfService, privacyPolicy, push, marketing]
   void setTermAgreements(List<bool> agreements) {
     state = state.copyWith(termAgreements: List.unmodifiable(agreements));
   }
 
+  /// 닉네임 입력값을 업데이트하고 유효성을 검증한다.
+  void updateNickname(String value) {
+    final result = _validateNickname(value);
+    state = state.copyWith(
+      nicknameInput: value,
+      nicknameValidationStatus: result.status,
+      nicknameErrorMessage: result.message,
+    );
+  }
+
+  /// 레벨 선택을 업데이트한다.
+  void selectLevel(int index) {
+    state = state.copyWith(selectedLevelIndex: index);
+  }
+
+  /// 관심 분야 선택을 토글한다.
+  void toggleInterest(int index) {
+    final updated = Set<int>.from(state.selectedInterestIndexes);
+    if (updated.contains(index)) {
+      updated.remove(index);
+    } else {
+      updated.add(index);
+    }
+    state = state.copyWith(selectedInterestIndexes: updated);
+  }
+
+  /// 추천인 코드 입력값을 업데이트하고 검증 상태를 초기화한다.
+  void updateReferral(String value) {
+    state = state.copyWith(
+      referralCodeInput: value,
+      referralCodeValidationState: const AsyncValue.data(null),
+    );
+  }
+
+  /// 추천인 코드 유효성 검증 API를 호출한다.
+  /// 결과를 state에 반영한다(AsyncValue 사용).
+  Future<void> verifyReferralCode() async {
+    final code = state.referralCodeInput;
+    if (code.isEmpty) return;
+    state =
+        state.copyWith(referralCodeValidationState: const AsyncValue.loading());
+    final result = await AsyncValue.guard<bool?>(
+      () => ref.read(referralRepositoryProvider).verifyReferralCode(code),
+    );
+    state = state.copyWith(referralCodeValidationState: result);
+  }
+
   /// 회원가입 API를 호출한다.
   ///
-  /// - [nickname]: 닉네임
-  /// - [level]: 레벨 1~5 (SignupScreen의 0-based index + 1)
-  /// - [interestCodes]: 관심분야 코드 리스트
-  ///
-  /// 성공 시 입력값과 서버 응답을 state에 저장하고 [SignupResponseModel]을 반환한다.
-  Future<SignupResponseModel?> submit({
-    required String nickname,
-    required int level,
-    required List<String> interestCodes,
-  }) async {
+  /// UI 입력값을 서버 요청 형식으로 변환해 제출한다.
+  /// 성공 시 제출 데이터를 Submit Snapshot에 저장하고 응답을 반환한다.
+  /// 실패 시 [submitState]에 에러를 기록하고 null을 반환한다.
+  Future<SignupResponseModel?> submit() async {
     state = state.copyWith(submitState: const AsyncValue.loading());
 
     try {
       final terms = state.termAgreements;
+      final interestCodes = state.selectedInterestIndexes
+          .map((i) => SignupScreenConstants.interestCodes[i])
+          .toList();
+      final referralCode =
+          state.isReferralVerified ? state.referralCodeInput : null;
+
       final response = await ref.read(authRepositoryProvider).signup(
             terms: TermsInfoModel(
-              termsOfService: terms[0],
-              privacyPolicy: terms[1],
-              push: terms[2],
-              marketing: terms[3],
+              termsOfService:
+                  terms[TermsAgreementScreenConstants.termsOfServiceIndex],
+              privacyPolicy:
+                  terms[TermsAgreementScreenConstants.privacyPolicyIndex],
+              push: terms[TermsAgreementScreenConstants.pushIndex],
+              marketing: terms[TermsAgreementScreenConstants.marketingIndex],
             ),
-            nickname: nickname,
-            level: level,
+            nickname: state.nicknameInput,
+            level: state.selectedLevelIndex! + 1,
             interests: interestCodes,
+            referralCode: referralCode,
           );
 
       state = state.copyWith(
         submitState: const AsyncValue.data(null),
-        nickname: nickname,
-        level: level,
+        nickname: state.nicknameInput,
+        level: state.selectedLevelIndex! + 1,
         interestCodes: List.unmodifiable(interestCodes),
+        referralCode: referralCode,
         signupResponse: response,
       );
+
       return response;
     } on AppException catch (e, st) {
       state = state.copyWith(submitState: AsyncValue.error(e, st));

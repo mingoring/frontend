@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants/app_icon_assets.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
-import '../../constants/app_spacing.dart';
+import '../../theme/app_spacing.dart';
 
 // 상단 AppBar 타입
 enum MingoringBackHeaderType {

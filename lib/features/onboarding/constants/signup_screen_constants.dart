@@ -25,10 +25,6 @@ abstract final class SignupScreenConstants {
   static const String nameHintText = 'Enter your name';
   static const int nameMaxLength = 10;
   static final RegExp nameValidChars = RegExp(r'^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z]+$');
-  static final RegExp nameSpecialChars =
-      RegExp(r'''[!@#$%^&*(),.?":{}|<>~`\-_=+\[\]\\/;'0-9]''');
-  static const String nameErrorSpecialChars =
-      'Special characters and numbers are not allowed.';
   static const String nameErrorInvalidInput =
       'Only Korean and English letters are allowed.';
 
@@ -103,12 +99,9 @@ abstract final class SignupScreenConstants {
   static const String referralTitleText =
       'Do you have a referral code?\nEnter it below';
   static const String referralSubtitleText =
-      'Instant check. If valid, you\'ll get +40 minutes';
+      'Instant check. If valid, you\'ll get +60 minutes';
   static const String referralHintText = '8 characters';
   static const String referralSuccessText = 'code applied!';
   static const String referralErrorText = 'Invalid code!';
   static const int referralMaxLength = 8;
-
-  // TODO: (임시) 테스트용 추천인 코드
-  static const String tempValidReferralCode = 'AAAAAAAA';
 }
