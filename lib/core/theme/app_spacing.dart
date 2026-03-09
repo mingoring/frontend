@@ -9,5 +9,5 @@ abstract final class AppSpacing {
   static const double actionBottomSpacing = 45.0;
 
   // 얼럿 다이얼로그 외부 좌우 여백
-  static const double alertDialogHorizontalSpacing = 40.0;
+  static const double alertDialogHorizontalSpacing = 30.0;
 }
