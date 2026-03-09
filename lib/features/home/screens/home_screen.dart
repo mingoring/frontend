@@ -81,7 +81,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.homeContentHorizontalPadding,
+                      horizontal: AppSpacing.homeContentHorizontalSpacing,
                     ),
                     child: SingleChildScrollView(
                       child: Column(
