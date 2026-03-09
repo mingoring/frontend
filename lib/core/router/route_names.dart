@@ -8,4 +8,6 @@ abstract final class RouteNames {
   static const String signup = '/signup';
   static const String login = '/login';
   static const String home = '/home';
+  static const String library = '/library';
+  static const String myPage = '/mypage';
 }
