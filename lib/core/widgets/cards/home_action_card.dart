@@ -3,9 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_icon_assets.dart';
 import '../../theme/app_colors.dart';
+import '../video/video_thumbnail.dart';
 import '../../theme/app_logo_typography.dart';
 import '../../theme/app_text_styles.dart';
-import '../badges/badge_day_of_the_week.dart';
+import '../badges/day_of_the_week_badge.dart';
 
 enum HomeActionCardType { bookmarks, goToLesson, calendar }
 
@@ -54,7 +55,7 @@ class HomeActionCard extends StatefulWidget {
   const HomeActionCard.calendar({
     super.key,
     required int streakDays,
-    required List<BadgeDayOfWeekData> weekBadges,
+    required List<DayOfWeekBadgeData> weekBadges,
     VoidCallback? onTap,
   })  : _type = HomeActionCardType.calendar,
         _bookmarkCount = null,
@@ -75,7 +76,7 @@ class HomeActionCard extends StatefulWidget {
   final String? _videoChannel; // videoTime (mm:ss 형식)
   final String? _thumbnailUrl;
   final int? _streakDays;
-  final List<BadgeDayOfWeekData>? _weekBadges;
+  final List<DayOfWeekBadgeData>? _weekBadges;
   final VoidCallback? _onTap;
 
   @override
@@ -103,11 +104,14 @@ class _HomeActionCardState extends State<HomeActionCard> {
       };
 
   List<BoxShadow> get _boxShadow => switch (widget._type) {
-        HomeActionCardType.bookmarks ||
-        HomeActionCardType.calendar =>
-          const [BoxShadow(color: AppColors.gray300, blurRadius: 5)],
+        HomeActionCardType.bookmarks => const [
+            BoxShadow(color: AppColors.gray300, blurRadius: 5)
+          ],
+        HomeActionCardType.calendar => const [
+            BoxShadow(color: AppColors.gray300, blurRadius: 5)
+          ],
         HomeActionCardType.goToLesson => const [
-            BoxShadow(color: AppColors.gray200, blurRadius: 10),
+            BoxShadow(color: AppColors.gray300, blurRadius: 5)
           ],
       };
 
@@ -254,7 +258,10 @@ class _GoToLessonContent extends StatelessWidget {
         const SizedBox(height: 13),
         Row(
           children: [
-            _VideoThumbnail(thumbnailUrl: thumbnailUrl),
+            VideoThumbnail(
+              size: VideoThumbnailSize.small,
+              thumbnailUrl: thumbnailUrl,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -286,65 +293,6 @@ class _GoToLessonContent extends StatelessWidget {
   }
 }
 
-class _VideoThumbnail extends StatelessWidget {
-  const _VideoThumbnail({this.thumbnailUrl});
-
-  final String? thumbnailUrl;
-
-  static const double _width = 88.0;
-  static const double _height = 50.0;
-  static const BorderRadius _borderRadius =
-      BorderRadius.all(Radius.circular(20));
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: _borderRadius,
-      child: SizedBox(
-        width: _width,
-        height: _height,
-        child: thumbnailUrl != null
-            ? Image.network(
-                thumbnailUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    const _VideoThumbnailPlaceholder(),
-              )
-            : const _VideoThumbnailPlaceholder(),
-      ),
-    );
-  }
-}
-
-class _VideoThumbnailPlaceholder extends StatelessWidget {
-  const _VideoThumbnailPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.gray200,
-      child: Center(
-        child: Container(
-          width: 14.5,
-          height: 14.5,
-          decoration: const BoxDecoration(
-            color: AppColors.gray400,
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: SvgPicture.asset(
-            AppIconAssets.btnVideoPlay,
-            width: 6.7,
-            height: 6.7,
-            colorFilter:
-                const ColorFilter.mode(AppColors.gray100, BlendMode.srcIn),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // ──────────────────────────────────────────────────────────────────
 // Calendar 콘텐츠
 // ──────────────────────────────────────────────────────────────────
@@ -356,7 +304,7 @@ class _CalendarContent extends StatelessWidget {
   });
 
   final int streakDays;
-  final List<BadgeDayOfWeekData> weekBadges;
+  final List<DayOfWeekBadgeData> weekBadges;
 
   @override
   Widget build(BuildContext context) {

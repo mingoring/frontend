@@ -25,8 +25,8 @@ enum DayBadgeVariant {
 }
 
 /// HomeActionCard(calendar) 타입에서 사용하는 뱃지 데이터 모델
-class BadgeDayOfWeekData {
-  const BadgeDayOfWeekData({
+class DayOfWeekBadgeData {
+  const DayOfWeekBadgeData({
     required this.weekDay,
     required this.date,
     required this.variant,
@@ -51,7 +51,8 @@ class DayOfTheWeekBadge extends StatelessWidget {
   final DayBadgeVariant variant;
 
   static const double _width = 40.0;
-  static const EdgeInsets _padding = EdgeInsets.all(12.0);
+  static const double _height = 60.0;
+  static const EdgeInsets _padding = EdgeInsets.zero;
   static const BorderRadius _borderRadius =
       BorderRadius.all(Radius.circular(20));
   static const double _gap = 4.0;
@@ -89,6 +90,7 @@ class DayOfTheWeekBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: _width,
+      height: _height,
       padding: _padding,
       decoration: BoxDecoration(
         color: _backgroundColor,
@@ -97,15 +99,19 @@ class DayOfTheWeekBadge extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             weekDay.displayName,
             style: AppTextStyles.detail5Sb12.copyWith(color: _weekDayColor),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: _gap),
           Text(
             date,
             style: AppTextStyles.body7B14.copyWith(color: _dateColor),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
