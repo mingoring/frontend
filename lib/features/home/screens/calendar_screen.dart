@@ -9,6 +9,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/badges/day_of_the_month_badge.dart';
 import '../../../core/widgets/calendars/monthly_calendar.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
+import '../constants/home_constants.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -36,6 +37,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final today = DateTime.now();
     final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = screenWidth * _horizontalPaddingRatio;
 
@@ -65,7 +67,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               const SizedBox(height: _streakToCalendarGap),
               MonthlyCalendar(
                 displayedMonth: _displayedMonth,
-                dayStates: _buildSampleDayStates(_displayedMonth),
+                dayStates: _buildDayStates(_displayedMonth, today),
                 onPrevMonthTap: _goToPrevMonth,
                 onNextMonthTap: _goToNextMonth,
                 onTitleTap: _goToCurrentMonth,
@@ -78,28 +80,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Map<DateTime, DayOfTheMonthBadgeVariant> _buildSampleDayStates(
+  Map<DateTime, DayOfTheMonthBadgeVariant> _buildDayStates(
     DateTime month,
+    DateTime today,
   ) {
     final normalizedMonth = DateTime(month.year, month.month, 1);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+    final todayNormalized = DateTime(today.year, today.month, today.day);
+    final studiedDates = HomeConstants.mockStudiedDates
+        .map((d) => DateTime(d.year, d.month, d.day))
+        .toSet();
     final states = <DateTime, DayOfTheMonthBadgeVariant>{};
 
-    for (int day = 1; day <= 4; day++) {
-      states[DateTime(normalizedMonth.year, normalizedMonth.month, day)] =
-          DayOfTheMonthBadgeVariant.incompletedPastDay;
-    }
-    for (int day = 5; day <= 7; day++) {
-      states[DateTime(normalizedMonth.year, normalizedMonth.month, day)] =
-          DayOfTheMonthBadgeVariant.completedDay;
-    }
+    final lastDay = DateTime(normalizedMonth.year, normalizedMonth.month + 1, 0).day;
+    for (int day = 1; day <= lastDay; day++) {
+      final date = DateTime(normalizedMonth.year, normalizedMonth.month, day);
+      if (date.isAfter(todayNormalized)) break;
 
-    if (today.year == normalizedMonth.year &&
-        today.month == normalizedMonth.month) {
-      final existing = states[today];
-      if (existing != DayOfTheMonthBadgeVariant.completedDay) {
-        states[today] = DayOfTheMonthBadgeVariant.incompletedToday;
+      if (studiedDates.contains(date)) {
+        states[date] = DayOfTheMonthBadgeVariant.completedDay;
+      } else if (date == todayNormalized) {
+        states[date] = DayOfTheMonthBadgeVariant.incompletedToday;
+      } else {
+        states[date] = DayOfTheMonthBadgeVariant.incompletedPastDay;
       }
     }
 

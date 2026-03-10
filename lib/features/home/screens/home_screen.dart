@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_mingo_assets.dart';
 import '../../../core/storage/local_storage_service.dart';
@@ -11,6 +12,7 @@ import '../../../core/widgets/badges/day_of_the_week_badge.dart';
 import '../../../core/widgets/cards/home_action_card.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
+import '../../../core/router/route_names.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
 
@@ -28,35 +30,38 @@ class HomeScreen extends ConsumerWidget {
   static const _mingoTopOffsetRatio = 0.25;
   static const _mingoRightOffset = -20.0;
 
-  // 플레이스홀더 캘린더 데이터
-  static const _weekBadges = [
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.th,
-      date: '22',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.fr,
-      date: '23',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.sa,
-      date: '24',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.su,
-      date: '25',
-      variant: DayBadgeVariant.completedToday,
-    ),
-  ];
+  static const _weekBadgeCount = 4;
+
+  static List<DayOfWeekBadgeData> _buildWeekBadges(DateTime today) {
+    final todayNormalized = DateTime(today.year, today.month, today.day);
+    final studiedDates = HomeConstants.mockStudiedDates
+        .map((d) => DateTime(d.year, d.month, d.day))
+        .toSet();
+
+    return List.generate(_weekBadgeCount, (i) {
+      final date = todayNormalized.subtract(Duration(days: _weekBadgeCount - 1 - i));
+      final DayBadgeVariant variant;
+      if (studiedDates.contains(date)) {
+        variant = DayBadgeVariant.completedDay;
+      } else if (date == todayNormalized) {
+        variant = DayBadgeVariant.incompletedToday;
+      } else {
+        variant = DayBadgeVariant.incompletedPastDay;
+      }
+      return DayOfWeekBadgeData(
+        weekDay: DayOfWeek.values[date.weekday - 1],
+        date: date.day.toString(),
+        variant: variant,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nickname =
         ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
             '-';
+    final today = DateTime.now();
     final greetingText = HomeGreetingTextConstants.resolve();
 
     return Scaffold(
@@ -98,7 +103,8 @@ class HomeScreen extends ConsumerWidget {
                             width: _calendarCardWidth,
                             child: HomeActionCard.calendar(
                               streakDays: HomeConstants.mockStreakDays,
-                              weekBadges: _weekBadges,
+                              weekBadges: _buildWeekBadges(today),
+                              onTap: () => context.push(RouteNames.calendar),
                             ),
                           ),
                           const SizedBox(height: _cardSpacing),
@@ -111,10 +117,8 @@ class HomeScreen extends ConsumerWidget {
                             onTap: () => VideoWatchAlertDialog.show(
                               context,
                               videoTitle: HomeConstants.mockVideoTitle,
-                              learningTextKo:
-                                  HomeConstants.mockLearningTextKo,
-                              learningTextEn:
-                                  HomeConstants.mockLearningTextEn,
+                              learningTextKo: HomeConstants.mockLearningTextKo,
+                              learningTextEn: HomeConstants.mockLearningTextEn,
                             ),
                           ),
                           const SizedBox(height: _cardSpacing),
