@@ -33,13 +33,13 @@ class AppStorage {
   Future<void> clearAll() async {
     await _localStorageService.clearSessionAll();
     await _memoryCacheService.clearCacheAll();
-    await _secureStorageService.clearAccessToken();
+    await _secureStorageService.clearTokens();
   }
 
   /// 로그인 사용자와 직접 관련된 데이터만 정리한다.
   Future<void> clearLoginData() async {
     await _localStorageService.clearLoginData();
     await _memoryCacheService.clearLoginData();
-    await _secureStorageService.clearAccessToken();
+    await _secureStorageService.clearTokens();
   }
 }
