@@ -4,9 +4,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../constants/app_icon_assets.dart';
 
-/// URL을 인앱 팝업으로 여는 바텀시트 웹뷰
-class WebViewPopup extends StatefulWidget {
-  const WebViewPopup({super.key, required this.url});
+/// URL을 인앱 바텀시트로 여는 웹뷰
+class WebViewBottomSheet extends StatefulWidget {
+  const WebViewBottomSheet({super.key, required this.url});
 
   final String url;
 
@@ -30,16 +30,16 @@ class WebViewPopup extends StatefulWidget {
       ),
       builder: (_) => FractionallySizedBox(
         heightFactor: _sheetHeightFactor,
-        child: WebViewPopup(url: url),
+        child: WebViewBottomSheet(url: url),
       ),
     );
   }
 
   @override
-  State<WebViewPopup> createState() => _WebViewPopupState();
+  State<WebViewBottomSheet> createState() => _WebViewBottomSheetState();
 }
 
-class _WebViewPopupState extends State<WebViewPopup> {
+class _WebViewBottomSheetState extends State<WebViewBottomSheet> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
@@ -67,12 +67,12 @@ class _WebViewPopupState extends State<WebViewPopup> {
             onTap: () => Navigator.of(context).pop(),
             child: Padding(
               padding: const EdgeInsets.only(
-                top: WebViewPopup._topPadding,
-                right: WebViewPopup._closeIconPadding,
+                top: WebViewBottomSheet._topPadding,
+                right: WebViewBottomSheet._closeIconPadding,
               ),
               child: SizedBox(
-                width: WebViewPopup._closeIconSize,
-                height: WebViewPopup._closeIconSize,
+                width: WebViewBottomSheet._closeIconSize,
+                height: WebViewBottomSheet._closeIconSize,
                 child: SvgPicture.asset(AppIconAssets.close),
               ),
             ),

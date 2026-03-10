@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/router/route_names.dart';
-import '../../../core/widgets/dialogs/web_view_popup.dart';
+import '../../../core/widgets/dialogs/web_view_bottom_sheet.dart';
 import '../../../core/widgets/inputs/mingoring_input_selection_card.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
@@ -119,7 +119,7 @@ class _TermsAgreementScreenState extends ConsumerState<TermsAgreementScreen> {
                             value: _accepted[i],
                             onChanged: (v) => _onItemChanged(i, v),
                             onLinkPressed: _items[i].url != null
-                                ? () => WebViewPopup.show(
+                                ? () => WebViewBottomSheet.show(
                                       context,
                                       url: _items[i].url!,
                                     )
