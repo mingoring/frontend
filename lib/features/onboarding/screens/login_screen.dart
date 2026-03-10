@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/storage/local_storage_service.dart';
@@ -57,7 +56,7 @@ class LoginScreen extends ConsumerWidget {
             const Spacer(flex: 9),
             SizedBox(
               width: _characterWidth,
-              child: SvgPicture.asset(
+              child: Image.asset(
                 AppImages.mingoWithGreeting,
                 fit: BoxFit.contain,
               ),
