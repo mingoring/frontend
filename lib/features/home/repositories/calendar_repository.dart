@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/api_constants.dart';
+import '../../../core/utils/date_time_utils.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../dto/calendar_response_dto.dart';
@@ -75,10 +76,10 @@ class CalendarRepositoryImpl implements CalendarRepository {
         ),
         queryParameters: {
           'timezone': timezone,
-          'todayDate': _formatDate(todayDate),
+          'todayDate': DateTimeUtils.formatDate(todayDate),
           'viewType': viewType.toApiValue(),
           if (viewType == CalendarViewType.monthly && targetMonth != null)
-            'targetMonth': _formatMonth(targetMonth),
+            'targetMonth': DateTimeUtils.formatMonth(targetMonth),
         },
       );
 
@@ -110,18 +111,6 @@ class CalendarRepositoryImpl implements CalendarRepository {
     }
   }
 
-  String _formatDate(DateTime date) {
-    final year = date.year.toString().padLeft(4, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
-  }
-
-  String _formatMonth(DateTime date) {
-    final year = date.year.toString().padLeft(4, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    return '$year-$month';
-  }
 }
 
 final calendarRepositoryProvider = Provider<CalendarRepository>((ref) {
