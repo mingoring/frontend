@@ -15,6 +15,7 @@ import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/router/route_names.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
+import '../utils/streak_days_calculator.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -62,6 +63,10 @@ class HomeScreen extends ConsumerWidget {
         ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
             '-';
     final today = DateTime.now();
+    final streakDays = StreakDaysCalculator.calculate(
+      todayDate: today,
+      learnedDates: HomeConstants.mockStudiedDates,
+    );
     final greetingText = HomeGreetingTextConstants.resolve();
 
     return Scaffold(
@@ -102,7 +107,7 @@ class HomeScreen extends ConsumerWidget {
                           SizedBox(
                             width: _calendarCardWidth,
                             child: HomeActionCard.calendar(
-                              streakDays: HomeConstants.mockStreakDays,
+                              streakDays: streakDays,
                               weekBadges: _buildWeekBadges(today),
                               onTap: () => context.push(RouteNames.calendar),
                             ),

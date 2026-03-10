@@ -10,6 +10,7 @@ import '../../../core/widgets/badges/day_of_the_month_badge.dart';
 import '../../../core/widgets/calendars/monthly_calendar.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../constants/home_constants.dart';
+import '../utils/streak_days_calculator.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -25,7 +26,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   static const double _fireIconHeight = 80.0;
   static const double _fireToStreakGap = 20.0;
   static const double _streakToCalendarGap = 24.0;
-  static const int _streakDays = 3;
   static const String _streakSubtitle = "You're doing great. Keep going.";
 
   @override
@@ -40,6 +40,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final today = DateTime.now();
     final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = screenWidth * _horizontalPaddingRatio;
+    final dayStates = _buildDayStates(_displayedMonth, today);
+    final streakDays = StreakDaysCalculator.calculate(
+      todayDate: today,
+      learnedDates: HomeConstants.mockStudiedDates,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.pink200,
@@ -60,14 +65,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 height: _fireIconHeight,
               ),
               const SizedBox(height: _fireToStreakGap),
-              const _StreakSection(
-                streakDays: _streakDays,
+              _StreakSection(
+                streakDays: streakDays,
                 subtitle: _streakSubtitle,
               ),
               const SizedBox(height: _streakToCalendarGap),
               MonthlyCalendar(
                 displayedMonth: _displayedMonth,
-                dayStates: _buildDayStates(_displayedMonth, today),
+                dayStates: dayStates,
                 onPrevMonthTap: _goToPrevMonth,
                 onNextMonthTap: _goToNextMonth,
                 onTitleTap: _goToCurrentMonth,

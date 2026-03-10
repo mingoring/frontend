@@ -8,7 +8,6 @@ abstract final class HomeConstants {
   static const String mockVideoTime = '15:34';
   static const String mockThumbnailUrl =
       'https://i.ytimg.com/vi/EFSHytNS3QM/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDFkCtFZKtUQTaUdWAFpsz-FFmlag';
-  static const int mockStreakDays = 3;
 
   // TODO: Mock 데이터 (실제 API 연동 전) - 학습 완료 날짜 목록
   static final List<DateTime> mockStudiedDates = [
