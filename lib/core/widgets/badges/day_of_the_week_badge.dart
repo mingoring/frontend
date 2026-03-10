@@ -18,10 +18,9 @@ enum DayOfWeek {
 
 // 요일 뱃지 상태
 enum DayBadgeVariant {
-  completedPastDay, // 배경 pink300 (다른 날, 학습완료)
-  incompletePastDay, // 배경 white (다른 날, 미학습)
-  completedToday, // 배경 pink600 (오늘, 학습완료)
-  incompleteToday, // 배경 white + inner border pink600 (오늘, 미학습)
+  completedDay, // 학습완료
+  incompletedPastDay, // 미학습 (과거 날짜)
+  incompletedToday, // 미학습 (오늘 날짜)
 }
 
 /// HomeActionCard(calendar) 타입에서 사용하는 뱃지 데이터 모델
@@ -58,33 +57,24 @@ class DayOfTheWeekBadge extends StatelessWidget {
   static const double _gap = 4.0;
 
   Color get _backgroundColor => switch (variant) {
-        DayBadgeVariant.completedPastDay => AppColors.pink300,
-        DayBadgeVariant.incompletePastDay => AppColors.white,
-        DayBadgeVariant.completedToday => AppColors.pink600,
-        DayBadgeVariant.incompleteToday => AppColors.white,
+        DayBadgeVariant.completedDay => AppColors.pink600,
+        DayBadgeVariant.incompletedPastDay => AppColors.white,
+        DayBadgeVariant.incompletedToday => AppColors.pink300,
       };
 
   Color get _weekDayColor => switch (variant) {
-        DayBadgeVariant.completedPastDay => AppColors.pink100,
-        DayBadgeVariant.incompletePastDay => AppColors.gray600,
-        DayBadgeVariant.completedToday => AppColors.pink200,
-        DayBadgeVariant.incompleteToday => AppColors.pink600,
+        DayBadgeVariant.completedDay => AppColors.pink200,
+        DayBadgeVariant.incompletedPastDay => AppColors.gray600,
+        DayBadgeVariant.incompletedToday => AppColors.pink100,
       };
 
   Color get _dateColor => switch (variant) {
-        DayBadgeVariant.completedPastDay => AppColors.white,
-        DayBadgeVariant.incompletePastDay => AppColors.gray500,
-        DayBadgeVariant.completedToday => AppColors.white,
-        DayBadgeVariant.incompleteToday => AppColors.pink600,
+        DayBadgeVariant.completedDay => AppColors.white,
+        DayBadgeVariant.incompletedPastDay => AppColors.gray500,
+        DayBadgeVariant.incompletedToday => AppColors.white,
       };
 
-  BoxBorder? get _border => switch (variant) {
-        DayBadgeVariant.incompleteToday => Border.all(
-            color: AppColors.pink600,
-            width: 1,
-          ),
-        _ => null,
-      };
+  BoxBorder? get _border => null;
 
   @override
   Widget build(BuildContext context) {

@@ -10,5 +10,5 @@ abstract final class AppImages {
   static const String onboarding1 = '$_onboardingPath/onboarding1.svg';
   static const String onboarding2 = '$_onboardingPath/onboarding2.svg';
   static const String onboarding3 = '$_onboardingPath/onboarding3.svg';
-  static const String mingoWithGreeting = '$_mingoPath/mingo_with_greeting.svg';
+  static const String mingoWithGreeting = '$_mingoPath/mingo_with_greeting.png';
 }

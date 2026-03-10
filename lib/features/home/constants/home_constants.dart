@@ -8,5 +8,9 @@ abstract final class HomeConstants {
   static const String mockVideoTime = '15:34';
   static const String mockThumbnailUrl =
       'https://i.ytimg.com/vi/EFSHytNS3QM/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDFkCtFZKtUQTaUdWAFpsz-FFmlag';
-  static const int mockStreakDays = 3;
+
+  // TODO: Mock 데이터 (실제 API 연동 전) - 학습 텍스트
+  static const String mockLearningTextKo = '오늘의 핵심 표현을 영상으로 배워보세요';
+  static const String mockLearningTextEn =
+      "Let's learn today's key expressions through video";
 }

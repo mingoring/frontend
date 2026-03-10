@@ -1,17 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_mingo_assets.dart';
+import '../../../core/errors/app_exception.dart';
+import '../../../core/storage/memory_cache_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/nickname_typography_cache.dart';
 import '../../../core/widgets/badges/day_of_the_week_badge.dart';
 import '../../../core/widgets/cards/home_action_card.dart';
+import '../../../core/widgets/dialogs/error_alert_dialog.dart';
+import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
+import '../../../core/router/route_names.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
+import '../providers/calendar_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -27,36 +36,88 @@ class HomeScreen extends ConsumerWidget {
   static const _mingoTopOffsetRatio = 0.25;
   static const _mingoRightOffset = -20.0;
 
-  // 플레이스홀더 캘린더 데이터
-  static const _weekBadges = [
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.th,
-      date: '22',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.fr,
-      date: '23',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.sa,
-      date: '24',
-      variant: DayBadgeVariant.completedPastDay,
-    ),
-    DayOfWeekBadgeData(
-      weekDay: DayOfWeek.su,
-      date: '25',
-      variant: DayBadgeVariant.completedToday,
-    ),
-  ];
+  static const _weekBadgeCount = 4;
+
+  static List<DayOfWeekBadgeData> _buildWeekBadges({
+    required DateTime today,
+    required Set<DateTime> learnedDates,
+  }) {
+    final todayNormalized = DateTime(today.year, today.month, today.day);
+
+    return List.generate(_weekBadgeCount, (i) {
+      final date =
+          todayNormalized.subtract(Duration(days: _weekBadgeCount - 1 - i));
+      final DayBadgeVariant variant;
+      if (learnedDates.contains(date)) {
+        variant = DayBadgeVariant.completedDay;
+      } else if (date == todayNormalized) {
+        variant = DayBadgeVariant.incompletedToday;
+      } else {
+        variant = DayBadgeVariant.incompletedPastDay;
+      }
+      return DayOfWeekBadgeData(
+        weekDay: DayOfWeek.values[date.weekday - 1],
+        date: date.day.toString(),
+        variant: variant,
+      );
+    });
+  }
+
+  static String _resolveGreetingText({
+    required MemoryCacheService cacheService,
+    required DateTime now,
+  }) {
+    final cachedText = cacheService.getGreetingTextCache(
+      weekday: now.weekday,
+      hour: now.hour,
+    );
+    if (cachedText != null) {
+      return cachedText;
+    }
+
+    final greetingText = HomeGreetingTextConstants.resolve(now: now);
+    unawaited(
+      cacheService.saveGreetingTextCache(
+        weekday: now.weekday,
+        hour: now.hour,
+        greetingText: greetingText,
+      ),
+    );
+    return greetingText;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nickname =
-        ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
-            '-';
-    final greetingText = HomeGreetingTextConstants.resolve();
+    ref.listen<AsyncValue>(recentCalendarProvider, (prev, next) {
+      final wasError = prev is AsyncError;
+      final isError = next is AsyncError;
+      if (!wasError && isError) {
+        next.whenOrNull(
+          error: (e, _) {
+            if (e is AppException) {
+              ErrorAlertDialog.show(context, errorMessage: e.message);
+            } else {
+              ErrorAlertDialog.show(context);
+            }
+          },
+        );
+      }
+    });
+
+    final localStorage = ref.watch(localStorageServiceProvider).valueOrNull;
+    final memoryCacheService = ref.watch(memoryCacheServiceProvider);
+    final nickname = localStorage?.getNickname() ?? '-';
+    final today = DateTime.now();
+    final recentCalendarAsync = ref.watch(recentCalendarProvider);
+    final learnedDates = recentCalendarAsync.valueOrNull?.learnedDates
+            .map((date) => DateTime(date.year, date.month, date.day))
+            .toSet() ??
+        <DateTime>{};
+    final streakDays = recentCalendarAsync.valueOrNull?.streakDays ?? 0;
+    final greetingText = _resolveGreetingText(
+      cacheService: memoryCacheService,
+      now: today,
+    );
 
     return Scaffold(
       body: GradientBackground(
@@ -81,7 +142,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.homeContentHorizontalPadding,
+                      horizontal: AppSpacing.homeContentHorizontalSpacing,
                     ),
                     child: SingleChildScrollView(
                       child: Column(
@@ -96,8 +157,12 @@ class HomeScreen extends ConsumerWidget {
                           SizedBox(
                             width: _calendarCardWidth,
                             child: HomeActionCard.calendar(
-                              streakDays: HomeConstants.mockStreakDays,
-                              weekBadges: _weekBadges,
+                              streakDays: streakDays,
+                              weekBadges: _buildWeekBadges(
+                                today: today,
+                                learnedDates: learnedDates,
+                              ),
+                              onTap: () => context.push(RouteNames.calendar),
                             ),
                           ),
                           const SizedBox(height: _cardSpacing),
@@ -107,6 +172,12 @@ class HomeScreen extends ConsumerWidget {
                             videoTitle: HomeConstants.mockVideoTitle,
                             videoTime: HomeConstants.mockVideoTime,
                             thumbnailUrl: HomeConstants.mockThumbnailUrl,
+                            onTap: () => VideoWatchAlertDialog.show(
+                              context,
+                              videoTitle: HomeConstants.mockVideoTitle,
+                              learningTextKo: HomeConstants.mockLearningTextKo,
+                              learningTextEn: HomeConstants.mockLearningTextEn,
+                            ),
                           ),
                           const SizedBox(height: _cardSpacing),
                           HomeActionCard.bookmarks(
@@ -146,41 +217,42 @@ class _GreetingSection extends StatelessWidget {
   final String nickname;
   final String greetingText;
 
+  static const _nicknameStyle = AppLogoTypography.logoEb2;
+  static const _nicknameFallbackStyle = AppLogoTypography.logoEb3;
+
   @override
   Widget build(BuildContext context) {
+    final nicknameText = '$nickname!';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Hello,',
-              style: AppTextStyles.head7Sb18.copyWith(
-                color: AppColors.pink600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final resolvedStyle = NicknameTypographyCache.resolve(
-                  context: context,
-                  nickname: nickname,
-                  maxWidth: constraints.maxWidth,
-                ).copyWith(color: AppColors.pink600);
+        Text(
+          'Hello,',
+          style: AppTextStyles.head7Sb18.copyWith(
+            color: AppColors.pink600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final style = _fitsInOneLine(
+              context: context,
+              text: nicknameText,
+              style: _nicknameStyle,
+              maxWidth: constraints.maxWidth,
+            )
+                ? _nicknameStyle
+                : _nicknameFallbackStyle;
 
-                return Text(
-                  '$nickname!',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                  style: resolvedStyle,
-                );
-              },
-            ),
-          ],
+            return Text(
+              nicknameText,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: style.copyWith(color: AppColors.pink600),
+            );
+          },
         ),
         const SizedBox(height: 11),
         Text(
@@ -191,5 +263,23 @@ class _GreetingSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static bool _fitsInOneLine({
+    required BuildContext context,
+    required String text,
+    required TextStyle style,
+    required double maxWidth,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout(maxWidth: maxWidth);
+
+    final fits = !painter.didExceedMaxLines;
+    painter.dispose();
+    return fits;
   }
 }
