@@ -2,22 +2,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/api_constants.dart';
-import '../../../core/utils/date_time_utils.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/network/dio_client.dart';
+import '../../../core/utils/date_time_utils.dart';
 import '../dto/calendar_response_dto.dart';
 import '../errors/calendar_error_mapper.dart';
 import '../models/calendar_data_model.dart';
 
 abstract interface class CalendarRepository {
   Future<CalendarDataModel> fetchRecent({
-    required String accessToken,
     required String timezone,
     required DateTime todayDate,
   });
 
   Future<CalendarDataModel> fetchMonthly({
-    required String accessToken,
     required String timezone,
     required DateTime todayDate,
     required DateTime targetMonth,
@@ -31,12 +29,10 @@ class CalendarRepositoryImpl implements CalendarRepository {
 
   @override
   Future<CalendarDataModel> fetchRecent({
-    required String accessToken,
     required String timezone,
     required DateTime todayDate,
   }) async {
     return _fetchCalendar(
-      accessToken: accessToken,
       timezone: timezone,
       todayDate: todayDate,
       viewType: CalendarViewType.recent,
@@ -45,13 +41,11 @@ class CalendarRepositoryImpl implements CalendarRepository {
 
   @override
   Future<CalendarDataModel> fetchMonthly({
-    required String accessToken,
     required String timezone,
     required DateTime todayDate,
     required DateTime targetMonth,
   }) async {
     return _fetchCalendar(
-      accessToken: accessToken,
       timezone: timezone,
       todayDate: todayDate,
       viewType: CalendarViewType.monthly,
@@ -60,7 +54,6 @@ class CalendarRepositoryImpl implements CalendarRepository {
   }
 
   Future<CalendarDataModel> _fetchCalendar({
-    required String accessToken,
     required String timezone,
     required DateTime todayDate,
     required CalendarViewType viewType,
@@ -69,11 +62,6 @@ class CalendarRepositoryImpl implements CalendarRepository {
     try {
       final response = await _dio.get(
         ApiConstants.calendarPath,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $accessToken',
-          },
-        ),
         queryParameters: {
           'timezone': timezone,
           'todayDate': DateTimeUtils.formatDate(todayDate),
@@ -110,7 +98,6 @@ class CalendarRepositoryImpl implements CalendarRepository {
       Error.throwWithStackTrace(const UnknownException(), st);
     }
   }
-
 }
 
 final calendarRepositoryProvider = Provider<CalendarRepository>((ref) {
