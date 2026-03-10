@@ -170,6 +170,10 @@ class SignupNotifier extends _$SignupNotifier {
     state = state.copyWith(submitState: const AsyncValue.loading());
 
     try {
+      final localStorageService =
+          await ref.read(localStorageServiceProvider.future);
+      await localStorageService.clearSessionForLogout();
+
       final terms = state.termAgreements;
       final interestCodes = state.selectedInterestIndexes
           .map((i) => SignupScreenConstants.interestCodes[i])
@@ -192,9 +196,8 @@ class SignupNotifier extends _$SignupNotifier {
             referralCode: referralCode,
           );
 
-      final localStorageService =
-          await ref.read(localStorageServiceProvider.future);
       await localStorageService.saveNickname(state.nicknameInput);
+      await localStorageService.saveAccessToken(response.accessToken);
 
       state = state.copyWith(
         submitState: const AsyncValue.data(null),

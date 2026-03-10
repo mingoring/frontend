@@ -21,4 +21,7 @@ abstract final class ApiConstants {
   // ── Credits / Referral ────────────────────────────
   static const String referralVerifyPath =
       '/api/v1/credits/rewards/referral/verify';
+
+  // ── Calendar ──────────────────────────────────────
+  static const String calendarPath = '/api/v1/calendar';
 }

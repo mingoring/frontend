@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_icon_assets.dart';
+import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/badges/day_of_the_month_badge.dart';
 import '../../../core/widgets/calendars/monthly_calendar.dart';
+import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
-import '../constants/home_constants.dart';
-import '../utils/streak_days_calculator.dart';
+import '../providers/calendar_provider.dart';
 
-class CalendarScreen extends StatefulWidget {
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   late DateTime _displayedMonth;
 
   static const double _horizontalPaddingRatio = 0.06;
@@ -37,14 +39,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final monthlyProvider = monthlyCalendarProvider(_displayedMonth);
+    ref.listen<AsyncValue>(monthlyProvider, (prev, next) {
+      final wasError = prev is AsyncError;
+      final isError = next is AsyncError;
+      if (!wasError && isError) {
+        next.whenOrNull(
+          error: (e, _) {
+            if (e is AppException) {
+              ErrorAlertDialog.show(context, errorMessage: e.message);
+            } else {
+              ErrorAlertDialog.show(context);
+            }
+          },
+        );
+      }
+    });
+
     final today = DateTime.now();
     final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = screenWidth * _horizontalPaddingRatio;
-    final dayStates = _buildDayStates(_displayedMonth, today);
-    final streakDays = StreakDaysCalculator.calculate(
-      todayDate: today,
-      learnedDates: HomeConstants.mockStudiedDates,
+    final monthlyCalendarAsync = ref.watch(monthlyProvider);
+    final learnedDates = monthlyCalendarAsync.valueOrNull?.learnedDates
+            .map((date) => DateTime(date.year, date.month, date.day))
+            .toSet() ??
+        <DateTime>{};
+    final dayStates = _buildDayStates(
+      month: _displayedMonth,
+      today: today,
+      learnedDates: learnedDates,
     );
+    final streakDays = monthlyCalendarAsync.valueOrNull?.streakDays ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.pink200,
@@ -86,22 +111,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Map<DateTime, DayOfTheMonthBadgeVariant> _buildDayStates(
-    DateTime month,
-    DateTime today,
+    {
+    required DateTime month,
+    required DateTime today,
+    required Set<DateTime> learnedDates,
+  }
   ) {
     final normalizedMonth = DateTime(month.year, month.month, 1);
     final todayNormalized = DateTime(today.year, today.month, today.day);
-    final studiedDates = HomeConstants.mockStudiedDates
-        .map((d) => DateTime(d.year, d.month, d.day))
-        .toSet();
     final states = <DateTime, DayOfTheMonthBadgeVariant>{};
 
-    final lastDay = DateTime(normalizedMonth.year, normalizedMonth.month + 1, 0).day;
+    final lastDay =
+        DateTime(normalizedMonth.year, normalizedMonth.month + 1, 0).day;
     for (int day = 1; day <= lastDay; day++) {
       final date = DateTime(normalizedMonth.year, normalizedMonth.month, day);
       if (date.isAfter(todayNormalized)) break;
 
-      if (studiedDates.contains(date)) {
+      if (learnedDates.contains(date)) {
         states[date] = DayOfTheMonthBadgeVariant.completedDay;
       } else if (date == todayNormalized) {
         states[date] = DayOfTheMonthBadgeVariant.incompletedToday;

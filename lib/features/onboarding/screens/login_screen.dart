@@ -12,8 +12,23 @@ import '../../../core/router/route_names.dart';
 import '../constants/login_screen_constants.dart';
 import '../widgets/social_icon_button.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final localStorageService =
+          await ref.read(localStorageServiceProvider.future);
+      await localStorageService.clearSessionForLogout();
+    });
+  }
 
   static const _characterWidth = 270.0;
   static const _socialIconSize = 52.0;
@@ -21,16 +36,16 @@ class LoginScreen extends ConsumerWidget {
   static const _dividerTextGap = 18.0;
   static const _socialGap = 14.0;
   static const _dividerThickness = 1.0;
-  static const _guestNickname = 'Guest';
 
-  Future<void> _onGuestPressed(BuildContext context, WidgetRef ref) async {
-    final localStorageService = await ref.read(localStorageServiceProvider.future);
-    await localStorageService.saveNickname(_guestNickname);
+  Future<void> _onGuestPressed(BuildContext context) async {
+    final localStorageService =
+        await ref.read(localStorageServiceProvider.future);
+    await localStorageService.saveGuestSession();
     if (context.mounted) context.go(RouteNames.home);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.pink600,
       body: SafeArea(
@@ -116,7 +131,7 @@ class LoginScreen extends ConsumerWidget {
             ),
             const SizedBox(height: LoginScreenConstants.socialToGuestGap),
             InkWell(
-              onTap: () => _onGuestPressed(context, ref),
+              onTap: () => _onGuestPressed(context),
               child: Text(
                 LoginScreenConstants.guestText,
                 style: AppTextStyles.body4B15.copyWith(

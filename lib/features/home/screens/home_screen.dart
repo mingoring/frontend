@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_mingo_assets.dart';
+import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -10,12 +11,13 @@ import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/badges/day_of_the_week_badge.dart';
 import '../../../core/widgets/cards/home_action_card.dart';
+import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/router/route_names.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
-import '../utils/streak_days_calculator.dart';
+import '../providers/calendar_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -33,16 +35,17 @@ class HomeScreen extends ConsumerWidget {
 
   static const _weekBadgeCount = 4;
 
-  static List<DayOfWeekBadgeData> _buildWeekBadges(DateTime today) {
+  static List<DayOfWeekBadgeData> _buildWeekBadges({
+    required DateTime today,
+    required Set<DateTime> learnedDates,
+  }) {
     final todayNormalized = DateTime(today.year, today.month, today.day);
-    final studiedDates = HomeConstants.mockStudiedDates
-        .map((d) => DateTime(d.year, d.month, d.day))
-        .toSet();
 
     return List.generate(_weekBadgeCount, (i) {
-      final date = todayNormalized.subtract(Duration(days: _weekBadgeCount - 1 - i));
+      final date =
+          todayNormalized.subtract(Duration(days: _weekBadgeCount - 1 - i));
       final DayBadgeVariant variant;
-      if (studiedDates.contains(date)) {
+      if (learnedDates.contains(date)) {
         variant = DayBadgeVariant.completedDay;
       } else if (date == todayNormalized) {
         variant = DayBadgeVariant.incompletedToday;
@@ -59,14 +62,32 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue>(recentCalendarProvider, (prev, next) {
+      final wasError = prev is AsyncError;
+      final isError = next is AsyncError;
+      if (!wasError && isError) {
+        next.whenOrNull(
+          error: (e, _) {
+            if (e is AppException) {
+              ErrorAlertDialog.show(context, errorMessage: e.message);
+            } else {
+              ErrorAlertDialog.show(context);
+            }
+          },
+        );
+      }
+    });
+
     final nickname =
         ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
             '-';
     final today = DateTime.now();
-    final streakDays = StreakDaysCalculator.calculate(
-      todayDate: today,
-      learnedDates: HomeConstants.mockStudiedDates,
-    );
+    final recentCalendarAsync = ref.watch(recentCalendarProvider);
+    final learnedDates = recentCalendarAsync.valueOrNull?.learnedDates
+            .map((date) => DateTime(date.year, date.month, date.day))
+            .toSet() ??
+        <DateTime>{};
+    final streakDays = recentCalendarAsync.valueOrNull?.streakDays ?? 0;
     final greetingText = HomeGreetingTextConstants.resolve();
 
     return Scaffold(
@@ -108,7 +129,10 @@ class HomeScreen extends ConsumerWidget {
                             width: _calendarCardWidth,
                             child: HomeActionCard.calendar(
                               streakDays: streakDays,
-                              weekBadges: _buildWeekBadges(today),
+                              weekBadges: _buildWeekBadges(
+                                today: today,
+                                learnedDates: learnedDates,
+                              ),
                               onTap: () => context.push(RouteNames.calendar),
                             ),
                           ),
