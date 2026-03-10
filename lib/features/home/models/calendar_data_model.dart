@@ -1,3 +1,7 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'calendar_data_model.freezed.dart';
+
 enum CalendarViewType {
   recent,
   monthly;
@@ -21,18 +25,13 @@ enum CalendarViewType {
   }
 }
 
-class CalendarDataModel {
-  const CalendarDataModel({
-    required this.viewType,
-    required this.rangeStart,
-    required this.rangeEnd,
-    required this.streakDays,
-    required this.learnedDates,
-  });
-
-  final CalendarViewType viewType;
-  final DateTime rangeStart;
-  final DateTime rangeEnd;
-  final int streakDays;
-  final List<DateTime> learnedDates;
+@freezed
+class CalendarDataModel with _$CalendarDataModel {
+  const factory CalendarDataModel({
+    required CalendarViewType viewType,
+    required DateTime rangeStart,
+    required DateTime rangeEnd,
+    required int streakDays,
+    required List<DateTime> learnedDates,
+  }) = _CalendarDataModel;
 }
