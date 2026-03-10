@@ -2,8 +2,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../core/storage/local_storage_service.dart';
 import '../../../core/storage/app_storage.dart';
+import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../constants/signup_screen_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
@@ -199,7 +200,9 @@ class SignupNotifier extends _$SignupNotifier {
           );
 
       await localStorageService.saveNickname(state.nicknameInput);
-      await localStorageService.saveAccessToken(response.accessToken);
+      final secureStorageService =
+          ref.read(secureStorageServiceProvider);
+      await secureStorageService.saveAccessToken(response.accessToken);
 
       state = state.copyWith(
         submitState: const AsyncValue.data(null),

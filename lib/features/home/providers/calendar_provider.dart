@@ -2,16 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../../../core/errors/app_exception.dart';
-import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/secure_storage_service.dart';
 import '../models/calendar_data_model.dart';
 import '../repositories/calendar_repository.dart';
 
 final recentCalendarProvider = FutureProvider<CalendarDataModel>((ref) async {
   final repository = ref.watch(calendarRepositoryProvider);
-  final localStorageService =
-      await ref.watch(localStorageServiceProvider.future);
+  final secureStorageService = ref.watch(secureStorageServiceProvider);
   final now = DateTime.now();
-  final accessToken = localStorageService.getAccessToken();
+  final accessToken = await secureStorageService.getAccessToken();
   if (accessToken == null || accessToken.isEmpty) {
     return CalendarDataModel(
       viewType: CalendarViewType.recent,
@@ -42,11 +41,10 @@ final monthlyCalendarProvider =
     FutureProvider.family<CalendarDataModel, DateTime>(
         (ref, displayedMonth) async {
   final repository = ref.watch(calendarRepositoryProvider);
-  final localStorageService =
-      await ref.watch(localStorageServiceProvider.future);
+  final secureStorageService = ref.watch(secureStorageServiceProvider);
   final now = DateTime.now();
   final targetMonth = DateTime(displayedMonth.year, displayedMonth.month, 1);
-  final accessToken = localStorageService.getAccessToken();
+  final accessToken = await secureStorageService.getAccessToken();
   if (accessToken == null || accessToken.isEmpty) {
     final rangeStart = DateTime(targetMonth.year, targetMonth.month, 1);
     final rangeEnd = DateTime(targetMonth.year, targetMonth.month + 1, 0);

@@ -5,8 +5,7 @@ final memoryCacheServiceProvider = Provider<MemoryCacheService>((ref) {
 });
 
 // MemoryCacheService
-// 앱 실행 중 잠깐 들고 있을 값
-// 예: greeting text, 일시적인 API 응답, 계산 결과
+// 앱 실행 중 잠깐 들고 있을 값 저장소 (예: greeting text, 일시적인 API 응답, 계산 결과)
 class MemoryCacheService {
   int? _weekday;
   int? _hour;
