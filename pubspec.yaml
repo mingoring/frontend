@@ -47,6 +47,7 @@ dependencies:
   webview_flutter: ^4.10.0
   dio: ^5.7.0
   shared_preferences: ^2.3.0
+  flutter_timezone: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/local_storage_service.dart';
@@ -23,7 +24,7 @@ final recentCalendarProvider = FutureProvider<CalendarDataModel>((ref) async {
   try {
     return repository.fetchRecent(
       accessToken: accessToken,
-      timezone: _resolveTimezone(),
+      timezone: await _resolveTimezone(),
       todayDate: now,
     );
   } on UnauthorizedException {
@@ -60,7 +61,7 @@ final monthlyCalendarProvider =
   try {
     return repository.fetchMonthly(
       accessToken: accessToken,
-      timezone: _resolveTimezone(),
+      timezone: await _resolveTimezone(),
       todayDate: now,
       targetMonth: targetMonth,
     );
@@ -78,9 +79,6 @@ final monthlyCalendarProvider =
   }
 });
 
-String _resolveTimezone() {
-  final timezoneName = DateTime.now().timeZoneName;
-  if (timezoneName == 'KST') return 'Asia/Seoul';
-  if (timezoneName == 'UTC') return 'Etc/UTC';
-  return timezoneName;
+Future<String> _resolveTimezone() async {
+  return FlutterTimezone.getLocalTimezone();
 }
