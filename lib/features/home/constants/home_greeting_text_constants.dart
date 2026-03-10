@@ -4,10 +4,6 @@ abstract final class HomeGreetingTextConstants {
   static const int _afternoonStartHour = 14;
   static const int _nightStartHour = 18;
 
-  static int? _cachedWeekday;
-  static int? _cachedHour;
-  static String? _cachedGreetingText;
-
   static const Map<int, Map<_GreetingTimeSlot, String>> _greetingTextMap = {
     DateTime.monday: {
       _GreetingTimeSlot.morning: '월요일이에요',
@@ -56,21 +52,10 @@ abstract final class HomeGreetingTextConstants {
   static String resolve({DateTime? now}) {
     final localNow = now ?? DateTime.now();
 
-    if (_cachedWeekday == localNow.weekday &&
-        _cachedHour == localNow.hour &&
-        _cachedGreetingText != null) {
-      return _cachedGreetingText!;
-    }
-
     final timeSlot = _resolveTimeSlot(localNow.hour);
     final weekdayGreetingMap = _greetingTextMap[localNow.weekday] ??
         _greetingTextMap[DateTime.monday]!;
-    final greetingText = weekdayGreetingMap[timeSlot] ?? '화이팅이에요';
-
-    _cachedWeekday = localNow.weekday;
-    _cachedHour = localNow.hour;
-    _cachedGreetingText = greetingText;
-    return greetingText;
+    return weekdayGreetingMap[timeSlot] ?? '화이팅이에요';
   }
 
   static _GreetingTimeSlot _resolveTimeSlot(int hour) {

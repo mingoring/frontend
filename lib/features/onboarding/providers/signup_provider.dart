@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/app_storage.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
 import '../constants/signup_screen_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
@@ -172,7 +173,8 @@ class SignupNotifier extends _$SignupNotifier {
     try {
       final localStorageService =
           await ref.read(localStorageServiceProvider.future);
-      await localStorageService.clearSessionForLogout();
+      final storageService = await ref.read(appStorageProvider.future);
+      await storageService.clearLoginData();
 
       final terms = state.termAgreements;
       final interestCodes = state.selectedInterestIndexes

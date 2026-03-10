@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/storage/local_storage_service.dart';
+import '../../../core/storage/app_storage.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/constants/app_images.dart';
@@ -23,11 +24,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final localStorageService =
-          await ref.read(localStorageServiceProvider.future);
-      await localStorageService.clearSessionForLogout();
-    });
+    _clearSessionOnEnter();
+  }
+
+  Future<void> _clearSessionOnEnter() async {
+    final storageService = await ref.read(appStorageProvider.future);
+    await storageService.clearLoginData();
   }
 
   static const _characterWidth = 270.0;

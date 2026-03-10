@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../constants/storage_keys.dart';
+import 'local_storage_keys.dart';
 
 final localStorageServiceProvider =
     FutureProvider<LocalStorageService>((ref) async {
@@ -9,6 +9,9 @@ final localStorageServiceProvider =
   return LocalStorageService(prefs);
 });
 
+// LocalStorageService
+// 앱 재실행 후에도 유지되어야 하는 값
+// 예: access token, nickname, onboarding flag, 설정값
 class LocalStorageService {
   const LocalStorageService(this._prefs);
 
@@ -16,37 +19,36 @@ class LocalStorageService {
 
   final SharedPreferences _prefs;
 
+  /// 닉네임을 저장한다.
   Future<void> saveNickname(String nickname) async {
-    await _prefs.setString(StorageKeys.nickname, nickname);
+    await _prefs.setString(LocalStorageKeys.nickname, nickname);
   }
 
-  String? getNickname() => _prefs.getString(StorageKeys.nickname);
+  /// 닉네임을 조회한다.
+  String? getNickname() => _prefs.getString(LocalStorageKeys.nickname);
 
+  /// 액세스 토큰을 저장한다.
   Future<void> saveAccessToken(String accessToken) async {
-    await _prefs.setString(StorageKeys.accessToken, accessToken);
+    await _prefs.setString(LocalStorageKeys.accessToken, accessToken);
   }
 
-  String? getAccessToken() => _prefs.getString(StorageKeys.accessToken);
+  /// 액세스 토큰을 조회한다.
+  String? getAccessToken() => _prefs.getString(LocalStorageKeys.accessToken);
 
-  /// 사용자 세션 데이터를 모두 정리한다.
-  Future<void> clearSessionForLogout() async {
-    await _prefs.remove(StorageKeys.accessToken);
-    await _prefs.remove(StorageKeys.nickname);
-    await _prefs.remove(StorageKeys.todayDate);
-  }
-
-  /// 게스트 모드로 진입한다. (사용할 닉네임 저장)
+  /// 게스트 모드로 진입한다.
   Future<void> saveGuestSession() async {
+    // 사용할 닉네임 저장
     await saveNickname(_guestNickname);
   }
 
-  Future<void> saveTodayDate(DateTime date) async {
-    await _prefs.setString(StorageKeys.todayDate, date.toIso8601String());
+  /// 로컬 스토리지 데이터를 모두 정리한다.
+  Future<void> clearSessionAll() async {
+    await clearLoginData();
   }
 
-  DateTime getTodayDate() {
-    final raw = _prefs.getString(StorageKeys.todayDate);
-    if (raw == null) return DateTime.now();
-    return DateTime.tryParse(raw) ?? DateTime.now();
+  /// 로그인 사용자와 직접 관련된 데이터만 정리한다.
+  Future<void> clearLoginData() async {
+    await _prefs.remove(LocalStorageKeys.accessToken);
+    await _prefs.remove(LocalStorageKeys.nickname);
   }
 }

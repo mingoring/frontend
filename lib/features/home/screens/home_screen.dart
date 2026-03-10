@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_mingo_assets.dart';
 import '../../../core/errors/app_exception.dart';
+import '../../../core/storage/memory_cache_service.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -60,6 +63,29 @@ class HomeScreen extends ConsumerWidget {
     });
   }
 
+  static String _resolveGreetingText({
+    required MemoryCacheService cacheService,
+    required DateTime now,
+  }) {
+    final cachedText = cacheService.getGreetingTextCache(
+      weekday: now.weekday,
+      hour: now.hour,
+    );
+    if (cachedText != null) {
+      return cachedText;
+    }
+
+    final greetingText = HomeGreetingTextConstants.resolve(now: now);
+    unawaited(
+      cacheService.saveGreetingTextCache(
+        weekday: now.weekday,
+        hour: now.hour,
+        greetingText: greetingText,
+      ),
+    );
+    return greetingText;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue>(recentCalendarProvider, (prev, next) {
@@ -78,9 +104,9 @@ class HomeScreen extends ConsumerWidget {
       }
     });
 
-    final nickname =
-        ref.watch(localStorageServiceProvider).valueOrNull?.getNickname() ??
-            '-';
+    final localStorage = ref.watch(localStorageServiceProvider).valueOrNull;
+    final memoryCacheService = ref.watch(memoryCacheServiceProvider);
+    final nickname = localStorage?.getNickname() ?? '-';
     final today = DateTime.now();
     final recentCalendarAsync = ref.watch(recentCalendarProvider);
     final learnedDates = recentCalendarAsync.valueOrNull?.learnedDates
@@ -88,7 +114,10 @@ class HomeScreen extends ConsumerWidget {
             .toSet() ??
         <DateTime>{};
     final streakDays = recentCalendarAsync.valueOrNull?.streakDays ?? 0;
-    final greetingText = HomeGreetingTextConstants.resolve();
+    final greetingText = _resolveGreetingText(
+      cacheService: memoryCacheService,
+      now: today,
+    );
 
     return Scaffold(
       body: GradientBackground(
