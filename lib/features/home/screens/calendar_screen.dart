@@ -99,7 +99,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 displayedMonth: _displayedMonth,
                 dayStates: dayStates,
                 onPrevMonthTap: _goToPrevMonth,
-                onNextMonthTap: _goToNextMonth,
+                onNextMonthTap: _isCurrentMonth(today) ? null : _goToNextMonth,
                 onTitleTap: _goToCurrentMonth,
               ),
               const SizedBox(height: 16),
@@ -165,6 +165,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       _displayedMonth = DateTime(now.year, now.month, 1);
     });
   }
+
+  bool _isCurrentMonth(DateTime today) =>
+      _displayedMonth.year == today.year &&
+      _displayedMonth.month == today.month;
 }
 
 class _StreakSection extends StatelessWidget {

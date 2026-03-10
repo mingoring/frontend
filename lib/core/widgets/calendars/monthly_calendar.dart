@@ -261,11 +261,11 @@ class MonthlyCalendar extends StatelessWidget {
     final totalCellCount = totalUsedSlots + trailingEmptyCount;
 
     final allCells = List<DateTime?>.generate(totalCellCount, (index) {
-      if (index < leadingEmptyCount) {
-        return null;
-      }
+      if (index < leadingEmptyCount) return null;
 
       final day = index - leadingEmptyCount + 1;
+      if (day > daysInMonth) return null;
+
       return DateTime(normalizedMonth.year, normalizedMonth.month, day);
     });
 
