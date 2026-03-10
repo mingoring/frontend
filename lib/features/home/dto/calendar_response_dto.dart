@@ -11,11 +11,11 @@ class CalendarResponseDto {
 
   factory CalendarResponseDto.fromJson(Map<String, dynamic> json) {
     return CalendarResponseDto(
-      viewType: (json['viewType'] as String?) ?? 'MONTHLY',
-      rangeStart: (json['rangeStart'] as String?) ?? '',
-      rangeEnd: (json['rangeEnd'] as String?) ?? '',
-      streakDays: (json['streakDays'] as num?)?.toInt() ?? 0,
-      learnedDates: ((json['learnedDates'] as List<dynamic>?) ?? const [])
+      viewType: json['viewType'] as String,
+      rangeStart: json['rangeStart'] as String,
+      rangeEnd: json['rangeEnd'] as String,
+      streakDays: (json['streakDays'] as num).toInt(),
+      learnedDates: (json['learnedDates'] as List<dynamic>)
           .whereType<String>()
           .toList(),
     );
@@ -28,9 +28,6 @@ class CalendarResponseDto {
   final List<String> learnedDates;
 
   CalendarDataModel toModel() {
-    final parsedRangeStart = DateTime.tryParse(rangeStart);
-    final parsedRangeEnd = DateTime.tryParse(rangeEnd);
-
     final normalizedLearnedDates = learnedDates
         .map(DateTime.tryParse)
         .whereType<DateTime>()
@@ -39,8 +36,8 @@ class CalendarResponseDto {
 
     return CalendarDataModel(
       viewType: CalendarViewType.fromApiValue(viewType),
-      rangeStart: parsedRangeStart ?? DateTime.now(),
-      rangeEnd: parsedRangeEnd ?? DateTime.now(),
+      rangeStart: DateTime.parse(rangeStart),
+      rangeEnd: DateTime.parse(rangeEnd),
       streakDays: streakDays,
       learnedDates: normalizedLearnedDates,
     );

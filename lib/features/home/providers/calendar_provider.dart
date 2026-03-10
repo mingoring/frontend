@@ -14,13 +14,7 @@ final recentCalendarProvider = FutureProvider<CalendarDataModel>((ref) async {
       todayDate: now,
     );
   } on UnauthorizedException {
-    return CalendarDataModel(
-      viewType: CalendarViewType.recent,
-      rangeStart: now.subtract(const Duration(days: 3)),
-      rangeEnd: now,
-      streakDays: 0,
-      learnedDates: const [],
-    );
+    return CalendarDataModel.emptyRecent(today: now);
   }
 });
 
@@ -37,16 +31,8 @@ final monthlyCalendarProvider =
       targetMonth: targetMonth,
     );
   } on UnauthorizedException {
-    // 401은 예외로 올리지 않고 streakDays: 0, learnedDates: []로 반환
-    final rangeStart = DateTime(targetMonth.year, targetMonth.month, 1);
-    final rangeEnd = DateTime(targetMonth.year, targetMonth.month + 1, 0);
-    return CalendarDataModel(
-      viewType: CalendarViewType.monthly,
-      rangeStart: rangeStart,
-      rangeEnd: rangeEnd,
-      streakDays: 0,
-      learnedDates: const [],
-    );
+    // 401은 예외로 올리지 않고 빈 달력 반환
+    return CalendarDataModel.emptyMonthly(targetMonth: targetMonth);
   }
 });
 

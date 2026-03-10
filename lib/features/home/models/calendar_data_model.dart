@@ -27,6 +27,8 @@ enum CalendarViewType {
 
 @freezed
 class CalendarDataModel with _$CalendarDataModel {
+  const CalendarDataModel._();
+
   const factory CalendarDataModel({
     required CalendarViewType viewType,
     required DateTime rangeStart,
@@ -34,4 +36,25 @@ class CalendarDataModel with _$CalendarDataModel {
     required int streakDays,
     required List<DateTime> learnedDates,
   }) = _CalendarDataModel;
+
+  factory CalendarDataModel.emptyRecent({required DateTime today}) {
+    return CalendarDataModel(
+      viewType: CalendarViewType.recent,
+      rangeStart: today.subtract(const Duration(days: 3)),
+      rangeEnd: today,
+      streakDays: 0,
+      learnedDates: const [],
+    );
+  }
+
+  factory CalendarDataModel.emptyMonthly({required DateTime targetMonth}) {
+    final normalized = DateTime(targetMonth.year, targetMonth.month, 1);
+    return CalendarDataModel(
+      viewType: CalendarViewType.monthly,
+      rangeStart: normalized,
+      rangeEnd: DateTime(targetMonth.year, targetMonth.month + 1, 0),
+      streakDays: 0,
+      learnedDates: const [],
+    );
+  }
 }
