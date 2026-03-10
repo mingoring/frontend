@@ -6,7 +6,10 @@ enum CalendarViewType {
     return switch (value.toUpperCase()) {
       'RECENT' => CalendarViewType.recent,
       'MONTHLY' => CalendarViewType.monthly,
-      _ => CalendarViewType.monthly,
+      _ => () {
+          assert(false, 'Unknown CalendarViewType: $value');
+          return CalendarViewType.monthly;
+        }(),
     };
   }
 

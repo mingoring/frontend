@@ -8,7 +8,8 @@ class MingoringCircularProgressIndicator extends StatelessWidget {
     super.key,
     this.size = _defaultSize,
     this.strokeWidth = _defaultStrokeWidth,
-  });
+  })  : assert(size > 0, 'size must be > 0'),
+        assert(strokeWidth > 0, 'strokeWidth must be > 0');
 
   static const double _defaultSize = 16.0;
   static const double _defaultStrokeWidth = 2.2;
