@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/errors/app_exception.dart';
+
 part 'calendar_data_model.freezed.dart';
 
 enum CalendarViewType {
@@ -10,10 +12,7 @@ enum CalendarViewType {
     return switch (value.toUpperCase()) {
       'RECENT' => CalendarViewType.recent,
       'MONTHLY' => CalendarViewType.monthly,
-      _ => () {
-          assert(false, 'Unknown CalendarViewType: $value');
-          return CalendarViewType.monthly;
-        }(),
+      _ => throw UnknownException('Unknown CalendarViewType: $value'),
     };
   }
 
