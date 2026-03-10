@@ -23,6 +23,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   late DateTime _displayedMonth;
+  int _cachedStreakDays = 0;
 
   static const double _horizontalPaddingRatio = 0.06;
   static const double _fireIconHeight = 80.0;
@@ -60,7 +61,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = screenWidth * _horizontalPaddingRatio;
     final monthlyCalendarAsync = ref.watch(monthlyProvider);
-    final learnedDates = monthlyCalendarAsync.valueOrNull?.learnedDates
+    final newData = monthlyCalendarAsync.valueOrNull;
+    if (newData != null) _cachedStreakDays = newData.streakDays;
+    final learnedDates = newData?.learnedDates
             .map((date) => DateTime(date.year, date.month, date.day))
             .toSet() ??
         <DateTime>{};
@@ -69,7 +72,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       today: today,
       learnedDates: learnedDates,
     );
-    final streakDays = monthlyCalendarAsync.valueOrNull?.streakDays ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.pink200,
@@ -91,7 +93,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               const SizedBox(height: _fireToStreakGap),
               _StreakSection(
-                streakDays: streakDays,
+                streakDays: _cachedStreakDays,
                 subtitle: _streakSubtitle,
               ),
               const SizedBox(height: _streakToCalendarGap),
