@@ -27,6 +27,7 @@ class BookmarkCard extends StatelessWidget {
   static const double _horizontalPadding = 20.0;
   static const double _verticalPadding = 10.0;
   static const double _textGap = 2.0;
+  static const double _watchButtonSize = 34.0;
 
   bool get _isPlaying => type == BookmarkCardState.playing;
 
@@ -42,9 +43,11 @@ class BookmarkCard extends StatelessWidget {
           width: 1.0,
         ),
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: _horizontalPadding,
-        vertical: _verticalPadding,
+      // 우측 padding은 watch 버튼의 hit area에 포함되므로 left만 적용
+      padding: const EdgeInsets.only(
+        left: _horizontalPadding,
+        top: _verticalPadding,
+        bottom: _verticalPadding,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,9 +122,24 @@ class _BookmarkCardButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MingoringWatchButton(
-      onPressed: onWatchPressed,
-      size: MingoringWatchButtonSize.small,
+    // watch 버튼(34×34)의 hit area를 카드 우측 끝까지 확장
+    // 너비: 버튼(34) + 우측 padding(20) = 54dp
+    // 높이: Row 제약에 따라 카드 내부 높이(50dp) 전체 커버 → 접근성 기준 48dp 충족
+    return GestureDetector(
+      onTap: onWatchPressed,
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: BookmarkCard._watchButtonSize + BookmarkCard._horizontalPadding,
+        child: Padding(
+          padding: const EdgeInsets.only(right: BookmarkCard._horizontalPadding),
+          child: Center(
+            child: MingoringWatchButton(
+              onPressed: onWatchPressed,
+              size: MingoringWatchButtonSize.small,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

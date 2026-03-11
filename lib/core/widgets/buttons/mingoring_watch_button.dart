@@ -77,6 +77,9 @@ class MingoringWatchButton extends StatelessWidget {
     );
   }
 
+  // small 버튼은 단일 디자인을 제공합니다.
+  // enabled/disabled 시각 구분 없이 항상 동일한 외형을 유지하며,
+  // hit area 확장은 호출부(카드 등)에서 담당합니다.
   Widget _buildSmall() {
     final defaultStyle = TextButton.styleFrom(
       foregroundColor: AppColors.pink50,
