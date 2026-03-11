@@ -11,12 +11,26 @@ class CalendarResponseDto {
   });
 
   factory CalendarResponseDto.fromJson(Map<String, dynamic> json) {
+    final viewType = json['viewType'];
+    final rangeStart = json['rangeStart'];
+    final rangeEnd = json['rangeEnd'];
+    final streakDays = json['streakDays'];
+    final learnedDates = json['learnedDates'];
+
+    if (viewType is! String ||
+        rangeStart is! String ||
+        rangeEnd is! String ||
+        streakDays is! num ||
+        learnedDates is! List) {
+      throw const UnknownException();
+    }
+
     return CalendarResponseDto(
-      viewType: json['viewType'] as String,
-      rangeStart: json['rangeStart'] as String,
-      rangeEnd: json['rangeEnd'] as String,
-      streakDays: (json['streakDays'] as num).toInt(),
-      learnedDates: (json['learnedDates'] as List<dynamic>).map((e) {
+      viewType: viewType,
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd,
+      streakDays: streakDays.toInt(),
+      learnedDates: learnedDates.map((e) {
         if (e is! String) throw const UnknownException();
         return e;
       }).toList(),
