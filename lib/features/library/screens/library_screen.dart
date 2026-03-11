@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,72 +47,71 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return Scaffold(
       backgroundColor: AppColors.pink100,
       floatingActionButton: LibraryAddVideoButton(
-        onTap: () => MingoringToast.show(
-          context,
-          message: 'Coming soon!',
-        ),
+        onTap: () {
+          if (kDebugMode) {
+            MingoringToast.show(context, message: '[DEBUG] Add Video tapped');
+          }
+        },
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Edit 버튼 (우측 정렬)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                _horizontalPadding,
-                16,
-                _horizontalPadding,
-                0,
-              ),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: LibraryEditButton(onTap: () {}),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // 타이틀 영역
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Library',
-                    style: AppLogoTypography.logoB4.copyWith(
-                      color: AppColors.pink600,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Library 타이틀 + Edit 버튼
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Library',
+                      style: AppLogoTypography.logoB4.copyWith(
+                        color: AppColors.pink600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Add videos and enjoy in this section!',
-                    style: AppTextStyles.body8Sb14.copyWith(
-                      color: AppColors.gray500,
-                      height: 1.2,
+                    const Spacer(),
+                    LibraryEditButton(
+                      onTap: () {
+                        if (kDebugMode) {
+                          MingoringToast.show(
+                            context,
+                            message: '[DEBUG] Edit tapped',
+                          );
+                        }
+                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 10),
 
-            // 필터 바
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-              child: LibraryFilterBar(
+              // 서브타이틀
+              Text(
+                'Add videos and enjoy in this section!',
+                style: AppTextStyles.body8Sb14.copyWith(
+                  color: AppColors.gray500,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 필터 바
+              LibraryFilterBar(
                 selectedOption: _selectedFilter,
                 onSelected: (option) {
                   setState(() => _selectedFilter = option);
                 },
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
 
-            // 카드 그리드 (2열)
-            Expanded(
-              child: _buildBody(asyncValue),
-            ),
-          ],
+              // 카드 그리드 (2열)
+              Expanded(
+                child: _buildBody(asyncValue),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -143,7 +143,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+      padding: const EdgeInsets.only(bottom: 24),
       child: Wrap(
         spacing: _cardSpacing,
         runSpacing: _cardSpacing,
