@@ -21,8 +21,15 @@ class VideoThumbnail extends StatelessWidget {
   final VideoThumbnailSize size;
   final String? thumbnailUrl;
 
-  static const BorderRadius _borderRadius =
-      BorderRadius.all(Radius.circular(10));
+  static const double _radius = 10.0;
+
+  BorderRadius get _borderRadius => switch (size) {
+        VideoThumbnailSize.small => const BorderRadius.all(Radius.circular(_radius)),
+        VideoThumbnailSize.big => const BorderRadius.only(
+            topLeft: Radius.circular(_radius),
+            topRight: Radius.circular(_radius),
+          ),
+      };
 
   double get _width => switch (size) {
         VideoThumbnailSize.small => 90.0,
