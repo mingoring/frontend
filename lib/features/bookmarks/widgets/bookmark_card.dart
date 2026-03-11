@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/buttons/mingoring_sound_button.dart';
 import '../../../core/widgets/buttons/mingoring_watch_button.dart';
 
 enum BookmarkCardState { idle, playing }
@@ -14,6 +13,7 @@ class BookmarkCard extends StatelessWidget {
     required this.originalText,
     required this.translatedText,
     this.type = BookmarkCardState.idle,
+    this.onTap,
     this.onSoundPressed,
     this.onWatchPressed,
   });
@@ -21,6 +21,8 @@ class BookmarkCard extends StatelessWidget {
   final String originalText;
   final String translatedText;
   final BookmarkCardState type;
+  /// 버튼 영역을 제외한 카드 텍스트 영역 탭 콜백
+  final VoidCallback? onTap;
   final VoidCallback? onSoundPressed;
   final VoidCallback? onWatchPressed;
 
@@ -30,10 +32,6 @@ class BookmarkCard extends StatelessWidget {
   static const double _verticalPadding = 10.0;
   static const double _textGap = 2.0;
   static const double _buttonGap = 9.0;
-  static const double _soundButtonSize = 34.0;
-  static const double _soundButtonBorderWidth = 0.68;
-  static const double _soundIconSize = 10.88;
-  static const double _soundButtonBorderRadius = 30.0;
 
   bool get _isPlaying => type == BookmarkCardState.playing;
 
@@ -57,20 +55,20 @@ class BookmarkCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: _BookmarkCardText(
-              originalText: originalText,
-              translatedText: translatedText,
-              isPlaying: _isPlaying,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onTap,
+              child: _BookmarkCardText(
+                originalText: originalText,
+                translatedText: translatedText,
+                isPlaying: _isPlaying,
+              ),
             ),
           ),
           _BookmarkCardButtons(
             isPlaying: _isPlaying,
             onSoundPressed: onSoundPressed,
             onWatchPressed: onWatchPressed,
-            soundButtonSize: _soundButtonSize,
-            soundButtonBorderWidth: _soundButtonBorderWidth,
-            soundIconSize: _soundIconSize,
-            soundButtonBorderRadius: _soundButtonBorderRadius,
             buttonGap: _buttonGap,
           ),
         ],
@@ -125,20 +123,12 @@ class _BookmarkCardButtons extends StatelessWidget {
     required this.isPlaying,
     required this.onSoundPressed,
     required this.onWatchPressed,
-    required this.soundButtonSize,
-    required this.soundButtonBorderWidth,
-    required this.soundIconSize,
-    required this.soundButtonBorderRadius,
     required this.buttonGap,
   });
 
   final bool isPlaying;
   final VoidCallback? onSoundPressed;
   final VoidCallback? onWatchPressed;
-  final double soundButtonSize;
-  final double soundButtonBorderWidth;
-  final double soundIconSize;
-  final double soundButtonBorderRadius;
   final double buttonGap;
 
   @override
@@ -146,13 +136,9 @@ class _BookmarkCardButtons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _SoundButton(
+        MingoringSoundButton(
           isPlaying: isPlaying,
           onPressed: onSoundPressed,
-          size: soundButtonSize,
-          borderWidth: soundButtonBorderWidth,
-          iconSize: soundIconSize,
-          borderRadius: soundButtonBorderRadius,
         ),
         SizedBox(width: buttonGap),
         MingoringWatchButton(
@@ -160,50 +146,6 @@ class _BookmarkCardButtons extends StatelessWidget {
           size: MingoringWatchButtonSize.small,
         ),
       ],
-    );
-  }
-}
-
-class _SoundButton extends StatelessWidget {
-  const _SoundButton({
-    required this.isPlaying,
-    required this.onPressed,
-    required this.size,
-    required this.borderWidth,
-    required this.iconSize,
-    required this.borderRadius,
-  });
-
-  final bool isPlaying;
-  final VoidCallback? onPressed;
-  final double size;
-  final double borderWidth;
-  final double iconSize;
-  final double borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isPlaying ? AppColors.pink600 : AppColors.gray400,
-            width: borderWidth,
-          ),
-        ),
-        child: Center(
-          child: SvgPicture.asset(
-            isPlaying ? AppIconAssets.btnSoundOn : AppIconAssets.btnSoundOff,
-            width: iconSize,
-            height: iconSize,
-          ),
-        ),
-      ),
     );
   }
 }

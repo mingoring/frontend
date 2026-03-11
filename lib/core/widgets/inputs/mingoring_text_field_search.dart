@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_icon_assets.dart';
-import '../../theme/app_colors.dart';
 import 'mingoring_text_field.dart';
 
 /// 검색용 단일행 텍스트 필드.
@@ -45,10 +44,6 @@ class MingoringTextFieldSearch extends StatelessWidget {
         AppIconAssets.search,
         width: _iconSize,
         height: _iconSize,
-        colorFilter: const ColorFilter.mode(
-          AppColors.pink600,
-          BlendMode.srcIn,
-        ),
       ),
     );
   }
