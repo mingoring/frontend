@@ -81,9 +81,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Column(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 12),
@@ -106,7 +105,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               ),
               const SizedBox(height: 16),
             ],
-          ),
         ),
       ),
     );

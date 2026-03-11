@@ -145,12 +145,11 @@ class HomeScreen extends ConsumerWidget {
                       height: _mingoHeight,
                     ),
                   ),
-                  Padding(
+                  SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.homeContentHorizontalSpacing,
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
+                    child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: contentTopPadding),
@@ -206,7 +205,6 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: _contentBottomPadding),
                         ],
-                      ),
                     ),
                   ),
                 ],
