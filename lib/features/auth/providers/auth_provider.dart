@@ -62,6 +62,7 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final appStorage = await ref.read(appStorageProvider.future);
       await appStorage.clearLoginData();
+
       state = const AuthState.unauthenticated();
     } catch (_) {
       rethrow;

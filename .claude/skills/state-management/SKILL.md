@@ -50,6 +50,27 @@
 - `signIn`, `signOut`, `enterGuest` 같은 메서드는 스토리지 I/O 실패 시 state는 바꾸지 않고 예외를 다시 던져서 UI 레이어에서 에러를 처리할 수 있게 합니다. 스토리지 저장이 성공한 경우에만 state를 변경합니다.
 - `AuthNotifier._init()` 중 발생한 예외는 모두 잡아서 `unauthenticated` 상태로 전환해, 스플래시 무한 대기 같은 실행 불가 상황을 방지합니다.
 
+## 6. Feature Provider의 인증 의존성
+
+- **AuthNotifier의 책임 분리**: `AuthNotifier`는 로그인/로그아웃/게스트 진입과 같은 인증 상태 및 스토리지 동기화만 담당합니다. 특정 feature provider를 직접 초기화하거나 비우는 책임을 가지지 않습니다.
+- **Feature의 자율적 인증 의존성 선언**: 인증이 필요한 각 feature provider는 `ref.watch(authNotifierProvider)`를 통해 인증 상태를 구독하고, 비인증 상태에서는 자체적으로 빈 상태(Default/Empty State)를 반환해야 합니다. 인증 의존성은 AuthNotifier에 중앙 집중적으로 연결하지 않고, 각 feature provider가 자신의 인증 요구사항을 직접 선언합니다.
+- **로그아웃 전파 방식**: 로그아웃 시 `AuthNotifier`가 `unauthenticated` 상태로 변경되면, 이를 watch 중인 feature provider들이 자동으로 재평가되어 안전한 빈 데이터 상태로 전환됩니다.
+- **확장 원칙**: 새로운 feature를 추가할 때도 동일한 패턴을 적용합니다. 
+
+예시:
+
+```dart
+final someProvider = FutureProvider<SomeModel>((ref) async {
+  final authState = ref.watch(authNotifierProvider);
+
+  if (authState is! AuthStateAuthenticated) {
+    return SomeModel.empty();
+  }
+
+  // 실제 인증 사용자 기준 API 호출
+});
+```
+
 ## 체크리스트
 
 1. 상태 변경이 UI에서 직접 일어나지 않는가?

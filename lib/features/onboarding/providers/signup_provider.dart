@@ -4,8 +4,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/app_storage.dart';
 import '../../../core/storage/local_storage_service.dart';
-import '../../../core/storage/secure_storage_service.dart';
 import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
+import '../../auth/models/auth_state.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../constants/signup_screen_constants.dart';
 import '../constants/terms_agreement_screen_constants.dart';
 import '../models/terms_info_model.dart';
@@ -109,7 +110,14 @@ class SignupFormState with _$SignupFormState {
 @Riverpod(keepAlive: true)
 class SignupNotifier extends _$SignupNotifier {
   @override
-  SignupFormState build() => const SignupFormState();
+  SignupFormState build() {
+    ref.listen(authNotifierProvider, (previous, next) {
+      if (next is! AuthStateAuthenticated) {
+        state = const SignupFormState();
+      }
+    });
+    return const SignupFormState();
+  }
 
   /// TermsAgreementScreen에서 약관 동의 결과를 저장한다.
   void setTermAgreements(List<bool> agreements) {
@@ -200,9 +208,10 @@ class SignupNotifier extends _$SignupNotifier {
           );
 
       await localStorageService.saveNickname(state.nicknameInput);
-      final secureStorageService =
-          ref.read(secureStorageServiceProvider);
-      await secureStorageService.saveAccessToken(response.accessToken);
+      await ref.read(authNotifierProvider.notifier).signIn(
+            response.accessToken,
+            refreshToken: response.refreshToken,
+          );
 
       state = state.copyWith(
         submitState: const AsyncValue.data(null),
