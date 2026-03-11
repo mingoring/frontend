@@ -154,7 +154,9 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
                   ),
                   error: (_, __) => const SizedBox.shrink(),
                   data: (_) => ListView.separated(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.paddingOf(context).bottom,
+                    ),
                     itemCount: items.length,
                     separatorBuilder: (_, __) =>
                         const SizedBox(height: _cardSpacing),
