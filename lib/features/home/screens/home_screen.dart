@@ -38,6 +38,7 @@ class HomeScreen extends ConsumerWidget {
   static const _mingoRightOffset = -20.0;
 
   static const _weekBadgeCount = 4;
+  static const _contentBottomPadding = 32.0;
 
   static List<DayOfWeekBadgeData> _buildWeekBadges({
     required DateTime today,
@@ -203,6 +204,7 @@ class HomeScreen extends ConsumerWidget {
                               }
                             },
                           ),
+                          const SizedBox(height: _contentBottomPadding),
                         ],
                       ),
                     ),

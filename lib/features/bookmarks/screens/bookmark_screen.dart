@@ -32,6 +32,7 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
   static const _searchToCountSpacing = 16.0;
   static const _countToListSpacing = 8.0;
   static const _cardSpacing = 7.0;
+  static const _listBottomPadding = 32.0;
 
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
@@ -155,7 +156,8 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
                   error: (_, __) => const SizedBox.shrink(),
                   data: (_) => ListView.separated(
                     padding: EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
+                      bottom: MediaQuery.paddingOf(context).bottom +
+                          _listBottomPadding,
                     ),
                     itemCount: items.length,
                     separatorBuilder: (_, __) =>
