@@ -8,6 +8,7 @@ import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/inputs/mingoring_dropdown_menu_small.dart';
+import '../../../core/widgets/toasts/mingoring_toast.dart';
 import '../../../core/widgets/inputs/mingoring_text_field_search.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../constants/bookmark_constants.dart';
@@ -168,8 +169,11 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
                             : BookmarkCardState.idle,
                         onTap: () =>
                             _toggleTts(item.bookmarkId, item.originalText),
-                        onWatchPressed: () =>
-                            _toggleTts(item.bookmarkId, item.originalText),
+                        onWatchPressed: () => MingoringToast.show(
+                          context,
+                          message:
+                              'learningCardId: ${item.learningCardId}, lessonId: ${item.lessonId} 클릭됨!',
+                        ),
                       );
                     },
                   ),
