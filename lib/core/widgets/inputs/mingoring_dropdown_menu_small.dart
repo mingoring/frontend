@@ -39,7 +39,7 @@ class MingoringDropdownMenuSmall extends StatefulWidget {
     required this.options,
     required this.onChanged,
     required this.value,
-  });
+  }) : assert(options.isNotEmpty, 'options must not be empty');
 
   /// 드롭다운 항목 목록
   final List<InputSelectionOption> options;
