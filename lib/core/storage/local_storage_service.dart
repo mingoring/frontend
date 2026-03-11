@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/storage_keys.dart';
+import '../logging/app_logger.dart';
 
 final localStorageServiceProvider =
     FutureProvider<LocalStorageService>((ref) async {
@@ -20,7 +21,8 @@ class LocalStorageService {
 
   /// 닉네임을 저장한다.
   Future<void> saveNickname(String nickname) async {
-    await _prefs.setString(StorageKeys.nickname, nickname);
+    final saved = await _prefs.setString(StorageKeys.nickname, nickname);
+    if (!saved) AppLogger.w('[LocalStorage] saveNickname 저장 실패 (key: ${StorageKeys.nickname})');
   }
 
   /// 닉네임을 조회한다.
@@ -28,7 +30,8 @@ class LocalStorageService {
 
   /// 세션 힌트를 저장한다.
   Future<void> saveSessionHint(String hint) async {
-    await _prefs.setString(StorageKeys.sessionHint, hint);
+    final saved = await _prefs.setString(StorageKeys.sessionHint, hint);
+    if (!saved) AppLogger.w('[LocalStorage] saveSessionHint 저장 실패 (key: ${StorageKeys.sessionHint})');
   }
 
   /// 세션 힌트를 조회한다.
@@ -47,7 +50,8 @@ class LocalStorageService {
 
   /// 온보딩 완료 여부를 저장한다.
   Future<void> saveOnboardingFlag() async {
-    await _prefs.setBool(StorageKeys.onboardingFlag, true);
+    final saved = await _prefs.setBool(StorageKeys.onboardingFlag, true);
+    if (!saved) AppLogger.w('[LocalStorage] saveOnboardingFlag 저장 실패 (key: ${StorageKeys.onboardingFlag})');
   }
 
   /// 온보딩 완료 여부를 조회한다.
@@ -55,7 +59,8 @@ class LocalStorageService {
 
   /// 북마크 정렬 기준을 저장한다.
   Future<void> saveBookmarkSort(String apiValue) async {
-    await _prefs.setString(StorageKeys.bookmarkSort, apiValue);
+    final saved = await _prefs.setString(StorageKeys.bookmarkSort, apiValue);
+    if (!saved) AppLogger.w('[LocalStorage] saveBookmarkSort 저장 실패 (key: ${StorageKeys.bookmarkSort})');
   }
 
   /// 북마크 정렬 기준을 조회한다. 저장값이 없으면 null을 반환한다.
