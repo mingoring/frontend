@@ -27,4 +27,5 @@ abstract final class ApiConstants {
 
   // ── Bookmarks ─────────────────────────────────────
   static const String bookmarkStatsPath = '/api/v1/bookmarks/stats';
+  static const String bookmarkListPath = '/api/v1/bookmarks';
 }

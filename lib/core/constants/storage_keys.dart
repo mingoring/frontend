@@ -14,4 +14,7 @@ abstract final class StorageKeys {
 
   // Onboarding
   static const String onboardingFlag = 'onboarding_flag';
+
+  // Bookmark
+  static const String bookmarkSort = 'bookmark_sort';
 }

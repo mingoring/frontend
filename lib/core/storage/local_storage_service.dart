@@ -53,6 +53,14 @@ class LocalStorageService {
   /// 온보딩 완료 여부를 조회한다.
   bool isOnboardingFlagSet() => _prefs.getBool(StorageKeys.onboardingFlag) ?? false;
 
+  /// 북마크 정렬 기준을 저장한다.
+  Future<void> saveBookmarkSort(String apiValue) async {
+    await _prefs.setString(StorageKeys.bookmarkSort, apiValue);
+  }
+
+  /// 북마크 정렬 기준을 조회한다. 저장값이 없으면 null을 반환한다.
+  String? getBookmarkSort() => _prefs.getString(StorageKeys.bookmarkSort);
+
   /// 로컬 스토리지 데이터를 모두 정리한다.
   Future<void> clearSessionAll() async {
     await clearLoginData();
