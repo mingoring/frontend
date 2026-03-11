@@ -15,7 +15,7 @@ final bookmarkStatsProvider = FutureProvider<BookmarkStatsModel>((ref) async {
 
   final repository = ref.watch(bookmarkRepositoryProvider);
   try {
-    return repository.fetchStats();
+    return await repository.fetchStats();
   } on UnauthorizedException {
     return const BookmarkStatsModel.empty();
   }
