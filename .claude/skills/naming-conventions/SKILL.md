@@ -7,9 +7,9 @@
 ## 컨벤션
 
 - **File Names**: `snake_case` 원칙. 파일의 역할을 명확히 접미사로 명시하세요. (예: `_screen.dart`, `_provider.dart`)
-- **Class Names**: `PascalCase` 원칙. 파일명과 클래스명은 1:1로 대응해야 합니다.
+- **Class Names**: `PascalCase` 원칙.
   - Screen: `HomeScreen`
-  - Provider: `AuthNotifier`
+  - Provider: `AuthNotifier`, `SignupNotifier`
   - Repository: `AuthRepository`
   - Model: `LessonModel` (앱 내부용)
   - DTO: `LoginRequestDto` (서버 통신용)
@@ -18,7 +18,6 @@
   - 데이터 로딩: `fetch~` (네트워크), `get~` (단순 조회)
   - 상태 변경 (Provider 내): 동사형 (예: `updateProfile`)
   - UI 이벤트 핸들러: `on~` 접두사 (예: `onLoginButtonPressed`)
-
 
 ## 체크리스트
 

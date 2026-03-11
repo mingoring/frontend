@@ -8,7 +8,7 @@ import 'interceptors/auth_interceptor.dart';
 
 part 'dio_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Dio dioClient(Ref ref) {
   final dio = Dio(
     BaseOptions(
@@ -20,7 +20,7 @@ Dio dioClient(Ref ref) {
   );
 
   dio.interceptors.add(
-    AuthInterceptor(ref.watch(secureStorageServiceProvider)),
+    AuthInterceptor(ref.watch(secureStorageServiceProvider), ref),
   );
 
   return dio;
