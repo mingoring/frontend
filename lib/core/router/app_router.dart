@@ -5,9 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/models/auth_state.dart';
 import '../../features/auth/providers/auth_provider.dart';
-import '../../features/bookmarks/providers/bookmark_stats_provider.dart';
-import '../../features/bookmarks/screens/bookmark_empty_screen.dart';
-import '../../features/bookmarks/screens/bookmark_screen.dart';
+import '../../features/bookmarks/screens/bookmark_entry_screen.dart';
 import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
@@ -79,7 +77,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: RouteNames.bookmarks,
-        builder: (_, __) => const _BookmarkEntryScreen(),
+        builder: (_, __) => const BookmarkEntryScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -142,14 +140,3 @@ bool _isProtectedRoute(String location) =>
     location == RouteNames.myPage ||
     location == RouteNames.calendar ||
     location == RouteNames.bookmarks;
-
-/// 북마크 카운트에 따라 [BookmarkEmptyScreen] 또는 [BookmarkScreen]으로 분기한다.
-class _BookmarkEntryScreen extends ConsumerWidget {
-  const _BookmarkEntryScreen();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(bookmarkStatsProvider).valueOrNull?.count ?? 0;
-    return count == 0 ? const BookmarkEmptyScreen() : const BookmarkScreen();
-  }
-}

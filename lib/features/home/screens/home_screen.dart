@@ -105,6 +105,7 @@ class HomeScreen extends ConsumerWidget {
       }
     });
 
+
     final localStorage = ref.watch(localStorageServiceProvider).valueOrNull;
     final memoryCacheService = ref.watch(memoryCacheServiceProvider);
     final nickname = localStorage?.getNickname() ?? '-';
@@ -186,8 +187,18 @@ class HomeScreen extends ConsumerWidget {
                           HomeActionCard.bookmarks(
                             bookmarkCount: bookmarkCount,
                             onTap: () async {
-                              await context.push(RouteNames.bookmarks);
-                              if (context.mounted) {
+                              final result = await context.push<Object?>(
+                                RouteNames.bookmarks,
+                              );
+                              if (!context.mounted) return;
+                              if (result is Exception) {
+                                ErrorAlertDialog.show(
+                                  context,
+                                  errorMessage: result is AppException
+                                      ? result.message
+                                      : 'Failed to load bookmark information.',
+                                );
+                              } else {
                                 ref.invalidate(bookmarkStatsProvider);
                               }
                             },
