@@ -18,12 +18,13 @@
 - **ViewModel**: `providers/` 내의 Notifier 또는 AsyncNotifier가 ViewModel 역할을 합니다. UI의 조건 판단 로직은 상태 클래스 내부의 Getter(Computed State)로 정의하여 제공하세요.
 - **AsyncValue 활용**: API 통신, 비동기 유효성 검사, 제출 상태 관리에 `AsyncValue`를 사용합니다. 위젯 트리 크래시 방지를 위해 값을 읽을 때는 `.value` 대신 .valueOrNull을 우선 사용하세요.
 - **비동기 가드**: 외부 비동기 호출 결과는 `AsyncValue.guard`를 활용해 일관되게 관리합니다. 특히 Notifier의 초기화 로직(_init) 등에서 발생하는 예외는 반드시 캐치하여 안전한 상태(Default State)로 Fallback 시켜야 합니다.
+- **Loading State UX**: 검색이나 필터 변경으로 인해 AsyncValue가 새로고침(loading)될 때, UI 레이어에서 이전 데이터를 캐싱하는 로컬 상태를 두거나, ref.listen의 data 콜백 내에서만 상태를 업데이트하여 데이터의 연속성을 유지하세요.
 
 ## 3. UI와 Provider 통신
 
 - **watch**: Provider의 상태를 구독하고, 상태가 변경될 때 UI가 자동으로 rebuild하는 상태 구독에 사용합니다. (예: 입력값, 로딩 여부, 활성화 상태)
 - **listen**: 특정 상태 변화에 반응하는 side effect 처리에 사용합니다. (예: 팝업, 토스트, 네비게이션, 로그 기록)
-
+- **State Preservation**: watch 중인 AsyncValue가 로딩 상태로 전환될 때 valueOrNull이 null을 반환하여 UI가 초기화되는 문제가 있다면, ref.listen을 활용하여 성공적인 데이터(data)가 들어온 시점에만 로컬 변수(StatefulWidget의 변수 등)를 갱신하는 방식을 권장합니다.
 
 ## 4. API 통신 및 인증 관리 (Dio & Interceptor)
 

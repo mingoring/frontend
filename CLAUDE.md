@@ -32,6 +32,7 @@
 - Riverpod 상태관리, 인증/인가 처리: skills/state-management/SKILL.md
 - 에러 처리: skills/error-handling/SKILL.md
 - 네이밍 컨벤션: skills/naming-conventions/SKILL.md
+- 컴포넌트 구현: skills/flutter-component-builder/SKILL.md
 
 
 ## 4. 로컬 저장소 활용
