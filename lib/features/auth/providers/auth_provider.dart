@@ -39,8 +39,10 @@ class AuthNotifier extends _$AuthNotifier {
     try {
       final secureStorage = ref.read(secureStorageServiceProvider);
       await secureStorage.saveAccessToken(accessToken);
-      if (refreshToken != null) {
+      if (refreshToken != null && refreshToken.isNotEmpty) {
         await secureStorage.saveRefreshToken(refreshToken);
+      } else {
+        await secureStorage.clearRefreshToken();
       }
       state = AuthState.authenticated(accessToken: accessToken);
     } catch (_) {

@@ -56,6 +56,14 @@ class SecureStorageService {
     }
   }
 
+  Future<void> clearRefreshToken() async {
+    try {
+      await _storage.delete(key: StorageKeys.refreshToken);
+    } catch (e, st) {
+      AppLogger.e('[SecureStorage] clearRefreshToken 삭제 실패 (key: ${StorageKeys.refreshToken})', error: e, stackTrace: st);
+    }
+  }
+
   Future<void> clearTokens() async {
     try {
       await _storage.delete(key: StorageKeys.accessToken);
