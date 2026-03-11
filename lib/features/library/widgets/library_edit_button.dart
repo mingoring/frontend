@@ -18,13 +18,19 @@ class LibraryEditButton extends StatelessWidget {
 
   static const double _iconSize = 10.0;
   static const double _gap = 7.0;
+  static const EdgeInsets _hitAreaPadding = EdgeInsets.symmetric(
+    horizontal: 12.0,
+    vertical: 10.0,
+  );
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Row(
+      child: Padding(
+        padding: _hitAreaPadding,
+        child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
@@ -45,6 +51,7 @@ class LibraryEditButton extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
