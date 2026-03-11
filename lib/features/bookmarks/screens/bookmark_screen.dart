@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +14,7 @@ import '../constants/bookmark_constants.dart';
 import '../models/bookmark_item_model.dart';
 import '../providers/bookmark_list_provider.dart';
 import '../providers/bookmark_sort_provider.dart';
+import '../providers/bookmark_tts_provider.dart';
 import '../widgets/bookmark_card.dart';
 
 class BookmarkScreen extends ConsumerStatefulWidget {
@@ -33,13 +32,9 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
   static const _countToListSpacing = 8.0;
   static const _cardSpacing = 7.0;
 
-  static const _playingDuration = Duration(seconds: 5);
-
   late final TextEditingController _searchController;
   late final FocusNode _searchFocusNode;
   String _keyword = '';
-  int? _playingBookmarkId;
-  Timer? _playingTimer;
   int _bookmarkCount = 0;
 
   @override
@@ -51,7 +46,6 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
 
   @override
   void dispose() {
-    _playingTimer?.cancel();
     _searchController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
@@ -76,15 +70,8 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
     }
   }
 
-  void _togglePlayingBookmarkId(int bookmarkId) {
-    _playingTimer?.cancel();
-    final isSame = _playingBookmarkId == bookmarkId;
-    setState(() => _playingBookmarkId = isSame ? null : bookmarkId);
-    if (!isSame) {
-      _playingTimer = Timer(_playingDuration, () {
-        if (mounted) setState(() => _playingBookmarkId = null);
-      });
-    }
+  void _toggleTts(int bookmarkId, String text) {
+    ref.read(bookmarkTtsProvider.notifier).toggle(bookmarkId, text);
   }
 
   @override
@@ -119,6 +106,7 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
       },
     );
 
+    final playingBookmarkId = ref.watch(bookmarkTtsProvider);
     final listAsync = ref.watch(bookmarkListProvider(params));
     final items = listAsync.valueOrNull?.items ?? [];
     final displayCount = listAsync.valueOrNull?.totalItems ?? _bookmarkCount;
@@ -171,8 +159,7 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
                         const SizedBox(height: _cardSpacing),
                     itemBuilder: (_, index) {
                       final item = items[index];
-                      final isPlaying =
-                          _playingBookmarkId == item.bookmarkId;
+                      final isPlaying = playingBookmarkId == item.bookmarkId;
                       return BookmarkCard(
                         originalText: item.originalText,
                         translatedText: item.translatedText,
@@ -180,9 +167,9 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
                             ? BookmarkCardState.playing
                             : BookmarkCardState.idle,
                         onTap: () =>
-                            _togglePlayingBookmarkId(item.bookmarkId),
+                            _toggleTts(item.bookmarkId, item.originalText),
                         onWatchPressed: () =>
-                            _togglePlayingBookmarkId(item.bookmarkId),
+                            _toggleTts(item.bookmarkId, item.originalText),
                       );
                     },
                   ),
