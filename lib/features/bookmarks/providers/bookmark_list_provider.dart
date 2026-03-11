@@ -30,7 +30,7 @@ class BookmarkListParams {
 }
 
 final bookmarkListProvider =
-    FutureProvider.family<BookmarkListModel, BookmarkListParams>(
+    FutureProvider.autoDispose.family<BookmarkListModel, BookmarkListParams>(
         (ref, params) async {
   final authState = ref.watch(authNotifierProvider);
 

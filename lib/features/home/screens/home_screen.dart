@@ -185,7 +185,12 @@ class HomeScreen extends ConsumerWidget {
                           const SizedBox(height: _cardSpacing),
                           HomeActionCard.bookmarks(
                             bookmarkCount: bookmarkCount,
-                            onTap: () => context.push(RouteNames.bookmarks),
+                            onTap: () async {
+                              await context.push(RouteNames.bookmarks);
+                              if (context.mounted) {
+                                ref.invalidate(bookmarkStatsProvider);
+                              }
+                            },
                           ),
                         ],
                       ),
