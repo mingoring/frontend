@@ -20,6 +20,8 @@ class LessonItemModel {
     required this.progressRatio,
     required this.videoTime,
     required this.addedAt,
+    required this.originalText,
+    required this.translatedText,
   });
 
   final int lessonId;
@@ -29,6 +31,8 @@ class LessonItemModel {
   final double progressRatio;
   final String videoTime;
   final DateTime addedAt;
+  final String originalText;
+  final String translatedText;
 }
 
 class LessonListModel {

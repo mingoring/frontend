@@ -15,6 +15,8 @@ class LessonItemDto with _$LessonItemDto {
     required double progressRatio,
     required String videoTime,
     required String addedAt,
+    required String originalText,
+    required String translatedText,
   }) = _LessonItemDto;
 
   factory LessonItemDto.fromJson(Map<String, dynamic> json) =>
@@ -55,6 +57,8 @@ extension LessonItemDtoX on LessonItemDto {
         progressRatio: progressRatio,
         videoTime: videoTime,
         addedAt: DateTime.parse(addedAt),
+        originalText: originalText,
+        translatedText: translatedText,
       );
 }
 

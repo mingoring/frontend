@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/dialogs/video_uploading_alert_dialog.dart';
+import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/toasts/mingoring_toast.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
@@ -155,6 +157,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 videoTime: item.videoTime,
                 thumbnailUrl: item.thumbnailUrl,
                 progressRatio: item.progressRatio,
+                onTap: switch (item.status) {
+                  LessonStatus.uploading =>
+                    () => VideoUploadingAlertDialog.show(context),
+                  LessonStatus.inProgress ||
+                  LessonStatus.completed =>
+                    () => VideoWatchAlertDialog.show(
+                          context,
+                          videoTitle: item.title,
+                          originalText: item.originalText,
+                          translatedText: item.translatedText,
+                        ),
+                },
               ),
             )
             .toList(),

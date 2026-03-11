@@ -179,8 +179,8 @@ class HomeScreen extends ConsumerWidget {
                             onTap: () => VideoWatchAlertDialog.show(
                               context,
                               videoTitle: HomeConstants.mockVideoTitle,
-                              learningTextKo: HomeConstants.mockLearningTextKo,
-                              learningTextEn: HomeConstants.mockLearningTextEn,
+                              originalText: HomeConstants.mockLearningTextKo,
+                              translatedText: HomeConstants.mockLearningTextEn,
                             ),
                           ),
                           const SizedBox(height: _cardSpacing),

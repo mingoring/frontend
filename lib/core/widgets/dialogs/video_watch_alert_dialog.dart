@@ -11,22 +11,22 @@ import 'mingoring_alert_dialog.dart';
 /// VideoWatchAlertDialog.show(
 ///   context,
 ///   videoTitle: '...',
-///   learningTextKo: '...',
-///   learningTextEn: '...',
+///   originalText: '...',
+///   translatedText: '...',
 /// );
 /// ```
 class VideoWatchAlertDialog extends StatelessWidget {
   const VideoWatchAlertDialog({
     super.key,
     required this.videoTitle,
-    required this.learningTextKo,
-    required this.learningTextEn,
+    required this.originalText,
+    required this.translatedText,
     this.onWatchPressed,
   });
 
   final String videoTitle;
-  final String learningTextKo;
-  final String learningTextEn;
+  final String originalText;
+  final String translatedText;
   final VoidCallback? onWatchPressed;
 
   static const double _textToDividerGap = 15.0;
@@ -38,16 +38,16 @@ class VideoWatchAlertDialog extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     required String videoTitle,
-    required String learningTextKo,
-    required String learningTextEn,
+    required String originalText,
+    required String translatedText,
     VoidCallback? onWatchPressed,
   }) {
     return MingoringAlertDialog.show(
       context,
       builder: (_) => VideoWatchAlertDialog(
         videoTitle: videoTitle,
-        learningTextKo: learningTextKo,
-        learningTextEn: learningTextEn,
+        originalText: originalText,
+        translatedText: translatedText,
         onWatchPressed: onWatchPressed,
       ),
     );
@@ -78,7 +78,7 @@ class VideoWatchAlertDialog extends StatelessWidget {
           ),
           const SizedBox(height: _dividerToLearningTextGap),
           Text(
-            learningTextKo,
+            originalText,
             style: AppTextStyles.body8Sb14.copyWith(
               color: AppColors.gray600,
               height: 1.2,
@@ -86,7 +86,7 @@ class VideoWatchAlertDialog extends StatelessWidget {
           ),
           const SizedBox(height: _learningTextGap),
           Text(
-            learningTextEn,
+            translatedText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.body8Sb14.copyWith(
