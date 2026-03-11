@@ -57,8 +57,9 @@ abstract final class AppIconAssets {
   static const String userPink = '$_basePath/ic_user_pink.svg';
 
   // Button Icon
-  static const String btnSoundOff = '$_basePath/btn_sound_off.svg';
-  static const String btnSoundOn = '$_basePath/btn_sound_on.svg';
+  static const String btnSoundGray600 = '$_basePath/btn_sound_gray600.svg';
+  static const String btnSoundGray800 = '$_basePath/btn_sound_gray800.svg';
+  static const String btnSoundPink600 = '$_basePath/btn_sound_pink600.svg';
   static const String btnPlus1 = '$_basePath/btn_plus1.svg';
   static const String btnPlus2 = '$_basePath/btn_plus2.svg';
   static const String btnBookmarkGray = '$_basePath/btn_bookmark_gray.svg';
