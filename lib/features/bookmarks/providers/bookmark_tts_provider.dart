@@ -3,12 +3,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 class BookmarkTtsNotifier extends Notifier<int?> {
   final FlutterTts _tts = FlutterTts();
+  late final Future<void> _initializeFuture = _initialize();
   int _gen = 0;
   bool _speechStarted = false;
 
   @override
   int? build() {
-    _initialize();
     ref.onDispose(() => _tts.stop());
     return null;
   }
@@ -33,6 +33,7 @@ class BookmarkTtsNotifier extends Notifier<int?> {
   }
 
   Future<void> play(int bookmarkId, String text) async {
+    await _initializeFuture;
     final myGen = ++_gen;
     // _speechStarted를 동기적으로 초기화 — await 이전에 반드시 설정
     // stop()의 deferred completion이 나중에 발화해도 speechStarted=false로 차단됨
