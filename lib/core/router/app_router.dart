@@ -30,16 +30,17 @@ GoRouter appRouter(Ref ref) {
     initialLocation: RouteNames.splash,
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider);
-      final onboardingFlag = ref.read(onboardingNotifierProvider);
+      final onboardingAsync = ref.read(onboardingNotifierProvider);
       final location = state.matchedLocation;
 
-      if (authState is AuthStateLoading) {
+      if (authState is AuthStateLoading || onboardingAsync.isLoading) {
         return location == RouteNames.splash ? null : RouteNames.splash;
       }
 
       // 인증 없을 때 온보딩 완료 여부에 따른 라우팅 결정
-      final unauthDestination =
-          onboardingFlag ? RouteNames.login : RouteNames.onboarding;
+      final unauthDestination = (onboardingAsync.valueOrNull ?? false)
+          ? RouteNames.login
+          : RouteNames.onboarding;
 
       return switch (authState) {
         AuthStateLoading() => null,
@@ -122,8 +123,12 @@ GoRouter appRouter(Ref ref) {
     ],
   );
 
-  // AuthState 변경 감지 → 라우터 갱신
+  // AuthState / OnboardingState 변경 감지 → 라우터 갱신
   ref.listen<AuthState>(authNotifierProvider, (_, __) => router.refresh());
+  ref.listen<AsyncValue<bool>>(
+    onboardingNotifierProvider,
+    (_, __) => router.refresh(),
+  );
 
   return router;
 }

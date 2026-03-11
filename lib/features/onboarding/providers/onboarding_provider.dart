@@ -9,22 +9,14 @@ part 'onboarding_provider.g.dart';
 @riverpod
 class OnboardingNotifier extends _$OnboardingNotifier {
   @override
-  bool build() {
-    Future.microtask(_init);
-    return false;
-  }
-
-  Future<void> _init() async {
-    try {
-      final localStorage = await ref.read(localStorageServiceProvider.future);
-      state = localStorage.isOnboardingFlagSet();
-    } catch (_) {
-      state = false;
-    }
+  FutureOr<bool> build() async {
+    final localStorage = await ref.read(localStorageServiceProvider.future);
+    return localStorage.isOnboardingFlagSet();
   }
 
   Future<void> completeOnboarding() async {
     final localStorage = await ref.read(localStorageServiceProvider.future);
     await localStorage.saveOnboardingFlag();
+    state = const AsyncData(true);
   }
 }
