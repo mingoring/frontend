@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/auth/models/auth_state.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/bookmarks/screens/bookmark_screen.dart';
+import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
 import '../../features/library/screens/library_screen.dart';
@@ -29,12 +30,23 @@ GoRouter appRouter(Ref ref) {
     initialLocation: RouteNames.splash,
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider);
+      final onboardingFlag = ref.read(onboardingNotifierProvider);
       final location = state.matchedLocation;
 
+      if (authState is AuthStateLoading) {
+        return location == RouteNames.splash ? null : RouteNames.splash;
+      }
+
+      // 인증 없을 때 온보딩 완료 여부에 따른 라우팅 결정
+      final unauthDestination =
+          onboardingFlag ? RouteNames.login : RouteNames.onboarding;
+
       return switch (authState) {
-        AuthStateLoading() => location == RouteNames.splash ? null : RouteNames.splash,
-        AuthStateAuthenticated() => _isAuthRoute(location) ? RouteNames.home : null,
-        AuthStateUnauthenticated() => _isProtectedRoute(location) ? RouteNames.login : null,
+        AuthStateLoading() => null,
+        AuthStateAuthenticated() =>
+          _isAuthRoute(location) ? RouteNames.home : null,
+        AuthStateUnauthenticated() =>
+          _isProtectedRoute(location) ? unauthDestination : null,
         AuthStateGuest() => _isAuthRoute(location) ? RouteNames.home : null,
       };
     },

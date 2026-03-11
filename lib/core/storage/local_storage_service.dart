@@ -45,6 +45,14 @@ class LocalStorageService {
     await saveSessionHint(StorageKeys.sessionHintGuest);
   }
 
+  /// 온보딩 완료 여부를 저장한다.
+  Future<void> saveOnboardingFlag() async {
+    await _prefs.setBool(StorageKeys.onboardingFlag, true);
+  }
+
+  /// 온보딩 완료 여부를 조회한다.
+  bool isOnboardingFlagSet() => _prefs.getBool(StorageKeys.onboardingFlag) ?? false;
+
   /// 로컬 스토리지 데이터를 모두 정리한다.
   Future<void> clearSessionAll() async {
     await clearLoginData();

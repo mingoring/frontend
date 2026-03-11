@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../constants/onboarding_constants.dart';
+import '../providers/onboarding_provider.dart';
 import '../widgets/onboarding_center_content.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/buttons/mingoring_text_button.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   late final PageController _pageController;
   int _currentIndex = 0;
 
@@ -31,7 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  void _onNextPressed() {
+  Future<void> _onNextPressed() async {
     if (_currentIndex < onboardingPages.length - 1) {
       _pageController.animateToPage(
         _currentIndex + 1,
@@ -39,7 +41,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      context.go(RouteNames.login);
+      await ref.read(onboardingNotifierProvider.notifier).completeOnboarding();
+      if (mounted) context.go(RouteNames.login);
     }
   }
 

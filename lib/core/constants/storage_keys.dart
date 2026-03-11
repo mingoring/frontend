@@ -11,4 +11,7 @@ abstract final class StorageKeys {
 
   // Session hint values
   static const String sessionHintGuest = 'guest';
+
+  // Onboarding
+  static const String onboardingFlag = 'onboarding_flag';
 }
