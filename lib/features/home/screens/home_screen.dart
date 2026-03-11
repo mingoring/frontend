@@ -18,6 +18,7 @@ import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/router/route_names.dart';
+import '../../bookmarks/providers/bookmark_stats_provider.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
 import '../providers/calendar_provider.dart';
@@ -118,6 +119,8 @@ class HomeScreen extends ConsumerWidget {
       cacheService: memoryCacheService,
       now: today,
     );
+    final bookmarkCount =
+        ref.watch(bookmarkStatsProvider).valueOrNull?.count ?? 0;
 
     return Scaffold(
       body: GradientBackground(
@@ -181,7 +184,8 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: _cardSpacing),
                           HomeActionCard.bookmarks(
-                            bookmarkCount: HomeConstants.mockBookmarkCount,
+                            bookmarkCount: bookmarkCount,
+                            onTap: () => context.push(RouteNames.bookmarks),
                           ),
                         ],
                       ),

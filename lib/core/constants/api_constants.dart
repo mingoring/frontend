@@ -24,4 +24,7 @@ abstract final class ApiConstants {
 
   // ── Calendar ──────────────────────────────────────
   static const String calendarPath = '/api/v1/calendar';
+
+  // ── Bookmarks ─────────────────────────────────────
+  static const String bookmarkStatsPath = '/api/v1/bookmarks/stats';
 }
