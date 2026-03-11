@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_icon_assets.dart';
-import '../../../core/theme/app_colors.dart';
 
 /// 라이브러리 화면 우측 하단 영상 추가 Floating 버튼
 ///
@@ -24,15 +23,8 @@ class LibraryAddVideoButton extends StatelessWidget {
       child: Container(
         width: _size,
         height: _size,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.gray200.withValues(alpha: 0.4),
-              blurRadius: 1,
-              offset: const Offset(0, 1),
-            ),
-          ],
         ),
         child: SvgPicture.asset(
           AppIconAssets.btnPlus2,
