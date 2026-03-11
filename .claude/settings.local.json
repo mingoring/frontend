@@ -7,7 +7,8 @@
       "Bash(dart run:*)",
       "Bash(flutter analyze:*)",
       "mcp__figma-remote-mcp__get_design_context",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(find /Users/Joy/Documents/source_files/project/mingoring/frontend/flutter/mingoring/lib/features/home -type f -name \"*.dart\" -exec wc -l {} \\\\; | sort -rn)"
     ]
   }
 }

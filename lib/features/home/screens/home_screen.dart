@@ -18,6 +18,7 @@ import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/layouts/gradient_background.dart';
 import '../../../core/router/route_names.dart';
+import '../../bookmarks/providers/bookmark_stats_provider.dart';
 import '../constants/home_greeting_text_constants.dart';
 import '../constants/home_constants.dart';
 import '../providers/calendar_provider.dart';
@@ -37,6 +38,7 @@ class HomeScreen extends ConsumerWidget {
   static const _mingoRightOffset = -20.0;
 
   static const _weekBadgeCount = 4;
+  static const _contentBottomPadding = 32.0;
 
   static List<DayOfWeekBadgeData> _buildWeekBadges({
     required DateTime today,
@@ -104,6 +106,7 @@ class HomeScreen extends ConsumerWidget {
       }
     });
 
+
     final localStorage = ref.watch(localStorageServiceProvider).valueOrNull;
     final memoryCacheService = ref.watch(memoryCacheServiceProvider);
     final nickname = localStorage?.getNickname() ?? '-';
@@ -118,6 +121,8 @@ class HomeScreen extends ConsumerWidget {
       cacheService: memoryCacheService,
       now: today,
     );
+    final bookmarkCount =
+        ref.watch(bookmarkStatsProvider).valueOrNull?.count ?? 0;
 
     return Scaffold(
       body: GradientBackground(
@@ -140,12 +145,11 @@ class HomeScreen extends ConsumerWidget {
                       height: _mingoHeight,
                     ),
                   ),
-                  Padding(
+                  SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.homeContentHorizontalSpacing,
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
+                    child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: contentTopPadding),
@@ -181,10 +185,26 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: _cardSpacing),
                           HomeActionCard.bookmarks(
-                            bookmarkCount: HomeConstants.mockBookmarkCount,
+                            bookmarkCount: bookmarkCount,
+                            onTap: () async {
+                              final result = await context.push<Object?>(
+                                RouteNames.bookmarks,
+                              );
+                              if (!context.mounted) return;
+                              if (result is Exception) {
+                                ErrorAlertDialog.show(
+                                  context,
+                                  errorMessage: result is AppException
+                                      ? result.message
+                                      : 'Failed to load bookmark information.',
+                                );
+                              } else {
+                                ref.invalidate(bookmarkStatsProvider);
+                              }
+                            },
                           ),
+                          const SizedBox(height: _contentBottomPadding),
                         ],
-                      ),
                     ),
                   ),
                 ],

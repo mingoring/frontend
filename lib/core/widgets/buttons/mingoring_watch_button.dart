@@ -19,7 +19,7 @@ class MingoringWatchButton extends StatelessWidget {
     this.onLongPress, // 길게 누르기 콜백
     this.onHover, // 호버 콜백
     this.onFocusChange, // 포커스 변경 콜백
-    this.size = MingoringWatchButtonSize.big, // 버튼 사이즈 (크기 및 텍스트 유무 차이)
+    this.size = MingoringWatchButtonSize.big, // 버튼 사이즈
     this.style, // 커스텀 버튼 스타일
     this.focusNode, // 포커스 노드
     this.autofocus = false, // 자동 포커스 여부
@@ -27,18 +27,20 @@ class MingoringWatchButton extends StatelessWidget {
     this.statesController, // 상태 컨트롤러
   });
 
-  final VoidCallback? onPressed; // 클릭 콜백
-  final VoidCallback? onLongPress; // 길게 누르기 콜백
-  final ValueChanged<bool>? onHover; // 호버 콜백
-  final ValueChanged<bool>? onFocusChange; // 포커스 변경 콜백
-  final MingoringWatchButtonSize size; // 버튼 사이즈
-  final ButtonStyle? style; // 커스텀 버튼 스타일
-  final FocusNode? focusNode; // 포커스 노드
-  final bool autofocus; // 자동 포커스 여부
-  final Clip? clipBehavior; // 클립 동작 방식
-  final WidgetStatesController? statesController; // 상태 컨트롤러
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
+  final ValueChanged<bool>? onHover;
+  final ValueChanged<bool>? onFocusChange;
+  final MingoringWatchButtonSize size;
+  final ButtonStyle? style;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final Clip? clipBehavior;
+  final WidgetStatesController? statesController;
 
   bool get _isEnabled => onPressed != null;
+
+  static const double _smallPlayIconOffsetX = 1.0;
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +77,17 @@ class MingoringWatchButton extends StatelessWidget {
     );
   }
 
+  // small 버튼은 단일 디자인을 제공합니다.
+  // enabled/disabled 시각 구분 없이 항상 동일한 외형을 유지하며,
+  // hit area 확장은 호출부(카드 등)에서 담당합니다.
   Widget _buildSmall() {
     final defaultStyle = TextButton.styleFrom(
       foregroundColor: AppColors.pink50,
-      disabledForegroundColor: AppColors.pink400,
       backgroundColor: AppColors.pink600,
-      disabledBackgroundColor: AppColors.pink500,
-      minimumSize: const Size(50, 50),
-      fixedSize: const Size(50, 50),
+      disabledForegroundColor: AppColors.pink50,
+      disabledBackgroundColor: AppColors.pink600,
+      minimumSize: const Size(34, 34),
+      fixedSize: const Size(34, 34),
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -92,7 +97,14 @@ class MingoringWatchButton extends StatelessWidget {
 
     return _buildTextButton(
       defaultStyle: defaultStyle,
-      child: _buildPlayIcon(width: 13, height: 17),
+      child: Transform.translate(
+        offset: const Offset(_smallPlayIconOffsetX, 0),
+        child: _buildPlayIcon(
+          width: 14.96,
+          height: 14.96,
+          color: AppColors.pink50,
+        ),
+      ),
     );
   }
 
@@ -114,13 +126,17 @@ class MingoringWatchButton extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayIcon({required double width, required double height}) {
+  Widget _buildPlayIcon({
+    required double width,
+    required double height,
+    Color? color,
+  }) {
     return SvgPicture.asset(
       AppIconAssets.watchPlay,
       width: width,
       height: height,
       colorFilter: ColorFilter.mode(
-        _isEnabled ? AppColors.pink50 : AppColors.pink400,
+        color ?? (_isEnabled ? AppColors.pink50 : AppColors.pink400),
         BlendMode.srcIn,
       ),
     );

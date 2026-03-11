@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/router/route_names.dart';
+import '../../../features/auth/models/auth_state.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../constants/splash_constants.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _mingoScale;
   late final Animation<double> _ringReveal;
   late final Animation<double> _dotPop;
+
+  ProviderSubscription<AuthState>? _authSubscription;
 
   @override
   void initState() {
@@ -71,16 +76,38 @@ class _SplashScreenState extends State<SplashScreen>
     await _controller.forward();
     if (!mounted) return;
     await Future.delayed(SplashConstants.holdDuration);
-    _navigateToOnboarding();
+    _navigateByAuthState();
   }
 
-  void _navigateToOnboarding() {
-    if (!mounted) return;
-    context.go(RouteNames.onboarding);
+  void _navigateByAuthState() {
+    final authState = ref.read(authNotifierProvider);
+    if (authState is! AuthStateLoading) {
+      _doNavigate(authState);
+      return;
+    }
+    _authSubscription = ref.listenManual<AuthState>(
+      authNotifierProvider,
+      (_, next) {
+        if (next is! AuthStateLoading) {
+          _authSubscription?.close();
+          _authSubscription = null;
+          if (mounted) _doNavigate(next);
+        }
+      },
+    );
+  }
+
+  void _doNavigate(AuthState state) {
+    final destination = switch (state) {
+      AuthStateAuthenticated() || AuthStateGuest() => RouteNames.home,
+      _ => RouteNames.onboarding,
+    };
+    context.go(destination);
   }
 
   @override
   void dispose() {
+    _authSubscription?.close();
     _controller.dispose();
     super.dispose();
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../onboarding/constants/signup_screen_constants.dart';
 import '../../onboarding/providers/signup_provider.dart';
 
@@ -15,6 +16,17 @@ class MyPageScreen extends ConsumerWidget {
     'Push Notifications',
     'Marketing',
   ];
+
+  Future<void> _handleSignOut(BuildContext context, WidgetRef ref) async {
+    try {
+      await ref.read(authNotifierProvider.notifier).signOut();
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그아웃에 실패했습니다. 다시 시도해주세요.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,6 +83,14 @@ class MyPageScreen extends ConsumerWidget {
                 _InfoRow('refreshToken', response.refreshToken),
                 _InfoRow('Referral Code Status', response.referralCodeStatus),
               ],
+              const SizedBox(height: 32),
+              TextButton(
+                onPressed: () => _handleSignOut(context, ref),
+                child: const Text(
+                  '로그아웃',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             ],
           ),
         ),

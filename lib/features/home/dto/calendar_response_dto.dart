@@ -1,3 +1,4 @@
+import '../../../core/errors/app_exception.dart';
 import '../models/calendar_data_model.dart';
 
 class CalendarResponseDto {
@@ -10,14 +11,29 @@ class CalendarResponseDto {
   });
 
   factory CalendarResponseDto.fromJson(Map<String, dynamic> json) {
+    final viewType = json['viewType'];
+    final rangeStart = json['rangeStart'];
+    final rangeEnd = json['rangeEnd'];
+    final streakDays = json['streakDays'];
+    final learnedDates = json['learnedDates'];
+
+    if (viewType is! String ||
+        rangeStart is! String ||
+        rangeEnd is! String ||
+        streakDays is! num ||
+        learnedDates is! List) {
+      throw const UnknownException();
+    }
+
     return CalendarResponseDto(
-      viewType: (json['viewType'] as String?) ?? 'MONTHLY',
-      rangeStart: (json['rangeStart'] as String?) ?? '',
-      rangeEnd: (json['rangeEnd'] as String?) ?? '',
-      streakDays: (json['streakDays'] as num?)?.toInt() ?? 0,
-      learnedDates: ((json['learnedDates'] as List<dynamic>?) ?? const [])
-          .whereType<String>()
-          .toList(),
+      viewType: viewType,
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd,
+      streakDays: streakDays.toInt(),
+      learnedDates: learnedDates.map((e) {
+        if (e is! String) throw const UnknownException();
+        return e;
+      }).toList(),
     );
   }
 
@@ -28,21 +44,28 @@ class CalendarResponseDto {
   final List<String> learnedDates;
 
   CalendarDataModel toModel() {
-    final parsedRangeStart = DateTime.tryParse(rangeStart);
-    final parsedRangeEnd = DateTime.tryParse(rangeEnd);
+    final parsedStart = DateTime.tryParse(rangeStart);
+    final parsedEnd = DateTime.tryParse(rangeEnd);
 
-    final normalizedLearnedDates = learnedDates
-        .map(DateTime.tryParse)
-        .whereType<DateTime>()
-        .map((date) => DateTime(date.year, date.month, date.day))
-        .toList();
+    if (parsedStart == null) {
+      throw UnknownException('Invalid rangeStart date: $rangeStart');
+    }
+    if (parsedEnd == null) {
+      throw UnknownException('Invalid rangeEnd date: $rangeEnd');
+    }
+
+    final parsedLearnedDates = learnedDates.map((s) {
+      final date = DateTime.tryParse(s);
+      if (date == null) throw UnknownException('Invalid learnedDate: $s');
+      return DateTime(date.year, date.month, date.day);
+    }).toList();
 
     return CalendarDataModel(
       viewType: CalendarViewType.fromApiValue(viewType),
-      rangeStart: parsedRangeStart ?? DateTime.now(),
-      rangeEnd: parsedRangeEnd ?? DateTime.now(),
+      rangeStart: parsedStart,
+      rangeEnd: parsedEnd,
       streakDays: streakDays,
-      learnedDates: normalizedLearnedDates,
+      learnedDates: parsedLearnedDates,
     );
   }
 }
