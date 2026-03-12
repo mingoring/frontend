@@ -142,12 +142,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     if (!mounted) return;
 
     if (success) {
-      setState(() {
-        _pendingStatusChanges.clear();
-        _pendingDeletes.clear();
-        _selectedIds.clear();
-      });
-      ref.invalidate(libraryListProvider);
+      context.pop(true);
     } else {
       final error = ref.read(libraryEditMutationProvider).error;
       ErrorAlertDialog.show(

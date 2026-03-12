@@ -84,7 +84,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         const Spacer(),
                         LibraryEditButton(
                           enabled: _cachedItems.isNotEmpty,
-                          onTap: () => context.push(RouteNames.libraryEdit),
+                          onTap: () async {
+                            final saved = await context.push<bool>(RouteNames.libraryEdit);
+                            if (!mounted) return;
+
+                            if (saved == true) {
+                              ref.invalidate(libraryListProvider);
+                            }
+                          },
                         ),
                       ],
                     ),
