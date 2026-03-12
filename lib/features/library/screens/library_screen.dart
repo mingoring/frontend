@@ -13,6 +13,7 @@ import '../../../core/widgets/toasts/mingoring_toast.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
 import '../widgets/library_add_video_button.dart';
+import '../widgets/library_empty_section.dart';
 import '../widgets/library_edit_button.dart';
 import '../widgets/library_filter_bar.dart';
 import '../widgets/library_list_card.dart';
@@ -82,6 +83,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         ),
                         const Spacer(),
                         LibraryEditButton(
+                          enabled: _cachedItems.isNotEmpty,
                           onTap: () => context.push(RouteNames.libraryEdit),
                         ),
                       ],
@@ -138,12 +140,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }
 
     if (_cachedItems.isEmpty) {
-      return Center(
-        child: Text(
-          'No lessons found.',
-          style: AppTextStyles.body8Sb14.copyWith(color: AppColors.gray500),
-        ),
-      );
+      return const LibraryEmptySection();
     }
 
     return LayoutBuilder(
