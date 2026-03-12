@@ -222,22 +222,11 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     });
   }
 
-  Future<void> _onSave() async {
-    final success = await ref.read(libraryEditMutationProvider.notifier).saveAll(
+  void _onSave() {
+    ref.read(libraryEditMutationProvider.notifier).saveAll(
           statusChanges: _buildStatusChangesPayload(),
           deleteIds: _draftDeletedIds.toList(growable: false),
         );
-    if (!mounted) return;
-
-    if (success) {
-      context.pop(true);
-    } else {
-      final error = ref.read(libraryEditMutationProvider).error;
-      ErrorAlertDialog.show(
-        context,
-        errorMessage: error is AppException ? error.message : null,
-      );
-    }
   }
 
   Widget _buildTitleWidget() {
@@ -267,6 +256,19 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(libraryEditMutationProvider, (prev, next) {
+      if (prev?.isLoading != true) return;
+      if (next.hasError) {
+        final error = next.error;
+        ErrorAlertDialog.show(
+          context,
+          errorMessage: error is AppException ? error.message : null,
+        );
+      } else if (next.hasValue) {
+        context.pop(true);
+      }
+    });
+
     final isMutating = ref.watch(libraryEditMutationProvider).isLoading;
 
     final hasDraftChanges = _hasUnsavedChanges && !isMutating;
