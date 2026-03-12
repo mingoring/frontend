@@ -26,6 +26,9 @@ abstract final class AppIconAssets {
   static const String arrowDownMiniPink =
       '$_basePath/ic_arrow_down_mini_pink.svg';
 
+  // Back Icon
+  static const String back = '$_basePath/ic_back.svg';
+
   // Check1 Icon
   static const String check1None = '$_basePath/ic_check1_none.svg';
   static const String check1True = '$_basePath/ic_check1_true.svg';

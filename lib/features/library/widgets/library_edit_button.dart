@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
@@ -16,8 +14,6 @@ class LibraryEditButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
-  static const double _iconSize = 10.0;
-  static const double _gap = 7.0;
   static const EdgeInsets _hitAreaPadding = EdgeInsets.symmetric(
     horizontal: 12.0,
     vertical: 10.0,
@@ -30,27 +26,12 @@ class LibraryEditButton extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: _hitAreaPadding,
-        child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Edit',
-            style: AppTextStyles.detail6Md12.copyWith(
-              color: AppColors.pink600,
-              height: 1.2,
-            ),
+        child: Text(
+          'Edit',
+          style: AppTextStyles.body7B14.copyWith(
+            color: AppColors.pink600,
+            height: 1.2,
           ),
-          const SizedBox(width: _gap),
-          SvgPicture.asset(
-            AppIconAssets.arrowRight,
-            width: _iconSize,
-            height: _iconSize,
-            colorFilter: const ColorFilter.mode(
-              AppColors.pink600,
-              BlendMode.srcIn,
-            ),
-          ),
-        ],
         ),
       ),
     );

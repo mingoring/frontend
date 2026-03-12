@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/badges/mingoring_badge.dart';
@@ -16,6 +18,10 @@ enum LibraryListCardStatus { uploading, inProgress, completed }
 /// - [LibraryListCardStatus.inProgress]: 썸네일 하단 진행 바 + darkPink 배지
 /// - [LibraryListCardStatus.completed]: 썸네일 하단 전체 진행 바 + pink 배지
 ///
+/// Edit 버튼 활성화 시 [isSelectable]을 true로 설정하면 선택 모드가 활성화됩니다.
+/// - [isSelected] == false: white 배경, gray200 border, 빈 체크박스 아이콘
+/// - [isSelected] == true: pink200 배경, pink600 border, 채워진 체크박스 아이콘
+///
 /// Example:
 /// ```dart
 /// LibraryListCard(
@@ -23,6 +29,16 @@ enum LibraryListCardStatus { uploading, inProgress, completed }
 ///   title: 'BLACKPINK ROSÉ\'s Honest Puzzle Interview',
 ///   videoTime: '17:32',
 ///   progressRatio: 0.3,
+///   onTap: () {},
+/// )
+///
+/// // 선택 모드
+/// LibraryListCard(
+///   status: LibraryListCardStatus.completed,
+///   title: 'Some Video',
+///   videoTime: '10:00',
+///   isSelectable: true,
+///   isSelected: true,
 ///   onTap: () {},
 /// )
 /// ```
@@ -38,6 +54,12 @@ class LibraryListCard extends StatelessWidget {
     /// completed 상태에서는 자동으로 1.0 처리됨
     this.progressRatio = 0.0,
     this.onTap,
+
+    /// Edit 버튼 활성화 시 선택 모드 여부
+    this.isSelectable = false,
+
+    /// [isSelectable]이 true일 때 선택 여부
+    this.isSelected = false,
   }) : assert(
           progressRatio >= 0.0 && progressRatio <= 1.0,
           'progressRatio must be between 0.0 and 1.0',
@@ -49,6 +71,8 @@ class LibraryListCard extends StatelessWidget {
   final String? thumbnailUrl;
   final double progressRatio;
   final VoidCallback? onTap;
+  final bool isSelectable;
+  final bool isSelected;
 
   static const double _cardWidth = 168.0;
   static const double _cardPaddingH = 14.0;
@@ -56,10 +80,27 @@ class LibraryListCard extends StatelessWidget {
   static const double _cardRadius = 20.0;
   static const double _itemGap = 11.0;
   static const double _textGap = 4.0;
+  static const double _checkboxSize = 24.0;
+  static const double _checkboxRight = -4.0;
+  static const double _checkboxTop = -7.0;
 
-  Color get _backgroundColor => status == LibraryListCardStatus.uploading
-      ? AppColors.pink100
-      : AppColors.white;
+  /// uploading 상태는 선택 불가
+  bool get _isActuallySelectable =>
+      isSelectable && status != LibraryListCardStatus.uploading;
+
+  Color get _backgroundColor {
+    if (_isActuallySelectable && isSelected) return AppColors.pink200;
+    return status == LibraryListCardStatus.uploading
+        ? AppColors.pink100
+        : AppColors.white;
+  }
+
+  Color get _borderColor {
+    if (_isActuallySelectable && isSelected) return AppColors.pink600;
+    return status == LibraryListCardStatus.uploading
+        ? AppColors.white
+        : AppColors.gray200;
+  }
 
   MingoringBadgeColor get _badgeColor => switch (status) {
         LibraryListCardStatus.uploading => MingoringBadgeColor.lightPink,
@@ -86,18 +127,7 @@ class LibraryListCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: _backgroundColor,
           borderRadius: BorderRadius.circular(_cardRadius),
-          border: Border.all(
-            color: status == LibraryListCardStatus.uploading
-                ? AppColors.white
-                : AppColors.gray200,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.white,
-              blurRadius: 5,
-              offset: Offset.zero,
-            ),
-          ],
+          boxShadow: const [BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 2),)],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,13 +144,14 @@ class LibraryListCard extends StatelessWidget {
   }
 
   /// 썸네일 + 진행 중/완료 상태일 때 하단 진행 바 오버레이
+  /// 선택 모드일 때 우측 상단 체크박스 아이콘 오버레이
   Widget _buildThumbnail() {
     final showProgressBar = status == LibraryListCardStatus.inProgress ||
         status == LibraryListCardStatus.completed;
     final ratio =
         status == LibraryListCardStatus.completed ? 1.0 : progressRatio;
 
-    if (!showProgressBar) {
+    if (!showProgressBar && !_isActuallySelectable) {
       return VideoThumbnail(
         size: VideoThumbnailSize.big,
         thumbnailUrl: thumbnailUrl,
@@ -128,17 +159,31 @@ class LibraryListCard extends StatelessWidget {
     }
 
     return Stack(
+      clipBehavior: Clip.none,
       children: [
         VideoThumbnail(
           size: VideoThumbnailSize.big,
           thumbnailUrl: thumbnailUrl,
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: _VideoProgressBar(ratio: ratio),
-        ),
+        if (showProgressBar)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _VideoProgressBar(ratio: ratio),
+          ),
+        if (_isActuallySelectable)
+          Positioned(
+            right: _checkboxRight,
+            top: _checkboxTop,
+            child: SvgPicture.asset(
+              isSelected
+                  ? AppIconAssets.check2True1
+                  : AppIconAssets.check2None,
+              width: _checkboxSize,
+              height: _checkboxSize,
+            ),
+          ),
       ],
     );
   }

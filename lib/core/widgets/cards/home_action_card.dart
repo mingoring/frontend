@@ -105,13 +105,13 @@ class _HomeActionCardState extends State<HomeActionCard> {
 
   List<BoxShadow> get _boxShadow => switch (widget._type) {
         HomeActionCardType.bookmarks => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
+            BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 0),)
           ],
         HomeActionCardType.calendar => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
+            BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 0),)
           ],
         HomeActionCardType.goToLesson => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
+            BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 0),)
           ],
       };
 

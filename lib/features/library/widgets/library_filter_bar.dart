@@ -103,7 +103,7 @@ class _LibraryFilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.white,
           border: Border.all(
-            color: isSelected ? AppColors.pink600 : Colors.transparent,
+            color: isSelected ? AppColors.pink600 : AppColors.gray400,
           ),
           borderRadius: BorderRadius.circular(chipRadius),
         ),

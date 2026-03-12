@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -56,64 +58,62 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         },
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Library 타이틀 + Edit 버튼
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Library',
-                      style: AppLogoTypography.logoB4.copyWith(
-                        color: AppColors.pink600,
-                      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Library 타이틀 + Edit 버튼
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Library',
+                          style: AppLogoTypography.logoB4.copyWith(
+                            color: AppColors.pink600,
+                          ),
+                        ),
+                        const Spacer(),
+                        LibraryEditButton(
+                          onTap: () => context.push(RouteNames.libraryEdit),
+                        ),
+                      ],
                     ),
-                    const Spacer(),
-                    LibraryEditButton(
-                      onTap: () {
-                        if (kDebugMode) {
-                          MingoringToast.show(
-                            context,
-                            message: '[DEBUG] Edit tapped',
-                          );
-                        }
-                      },
+                  ),
+                  const SizedBox(height: 10),
+
+                  // 서브타이틀
+                  Text(
+                    'Add videos and enjoy in this section!',
+                    style: AppTextStyles.body8Sb14.copyWith(
+                      color: AppColors.gray500,
+                      height: 1.2,
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
+                  ),
+                  const SizedBox(height: 16),
 
-              // 서브타이틀
-              Text(
-                'Add videos and enjoy in this section!',
-                style: AppTextStyles.body8Sb14.copyWith(
-                  color: AppColors.gray500,
-                  height: 1.2,
-                ),
+                  // 필터 바
+                  LibraryFilterBar(
+                    selectedOption: _selectedFilter,
+                    onSelected: (option) {
+                      setState(() => _selectedFilter = option);
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                ],
               ),
-              const SizedBox(height: 16),
+            ),
 
-              // 필터 바
-              LibraryFilterBar(
-                selectedOption: _selectedFilter,
-                onSelected: (option) {
-                  setState(() => _selectedFilter = option);
-                },
-              ),
-              const SizedBox(height: 14),
-
-              // 카드 그리드 (2열)
-              Expanded(
-                child: _buildBody(asyncValue),
-              ),
-            ],
-          ),
+            // 카드 그리드 (2열)
+            Expanded(
+              child: _buildBody(asyncValue),
+            ),
+          ],
         ),
       ),
     );
@@ -145,33 +145,34 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.fromLTRB(_horizontalPadding, 5, _horizontalPadding, 24,
+      ),
       child: Wrap(
         spacing: _cardSpacing,
         runSpacing: _cardSpacing,
         children: _cachedItems
-            .map(
-              (item) => LibraryListCard(
-                status: _toCardStatus(item.status),
-                title: item.title,
-                videoTime: item.videoTime,
-                thumbnailUrl: item.thumbnailUrl,
-                progressRatio: item.progressRatio,
-                onTap: switch (item.status) {
-                  LessonStatus.uploading =>
-                    () => VideoUploadingAlertDialog.show(context),
-                  LessonStatus.inProgress ||
-                  LessonStatus.completed =>
-                    () => VideoWatchAlertDialog.show(
-                          context,
-                          videoTitle: item.title,
-                          originalText: item.originalText,
-                          translatedText: item.translatedText,
-                        ),
-                },
-              ),
-            )
-            .toList(),
+        .map(
+          (item) => LibraryListCard(
+            status: _toCardStatus(item.status),
+            title: item.title,
+            videoTime: item.videoTime,
+            thumbnailUrl: item.thumbnailUrl,
+            progressRatio: item.progressRatio,
+            onTap: switch (item.status) {
+              LessonStatus.uploading =>
+                () => VideoUploadingAlertDialog.show(context),
+              LessonStatus.inProgress ||
+              LessonStatus.completed =>
+                () => VideoWatchAlertDialog.show(
+                      context,
+                      videoTitle: item.title,
+                      originalText: item.originalText,
+                      translatedText: item.translatedText,
+                    ),
+            },
+          ),
+        )
+        .toList(),
       ),
     );
   }
