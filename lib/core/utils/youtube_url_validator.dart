@@ -63,19 +63,21 @@ abstract final class YoutubeUrlValidator {
     if (normalized.isEmpty) return false;
 
     final uri = Uri.tryParse(normalized);
-    if (uri == null || !uri.hasScheme) return false;
+    if (uri == null || (uri.scheme != 'http' && uri.scheme != 'https')) {
+      return false;
+    }
 
     final host = uri.host.toLowerCase();
 
     // youtu.be/VIDEO_ID
     if (host == 'youtu.be') {
-      return uri.pathSegments.isNotEmpty &&
+      return uri.pathSegments.length == 1 &&
           uri.pathSegments.first.isNotEmpty;
     }
 
     // youtube.com/watch?v=VIDEO_ID (www 포함, Shorts 제외)
     if (host == 'youtube.com' || host == 'www.youtube.com') {
-      if (uri.pathSegments.contains('shorts')) return false;
+      if (uri.path != '/watch') return false;
 
       final videoId = uri.queryParameters['v'];
       return videoId != null && videoId.isNotEmpty;
