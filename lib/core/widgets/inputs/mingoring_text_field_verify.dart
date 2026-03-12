@@ -20,8 +20,8 @@ enum _TrailingIconType {
 }
 
 // 검증 기능이 포함된 표준 텍스트 입력 위젯.
-class MingoringInputTextfieldVerify extends StatefulWidget {
-  const MingoringInputTextfieldVerify({
+class MingoringTextFieldVerify extends StatefulWidget {
+  const MingoringTextFieldVerify({
     super.key,
     required this.controller, // 텍스트 컨트롤러
     this.hintText = '', // 힌트 텍스트
@@ -56,12 +56,11 @@ class MingoringInputTextfieldVerify extends StatefulWidget {
   final FocusNode? focusNode;
 
   @override
-  State<MingoringInputTextfieldVerify> createState() =>
-      _MingoringInputTextfieldVerifyState();
+  State<MingoringTextFieldVerify> createState() =>
+      _MingoringTextFieldVerifyState();
 }
 
-class _MingoringInputTextfieldVerifyState
-    extends State<MingoringInputTextfieldVerify> {
+class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
   late FocusNode _internalFocusNode;
   bool _isFocused = false;
   bool _hasText = false;
@@ -76,7 +75,7 @@ class _MingoringInputTextfieldVerifyState
   }
 
   @override
-  void didUpdateWidget(covariant MingoringInputTextfieldVerify oldWidget) {
+  void didUpdateWidget(covariant MingoringTextFieldVerify oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_onTextChanged);

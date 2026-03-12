@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/app_mingo_assets.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_logo_typography.dart';
-import '../../constants/app_mingo_assets.dart';
 import '../../theme/app_text_styles.dart';
 import 'mingoring_alert_dialog.dart';
 
@@ -23,7 +23,12 @@ class ErrorAlertDialog extends StatelessWidget {
   static const double _mingoTopSpace = 16.0;
   static const double _mingoToTextGap = 24.0;
   static const double _titleToMessageGap = 8.0;
-  static const double _messageToButtonGap = 45.0;
+  static const double _MessageToButtonGap = 24.0;
+
+  String get _message {
+    final firstLine = errorMessage ?? 'Something went wrong.';
+    return '$firstLine\nIf the problem persists, contact us.';
+  }
 
   static Future<void> show(BuildContext context, {String? errorMessage}) {
     return MingoringAlertDialog.show(
@@ -34,12 +39,9 @@ class ErrorAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstLine = errorMessage ?? 'Something went wrong.';
-    final message = '$firstLine\nIf the problem persists, contact us.';
-
     return MingoringAlertDialog(
       type: MingoringAlertDialogType.close,
-      buttonGap: _messageToButtonGap,
+      buttonGap: _MessageToButtonGap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -59,7 +61,7 @@ class ErrorAlertDialog extends StatelessWidget {
           ),
           const SizedBox(height: _titleToMessageGap),
           Text(
-            message,
+            _message,
             style: AppTextStyles.body9Md14.copyWith(
               color: AppColors.gray500,
               height: 1.2,

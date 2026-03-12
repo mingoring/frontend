@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/buttons/mingoring_verify_button.dart';
-import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
+import '../../../core/widgets/inputs/mingoring_text_field_verify.dart';
 import '../constants/signup_screen_constants.dart';
 
 /// 추천인 코드 입력 영역 위젯
-/// [MingoringInputTextfieldVerify] 와 [MingoringVerifyButton] 으로 구성.
+/// [MingoringTextFieldVerify] 와 [MingoringVerifyButton] 으로 구성.
 class SignupReferralInput extends StatelessWidget {
   const SignupReferralInput({
     super.key,
@@ -34,7 +34,7 @@ class SignupReferralInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: MingoringInputTextfieldVerify(
+          child: MingoringTextFieldVerify(
             controller: controller,
             validationStatus: validationStatus,
             hintText: SignupScreenConstants.referralHintText,

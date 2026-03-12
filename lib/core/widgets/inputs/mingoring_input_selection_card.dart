@@ -66,22 +66,30 @@ class MingoringInputSelectionCard extends StatelessWidget {
   static const double _linkHitAreaHorizontalPadding = 8.0;
   static const double _linkHitAreaVerticalPadding = 4.0;
 
+  bool get _isCompact => type == InputSelectionCardType.compact;
+
+  EdgeInsets get _edgeInsets => _isCompact
+      ? _paddingCompact
+      : EdgeInsets.all(type == InputSelectionCardType.primary
+          ? _paddingPrimary
+          : _paddingSecondary);
+
+  Color get _borderColor => value ? AppColors.pink600 : AppColors.gray400;
+
+  String get _checkAsset => _isCompact
+      ? (value ? AppIconAssets.check1True : AppIconAssets.check1None)
+      : type == InputSelectionCardType.primary
+          ? (value ? AppIconAssets.check2True2 : AppIconAssets.check2None)
+          : (value ? AppIconAssets.check2True1 : AppIconAssets.check2None);
+
+  double get _resolvedIconSize =>
+      _isCompact ? _checkIconSizeCompact : _checkIconSize;
+
+  Color get _subtitleColor =>
+      value ? AppColors.gray600 : AppColors.gray600;
+
   @override
   Widget build(BuildContext context) {
-    final isCompact = type == InputSelectionCardType.compact;
-    final edgeInsets = isCompact
-        ? _paddingCompact
-        : EdgeInsets.all(type == InputSelectionCardType.primary
-            ? _paddingPrimary
-            : _paddingSecondary);
-    final borderColor = value ? AppColors.pink600 : AppColors.gray400;
-    final checkAsset = isCompact
-        ? (value ? AppIconAssets.check1True : AppIconAssets.check1None)
-        : type == InputSelectionCardType.primary
-            ? (value ? AppIconAssets.check2True2 : AppIconAssets.check2None)
-            : (value ? AppIconAssets.check2True1 : AppIconAssets.check2None);
-    final iconSize = isCompact ? _checkIconSizeCompact : _checkIconSize;
-
     return Material(
       color: AppColors.white,
       borderRadius: BorderRadius.circular(_borderRadius),
@@ -89,14 +97,14 @@ class MingoringInputSelectionCard extends StatelessWidget {
         onTap: () => onChanged(!value),
         borderRadius: BorderRadius.circular(_borderRadius),
         child: Container(
-          padding: edgeInsets,
+          padding: _edgeInsets,
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(_borderRadius),
-            border: Border.all(color: borderColor),
+            border: Border.all(color: _borderColor),
           ),
           child: Row(
-            crossAxisAlignment: isCompact
+            crossAxisAlignment: _isCompact
                 ? CrossAxisAlignment.center
                 : CrossAxisAlignment.start,
             children: [
@@ -108,7 +116,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
                     _buildTitle(),
                     if (subtitle != null) ...[
                       SizedBox(
-                          height: isCompact
+                          height: _isCompact
                               ? _subtitleGapCompact
                               : type == InputSelectionCardType.primary
                                   ? _subtitleGap
@@ -116,7 +124,7 @@ class MingoringInputSelectionCard extends StatelessWidget {
                       Text(
                         subtitle!,
                         style: AppTextStyles.detail3Md13.copyWith(
-                          color: AppColors.gray400,
+                          color: _subtitleColor,
                           height: 1.2,
                         ),
                       ),
@@ -149,10 +157,10 @@ class MingoringInputSelectionCard extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: iconSize,
-                height: iconSize,
+                width: _resolvedIconSize,
+                height: _resolvedIconSize,
                 child: SvgPicture.asset(
-                  checkAsset,
+                  _checkAsset,
                   fit: BoxFit.contain,
                 ),
               ),

@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/app_storage.dart';
 import '../../../core/storage/local_storage_service.dart';
-import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
+import '../../../core/widgets/inputs/mingoring_text_field_verify.dart';
 import '../../auth/models/auth_state.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../constants/signup_screen_constants.dart';

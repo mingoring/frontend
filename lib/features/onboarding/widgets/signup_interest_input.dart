@@ -4,7 +4,7 @@ import '../../../core/widgets/inputs/mingoring_input_selection_chip.dart';
 import '../constants/signup_screen_constants.dart';
 
 /// 관심 분야 선택 영역 위젯 (회원가입 Step 3).
-/// [MingoringInputSelectionChip] (big) 리스트로 구성.
+/// [MingoringInputSelectionChip] 리스트로 구성.
 class SignupInterestInput extends StatelessWidget {
   const SignupInterestInput({
     super.key,
@@ -30,7 +30,6 @@ class SignupInterestInput extends StatelessWidget {
           (index) {
             final option = SignupScreenConstants.interestOptions[index];
             return MingoringInputSelectionChip(
-              size: InputSelectionChipSize.big,
               label: option,
               value: selectedIndexes.contains(index),
               onChanged: (_) => onSelected(index),
