@@ -154,6 +154,7 @@ bool _isAuthRoute(String location) =>
 bool _isProtectedRoute(String location) =>
     location == RouteNames.home ||
     location == RouteNames.library ||
+    location == RouteNames.libraryEdit ||
     location == RouteNames.myPage ||
     location == RouteNames.calendar ||
     location == RouteNames.bookmarks;
