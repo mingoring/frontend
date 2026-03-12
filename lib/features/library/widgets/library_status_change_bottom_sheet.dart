@@ -10,15 +10,14 @@ enum LibraryVideoStatus { inProgress, completed }
 
 /// 동영상 상태 변경 바텀시트 (library feature 전용)
 ///
-/// - 현재 상태 칩: pink600 border (선택됨)
-/// - 미선택 상태 칩: gray400 border
-/// - 다른 상태 칩 탭 시: 해당 칩 즉시 pink600으로 피드백 → 150ms 후 닫히고 [onStatusChanged] 호출
+/// - 초기 상태: 어떤 칩도 선택 표시하지 않음
+/// - 미선택 상태 칩: gray600 text / gray600 border
+/// - 칩 탭 시: 해당 칩 즉시 pink700으로 피드백 → 150ms 후 닫히고 [onStatusChanged] 호출
 ///
 /// 사용 예시:
 /// ```dart
 /// LibraryStatusChangeBottomSheet.show(
 ///   context,
-///   currentStatus: LibraryVideoStatus.inProgress,
 ///   onStatusChanged: (status) {
 ///     // status change logic
 ///   },
@@ -27,22 +26,17 @@ enum LibraryVideoStatus { inProgress, completed }
 class LibraryStatusChangeBottomSheet extends StatefulWidget {
   const LibraryStatusChangeBottomSheet({
     super.key,
-    required this.currentStatus,
     required this.onStatusChanged,
   });
 
   static const double _borderRadius = 20.0;
 
-  /// 현재 선택된 상태 (칩 강조 표시 기준)
-  final LibraryVideoStatus currentStatus;
-
-  /// 다른 상태 칩을 탭했을 때 호출되는 콜백
+  /// 상태 칩을 탭했을 때 호출되는 콜백
   final ValueChanged<LibraryVideoStatus> onStatusChanged;
 
   /// 상태 변경 바텀시트를 표시하는 편의 메서드
   static Future<T?> show<T>(
     BuildContext context, {
-    required LibraryVideoStatus currentStatus,
     required ValueChanged<LibraryVideoStatus> onStatusChanged,
     Color barrierColor = AppColors.black50,
   }) {
@@ -56,7 +50,6 @@ class LibraryStatusChangeBottomSheet extends StatefulWidget {
         ),
       ),
       builder: (_) => LibraryStatusChangeBottomSheet(
-        currentStatus: currentStatus,
         onStatusChanged: onStatusChanged,
       ),
     );
@@ -82,13 +75,9 @@ class _LibraryStatusChangeBottomSheetState
 
   LibraryVideoStatus? _tappedStatus;
 
-  bool _isSelected(LibraryVideoStatus status) {
-    if (_tappedStatus != null) return status == _tappedStatus;
-    return status == widget.currentStatus;
-  }
+  bool _isSelected(LibraryVideoStatus status) => status == _tappedStatus;
 
   void _onChipTap(LibraryVideoStatus tapped) {
-    if (tapped == widget.currentStatus) return;
     setState(() => _tappedStatus = tapped);
     Future.delayed(_tapFeedbackDelay, () {
       if (!mounted) return;
@@ -210,13 +199,13 @@ class _StatusChip extends StatelessWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(_borderRadius),
           border: Border.all(
-            color: isSelected ? AppColors.pink600 : AppColors.gray400,
+            color: isSelected ? AppColors.pink600 : AppColors.gray600,
           ),
         ),
         child: Text(
           label,
           style: AppTextStyles.body8Sb14.copyWith(
-            color: isSelected ? AppColors.pink600 : AppColors.gray400,
+            color: isSelected ? AppColors.pink600 : AppColors.gray600,
             height: 1.2,
           ),
         ),

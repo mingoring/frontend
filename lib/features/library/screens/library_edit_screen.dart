@@ -8,9 +8,9 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/dialogs/confirm_alert_dialog.dart';
 import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
+import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_edit_mutation_provider.dart';
-import '../providers/library_list_provider.dart';
 import '../widgets/library_delete_bottom_sheet.dart';
 import '../widgets/library_edit_action_bar.dart';
 import '../widgets/library_filter_bar.dart';
@@ -18,28 +18,74 @@ import '../widgets/library_list_card.dart';
 import '../widgets/library_status_change_bottom_sheet.dart';
 
 class LibraryEditScreen extends ConsumerStatefulWidget {
-  const LibraryEditScreen({super.key});
+  const LibraryEditScreen({
+    super.key,
+    required this.args,
+  });
+
+  final LibraryEditScreenArgs args;
 
   @override
   ConsumerState<LibraryEditScreen> createState() => _LibraryEditScreenState();
 }
 
 class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
-  LibraryFilterOption _selectedFilter = LibraryFilterOption.all;
+  late LibraryFilterOption _selectedFilter;
   final Set<int> _selectedIds = {};
-  List<LessonItemModel> _cachedItems = const [];
 
-  /// 백엔드에 아직 보내지 않은 pending 상태 변경 (Save 시 전송)
-  /// 원본 _cachedItems와 분리하되, 화면 표시에는 반영한다.
-  final Map<int, LessonStatus> _pendingStatusChanges = {};
-  final Set<int> _pendingDeletes = {};
+  /// 편집 화면 진입 시점의 원본 스냅샷
+  ///
+  /// Save 시 draft와 비교할 기준 데이터다.
+  late final Map<int, LessonItemModel> _originalItemsById;
+
+  /// 카드 노출 순서를 원본과 동일하게 유지하기 위한 lessonId 순서 목록
+  late final List<int> _initialOrderLessonIds;
+
+  /// 편집 화면 전용 draft 상태값
+  ///
+  /// 화면 표시와 필터 판별은 모두 이 값을 기준으로 계산한다.
+  late final Map<int, LessonStatus> _draftStatusesById;
+
+  /// 편집 화면 전용 draft 삭제 상태
+  ///
+  /// 아직 백엔드에는 반영되지 않았으며, Save 시 delete payload로 전송된다.
+  final Set<int> _draftDeletedIds = {};
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
 
-  bool get _hasUnsavedChanges =>
-      _pendingStatusChanges.isNotEmpty || _pendingDeletes.isNotEmpty;
+  @override
+  void initState() {
+    super.initState();
+    _selectedFilter = widget.args.initialFilter;
+
+    _originalItemsById = {
+      for (final item in widget.args.initialItems) item.lessonId: item,
+    };
+
+    _initialOrderLessonIds = widget.args.initialItems
+        .map((item) => item.lessonId)
+        .toList(growable: false);
+
+    _draftStatusesById = {
+      for (final item in widget.args.initialItems) item.lessonId: item.status,
+    };
+  }
+
+  bool get _hasUnsavedChanges {
+    if (_draftDeletedIds.isNotEmpty) return true;
+
+    for (final lessonId in _initialOrderLessonIds) {
+      final original = _originalItemsById[lessonId];
+      final draftStatus = _draftStatusesById[lessonId];
+
+      if (original == null || draftStatus == null) continue;
+      if (original.status != draftStatus) return true;
+    }
+
+    return false;
+  }
 
   Future<void> _handleBack() async {
     final isMutating = ref.read(libraryEditMutationProvider).isLoading;
@@ -76,16 +122,37 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
         LessonStatus.completed => LibraryListCardStatus.completed,
       };
 
-  LessonStatus _effectiveStatusOf(LessonItemModel item) {
-    return _pendingStatusChanges[item.lessonId] ?? item.status;
+  LessonStatus _effectiveStatusOf(int lessonId) {
+    return _draftStatusesById[lessonId] ?? LessonStatus.inProgress;
   }
 
-  List<LessonItemModel> _buildVisibleItems(List<LessonItemModel> source) {
-    return source.where((item) => !_pendingDeletes.contains(item.lessonId)).toList();
+  bool _matchesFilter(LessonStatus status) => switch (_selectedFilter) {
+        LibraryFilterOption.all => true,
+        LibraryFilterOption.uploading => status == LessonStatus.uploading,
+        LibraryFilterOption.inProgress => status == LessonStatus.inProgress,
+        LibraryFilterOption.completed => status == LessonStatus.completed,
+      };
+
+  List<LessonItemModel> _buildVisibleItems() {
+    final visible = <LessonItemModel>[];
+
+    for (final lessonId in _initialOrderLessonIds) {
+      if (_draftDeletedIds.contains(lessonId)) continue;
+
+      final item = _originalItemsById[lessonId];
+      if (item == null) continue;
+
+      final effectiveStatus = _effectiveStatusOf(lessonId);
+      if (!_matchesFilter(effectiveStatus)) continue;
+
+      visible.add(item);
+    }
+
+    return visible;
   }
 
   void _toggleSelection(int lessonId) {
-    if (_pendingDeletes.contains(lessonId)) return;
+    if (_draftDeletedIds.contains(lessonId)) return;
 
     setState(() {
       if (_selectedIds.contains(lessonId)) {
@@ -96,29 +163,32 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     });
   }
 
-  LibraryVideoStatus get _currentStatusForSheet {
-    final selected = _cachedItems.where(
-      (item) =>
-          _selectedIds.contains(item.lessonId) &&
-          !_pendingDeletes.contains(item.lessonId),
-    );
-
-    final allCompleted = selected.isNotEmpty &&
-        selected.every((item) => _effectiveStatusOf(item) == LessonStatus.completed);
-
-    return allCompleted
-        ? LibraryVideoStatus.completed
-        : LibraryVideoStatus.inProgress;
-  }
-
   LessonStatus _toModelStatus(LibraryVideoStatus v) => switch (v) {
         LibraryVideoStatus.inProgress => LessonStatus.inProgress,
         LibraryVideoStatus.completed => LessonStatus.completed,
       };
 
-  /// 삭제 확인 → pending에 저장 (API 즉시 호출 X) 
+  Map<int, LessonStatus> _buildStatusChangesPayload() {
+    final result = <int, LessonStatus>{};
+
+    for (final lessonId in _initialOrderLessonIds) {
+      if (_draftDeletedIds.contains(lessonId)) continue;
+
+      final original = _originalItemsById[lessonId];
+      final draftStatus = _draftStatusesById[lessonId];
+
+      if (original == null || draftStatus == null) continue;
+      if (original.status == draftStatus) continue;
+
+      result[lessonId] = draftStatus;
+    }
+
+    return result;
+  }
+
+  /// 삭제 확인 → draft 삭제 상태에 반영 (API 즉시 호출 X)
   Future<void> _onTrashTap() async {
-    final ids = _selectedIds.toList();
+    final ids = _selectedIds.toList(growable: false);
     bool confirmed = false;
 
     await LibraryDeleteBottomSheet.show(
@@ -130,24 +200,18 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     if (!mounted || !confirmed) return;
 
     setState(() {
-      _pendingDeletes.addAll(ids);
-
-      for (final id in ids) {
-        _pendingStatusChanges.remove(id);
-      }
-
+      _draftDeletedIds.addAll(ids);
       _selectedIds.clear();
     });
   }
 
-  /// 상태 변경 선택 → pending에 저장 (API 즉시 호출 X)
+  /// 상태 변경 선택 → draft 상태값에 반영 (API 즉시 호출 X)
   Future<void> _onChangeTap() async {
-    final ids = _selectedIds.toList();
+    final ids = _selectedIds.toList(growable: false);
     LessonStatus? chosen;
 
     await LibraryStatusChangeBottomSheet.show(
       context,
-      currentStatus: _currentStatusForSheet,
       onStatusChanged: (v) {
         chosen = _toModelStatus(v);
       },
@@ -156,8 +220,8 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
     setState(() {
       for (final id in ids) {
-        if (_pendingDeletes.contains(id)) continue;
-        _pendingStatusChanges[id] = chosen!;
+        if (_draftDeletedIds.contains(id)) continue;
+        _draftStatusesById[id] = chosen!;
       }
       _selectedIds.clear();
     });
@@ -165,8 +229,8 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
   Future<void> _onSave() async {
     final success = await ref.read(libraryEditMutationProvider.notifier).saveAll(
-          statusChanges: Map.of(_pendingStatusChanges),
-          deleteIds: _pendingDeletes.toList(),
+          statusChanges: _buildStatusChangesPayload(),
+          deleteIds: _draftDeletedIds.toList(growable: false),
         );
     if (!mounted) return;
 
@@ -208,23 +272,9 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final params = LibraryListParams(filter: _selectedFilter);
-    final asyncValue = ref.watch(libraryListProvider(params));
-
-    ref.listen(libraryListProvider(params), (_, next) {
-      next.whenData((model) {
-        setState(() {
-          _cachedItems = model.items;
-        });
-      });
-    });
-
     final isMutating = ref.watch(libraryEditMutationProvider).isLoading;
 
-    final hasPendingChanges =
-        (_pendingStatusChanges.isNotEmpty || _pendingDeletes.isNotEmpty) &&
-            !isMutating;
-
+    final hasDraftChanges = _hasUnsavedChanges && !isMutating;
     final hasSelection = _selectedIds.isNotEmpty && !isMutating;
 
     return PopScope(
@@ -238,7 +288,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
         appBar: MingoringAppBar.actionSave(
           onBack: _handleBack,
           titleWidget: _buildTitleWidget(),
-          isActionEnabled: hasPendingChanges,
+          isActionEnabled: hasDraftChanges,
           onActionPressed: _onSave,
         ),
         body: SafeArea(
@@ -258,7 +308,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
               const SizedBox(height: 14),
 
               // 학습 카드 스크롤 영역
-              Expanded(child: _buildBody(asyncValue)),
+              Expanded(child: _buildBody()),
             ],
           ),
         ),
@@ -272,22 +322,8 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     );
   }
 
-  Widget _buildBody(AsyncValue<LessonListModel> asyncValue) {
-    final sourceItems = asyncValue.valueOrNull?.items ?? _cachedItems;
-    final items = _buildVisibleItems(sourceItems);
-
-    if (asyncValue.isLoading && items.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (asyncValue.hasError && items.isEmpty) {
-      return Center(
-        child: Text(
-          'Failed to load library.',
-          style: AppTextStyles.body8Sb14.copyWith(color: AppColors.gray500),
-        ),
-      );
-    }
+  Widget _buildBody() {
+    final items = _buildVisibleItems();
 
     if (items.isEmpty) {
       return Center(
@@ -316,7 +352,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
             spacing: _cardSpacing,
             runSpacing: _cardSpacing,
             children: items.map<Widget>((item) {
-              final effectiveStatus = _effectiveStatusOf(item);
+              final effectiveStatus = _effectiveStatusOf(item.lessonId);
 
               return LibraryListCard(
                 width: cardWidth,

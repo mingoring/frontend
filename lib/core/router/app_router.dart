@@ -9,6 +9,7 @@ import '../../features/bookmarks/screens/bookmark_entry_screen.dart';
 import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
+import '../../features/library/models/library_edit_screen_args.dart';
 import '../../features/library/screens/library_edit_screen.dart';
 import '../../features/library/screens/library_screen.dart';
 import '../../features/onboarding/screens/login_screen.dart';
@@ -75,7 +76,13 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: RouteNames.libraryEdit,
-        builder: (_, __) => const LibraryEditScreen(),
+        builder: (_, state) {
+          final extra = state.extra;
+          if (extra is! LibraryEditScreenArgs) {
+            throw ArgumentError('LibraryEditScreenArgs is required for libraryEdit route.');
+          }
+          return LibraryEditScreen(args: extra);
+        },
       ),
       GoRoute(
         path: RouteNames.calendar,
@@ -150,3 +157,4 @@ bool _isProtectedRoute(String location) =>
     location == RouteNames.myPage ||
     location == RouteNames.calendar ||
     location == RouteNames.bookmarks;
+    

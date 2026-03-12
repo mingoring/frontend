@@ -10,11 +10,12 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/dialogs/video_uploading_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/toasts/mingoring_toast.dart';
+import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
 import '../widgets/library_add_video_button.dart';
-import '../widgets/library_empty_section.dart';
 import '../widgets/library_edit_button.dart';
+import '../widgets/library_empty_section.dart';
 import '../widgets/library_filter_bar.dart';
 import '../widgets/library_list_card.dart';
 
@@ -27,7 +28,6 @@ class LibraryScreen extends ConsumerStatefulWidget {
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   LibraryFilterOption _selectedFilter = LibraryFilterOption.all;
-  List<LessonItemModel> _cachedItems = const [];
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
@@ -41,14 +41,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final params = LibraryListParams(filter: _selectedFilter);
-    final asyncValue = ref.watch(libraryListProvider(params));
+    final visibleParams = LibraryListParams(filter: _selectedFilter);
+    final visibleAsyncValue = ref.watch(libraryListProvider(visibleParams));
 
-    ref.listen(libraryListProvider(params), (_, next) {
-      next.whenData((model) {
-        setState(() => _cachedItems = model.items);
-      });
-    });
+    /// 편집 화면에서는 필터 변경을 자유롭게 해야 하므로,
+    /// 현재 선택된 필터 목록이 아니라 전체 목록 스냅샷을 따로 확보한다.
+    final allParams = const LibraryListParams(filter: LibraryFilterOption.all);
+    final allItemsAsyncValue = ref.watch(libraryListProvider(allParams));
+
+    final visibleItems = visibleAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
+    final allItemsForEdit = allItemsAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
 
     return Scaffold(
       backgroundColor: AppColors.pink100,
@@ -64,8 +66,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -83,9 +84,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         ),
                         const Spacer(),
                         LibraryEditButton(
-                          enabled: _cachedItems.isNotEmpty,
+                          enabled: allItemsForEdit.isNotEmpty,
                           onTap: () async {
-                            final saved = await context.push<bool>(RouteNames.libraryEdit);
+                            final saved = await context.push<bool>(
+                              RouteNames.libraryEdit,
+                              extra: LibraryEditScreenArgs(
+                                initialItems: allItemsForEdit,
+                                initialFilter: _selectedFilter,
+                              ),
+                            );
                             if (!mounted) return;
 
                             if (saved == true) {
@@ -122,7 +129,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
             // 카드 그리드 (2열 고정)
             Expanded(
-              child: _buildBody(asyncValue),
+              child: _buildBody(visibleAsyncValue, visibleItems),
             ),
           ],
         ),
@@ -130,12 +137,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  Widget _buildBody(AsyncValue<LessonListModel> asyncValue) {
-    if (asyncValue.isLoading && _cachedItems.isEmpty) {
+  Widget _buildBody(
+    AsyncValue<LessonListModel> asyncValue,
+    List<LessonItemModel> items,
+  ) {
+    if (asyncValue.isLoading && items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (asyncValue.hasError && _cachedItems.isEmpty) {
+    if (asyncValue.hasError && items.isEmpty) {
       debugPrint('[LibraryScreen] error: ${asyncValue.error}');
       debugPrint('[LibraryScreen] stackTrace: ${asyncValue.stackTrace}');
       return Center(
@@ -146,7 +156,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       );
     }
 
-    if (_cachedItems.isEmpty) {
+    if (items.isEmpty) {
       return const LibraryEmptySection();
     }
 
@@ -167,7 +177,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           child: Wrap(
             spacing: _cardSpacing,
             runSpacing: _cardSpacing,
-            children: _cachedItems
+            children: items
                 .map(
                   (item) => LibraryListCard(
                     width: cardWidth,

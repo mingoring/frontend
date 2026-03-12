@@ -10,8 +10,7 @@ import '../repositories/library_repository.dart';
 ///   AsyncData(null)   → idle / 성공
 ///   AsyncLoading()    → 요청 진행 중
 ///   AsyncError(e, st) → 요청 실패
-class LibraryEditMutationNotifier
-    extends StateNotifier<AsyncValue<void>> {
+class LibraryEditMutationNotifier extends StateNotifier<AsyncValue<void>> {
   LibraryEditMutationNotifier(this._repository)
       : super(const AsyncValue.data(null));
 
@@ -83,7 +82,7 @@ class LibraryEditMutationNotifier
   }
 }
 
-final libraryEditMutationProvider = StateNotifierProvider.autoDispose<
-    LibraryEditMutationNotifier, AsyncValue<void>>(
+final libraryEditMutationProvider =
+    StateNotifierProvider.autoDispose<LibraryEditMutationNotifier, AsyncValue<void>>(
   (ref) => LibraryEditMutationNotifier(ref.watch(libraryRepositoryProvider)),
 );
