@@ -5,7 +5,7 @@ import '../../../core/constants/app_icon_assets.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-/// 라이브러리 Edit 모드 하단 탭 바
+/// 라이브러리 Edit 모드 하단 액션 바
 ///
 /// Edit 버튼 활성화 시 하단에 표시되는 Trash / Status change 두 버튼을 포함합니다.
 /// 각 버튼은 독립적으로 활성화/비활성화할 수 있습니다.
@@ -15,15 +15,15 @@ import '../../../core/theme/app_text_styles.dart';
 ///
 /// Example:
 /// ```dart
-/// LibraryEditTabBar(
+/// LibraryEditActionBar(
 ///   isTrashEnabled: selectedItems.isNotEmpty,
 ///   isChangeEnabled: selectedItems.isNotEmpty,
 ///   onTrashTap: () { /* 삭제 로직 */ },
 ///   onChangeTap: () { /* 상태 변경 로직 */ },
 /// )
 /// ```
-class LibraryEditTabBar extends StatelessWidget {
-  const LibraryEditTabBar({
+class LibraryEditActionBar extends StatelessWidget {
+  const LibraryEditActionBar({
     super.key,
     required this.isTrashEnabled,
     required this.isChangeEnabled,

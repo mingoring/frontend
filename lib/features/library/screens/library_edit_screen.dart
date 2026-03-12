@@ -7,7 +7,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
-import '../widgets/library_edit_tab_bar.dart';
+import '../widgets/library_edit_action_bar.dart';
 import '../widgets/library_filter_bar.dart';
 import '../widgets/library_list_card.dart';
 
@@ -114,7 +114,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: LibraryEditTabBar(
+      bottomNavigationBar: LibraryEditActionBar(
         isTrashEnabled: hasSelection,
         isChangeEnabled: hasSelection,
         onTrashTap: hasSelection ? () {} : null,
