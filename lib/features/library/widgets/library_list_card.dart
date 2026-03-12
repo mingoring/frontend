@@ -40,8 +40,8 @@ class LibraryListCard extends StatelessWidget {
     required this.videoTime,
     this.thumbnailUrl,
 
-    /// inProgress 상태에서 0.0 ~ 1.0 사이의 진행률
-    /// completed 상태에서는 자동으로 1.0 처리됨
+    /// 마지막으로 학습한 문장 위치 (0.0 ~ 1.0)
+    /// inProgress / completed 상태에서 진행 바로 표시됨
     this.progressRatio = 0.0,
     this.onTap,
 
@@ -157,8 +157,7 @@ class LibraryListCard extends StatelessWidget {
   Widget _buildThumbnail() {
     final showProgressBar = status == LibraryListCardStatus.inProgress ||
         status == LibraryListCardStatus.completed;
-    final ratio =
-        status == LibraryListCardStatus.completed ? 1.0 : progressRatio;
+    final ratio = progressRatio;
 
     if (!showProgressBar && !_isActuallySelectable) {
       return VideoThumbnail(
