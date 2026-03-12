@@ -30,6 +30,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
+  static const int _crossAxisCount = 2;
 
   LibraryListCardStatus _toCardStatus(LessonStatus status) => switch (status) {
         LessonStatus.uploading => LibraryListCardStatus.uploading,
@@ -62,7 +63,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: _horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -109,7 +111,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               ),
             ),
 
-            // 카드 그리드 (2열)
+            // 카드 그리드 (2열 고정)
             Expanded(
               child: _buildBody(asyncValue),
             ),
@@ -144,36 +146,49 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(_horizontalPadding, 5, _horizontalPadding, 24,
-      ),
-      child: Wrap(
-        spacing: _cardSpacing,
-        runSpacing: _cardSpacing,
-        children: _cachedItems
-        .map(
-          (item) => LibraryListCard(
-            status: _toCardStatus(item.status),
-            title: item.title,
-            videoTime: item.videoTime,
-            thumbnailUrl: item.thumbnailUrl,
-            progressRatio: item.progressRatio,
-            onTap: switch (item.status) {
-              LessonStatus.uploading =>
-                () => VideoUploadingAlertDialog.show(context),
-              LessonStatus.inProgress ||
-              LessonStatus.completed =>
-                () => VideoWatchAlertDialog.show(
-                      context,
-                      videoTitle: item.title,
-                      originalText: item.originalText,
-                      translatedText: item.translatedText,
-                    ),
-            },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth - (_horizontalPadding * 2);
+        final cardWidth =
+            (contentWidth - (_cardSpacing * (_crossAxisCount - 1))) /
+                _crossAxisCount;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            _horizontalPadding,
+            5,
+            _horizontalPadding,
+            24,
           ),
-        )
-        .toList(),
-      ),
+          child: Wrap(
+            spacing: _cardSpacing,
+            runSpacing: _cardSpacing,
+            children: _cachedItems
+                .map(
+                  (item) => LibraryListCard(
+                    width: cardWidth,
+                    status: _toCardStatus(item.status),
+                    title: item.title,
+                    videoTime: item.videoTime,
+                    thumbnailUrl: item.thumbnailUrl,
+                    progressRatio: item.progressRatio,
+                    onTap: switch (item.status) {
+                      LessonStatus.uploading =>
+                        () => VideoUploadingAlertDialog.show(context),
+                      LessonStatus.inProgress || LessonStatus.completed =>
+                        () => VideoWatchAlertDialog.show(
+                              context,
+                              videoTitle: item.title,
+                              originalText: item.originalText,
+                              translatedText: item.translatedText,
+                            ),
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
     );
   }
 }

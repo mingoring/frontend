@@ -22,30 +22,10 @@ enum LibraryListCardStatus { uploading, inProgress, completed }
 /// - [isSelectable] == false: 그림자
 /// - [isSelectable] == true && [isSelected] == false: gray400 테두리, 빈 체크박스 아이콘
 /// - [isSelectable] == true && [isSelected] == true: pink600 테두리, 채워진 체크박스 아이콘
-///
-/// Example:
-/// ```dart
-/// LibraryListCard(
-///   status: LibraryListCardStatus.inProgress,
-///   title: 'BLACKPINK ROSÉ\'s Honest Puzzle Interview',
-///   videoTime: '17:32',
-///   progressRatio: 0.3,
-///   onTap: () {},
-/// )
-///
-/// // 선택 모드
-/// LibraryListCard(
-///   status: LibraryListCardStatus.completed,
-///   title: 'Some Video',
-///   videoTime: '10:00',
-///   isSelectable: true,
-///   isSelected: true,
-///   onTap: () {},
-/// )
-/// ```
 class LibraryListCard extends StatelessWidget {
   const LibraryListCard({
     super.key,
+    required this.width,
     required this.status,
     required this.title,
     required this.videoTime,
@@ -66,6 +46,7 @@ class LibraryListCard extends StatelessWidget {
           'progressRatio must be between 0.0 and 1.0',
         );
 
+  final double width;
   final LibraryListCardStatus status;
   final String title;
   final String videoTime;
@@ -75,7 +56,6 @@ class LibraryListCard extends StatelessWidget {
   final bool isSelectable;
   final bool isSelected;
 
-  static const double _cardWidth = 168.0;
   static const double _cardPaddingH = 14.0;
   static const double _cardPaddingV = 17.0;
   static const double _cardRadius = 20.0;
@@ -87,7 +67,7 @@ class LibraryListCard extends StatelessWidget {
 
   /// 선택 모드이면서 uploading 상태가 아닐 때만 true
   bool get _isActuallySelectable =>
-    isSelectable && status != LibraryListCardStatus.uploading;
+      isSelectable && status != LibraryListCardStatus.uploading;
 
   Color get _backgroundColor {
     if (_isActuallySelectable && isSelected) {
@@ -99,7 +79,7 @@ class LibraryListCard extends StatelessWidget {
     return AppColors.white;
   }
 
-  // 그림자 (isSelectable = false 일 때 적용)
+  /// 그림자 (isSelectable = false 일 때 적용)
   List<BoxShadow>? get _boxShadow {
     if (isSelectable) {
       return null;
@@ -113,9 +93,9 @@ class LibraryListCard extends StatelessWidget {
     ];
   }
 
-  // 테두리
+  /// 테두리
   Color get _borderColor =>
-    isSelected ? AppColors.pink600 : AppColors.gray400;
+      isSelected ? AppColors.pink600 : AppColors.gray400;
 
   MingoringBadgeColor get _badgeColor => switch (status) {
         LibraryListCardStatus.uploading => MingoringBadgeColor.lightPink,
@@ -129,12 +109,14 @@ class LibraryListCard extends StatelessWidget {
         LibraryListCardStatus.completed => 'Completed',
       };
 
+  double get _thumbnailWidth => width - (_cardPaddingH * 2);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: _cardWidth,
+        width: width,
         padding: const EdgeInsets.symmetric(
           horizontal: _cardPaddingH,
           vertical: _cardPaddingV,
@@ -173,6 +155,7 @@ class LibraryListCard extends StatelessWidget {
       return VideoThumbnail(
         size: VideoThumbnailSize.big,
         thumbnailUrl: thumbnailUrl,
+        width: _thumbnailWidth,
       );
     }
 
@@ -182,6 +165,7 @@ class LibraryListCard extends StatelessWidget {
         VideoThumbnail(
           size: VideoThumbnailSize.big,
           thumbnailUrl: thumbnailUrl,
+          width: _thumbnailWidth,
         ),
         if (showProgressBar)
           Positioned(
@@ -236,16 +220,14 @@ class LibraryListCard extends StatelessWidget {
       children: [
         Text(
           title,
-          style:
-              AppTextStyles.detail4B12.copyWith(color: AppColors.gray900),
+          style: AppTextStyles.detail4B12.copyWith(color: AppColors.gray900),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: _textGap),
         Text(
           videoTime,
-          style:
-              AppTextStyles.detail7Md10.copyWith(color: AppColors.gray600),
+          style: AppTextStyles.detail7Md10.copyWith(color: AppColors.gray600),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -269,8 +251,7 @@ class _VideoProgressBar extends StatelessWidget {
       height: _height,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final filledWidth =
-              constraints.maxWidth * ratio.clamp(0.0, 1.0);
+          final filledWidth = constraints.maxWidth * ratio.clamp(0.0, 1.0);
           return Stack(
             children: [
               Container(

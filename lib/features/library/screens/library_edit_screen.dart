@@ -25,6 +25,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
+  static const int _crossAxisCount = 2;
 
   LibraryListCardStatus _toCardStatus(LessonStatus status) => switch (status) {
         LessonStatus.uploading => LibraryListCardStatus.uploading,
@@ -123,8 +124,6 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
   }
 
   Widget _buildBody(AsyncValue<LessonListModel> asyncValue) {
-    // asyncValue에 즉시 사용 가능한 데이터가 있으면 바로 사용하고,
-    // 없으면 필터 전환 중 flicker 방지를 위해 이전 캐시 사용
     final items = asyncValue.valueOrNull?.items ?? _cachedItems;
 
     if (asyncValue.isLoading && items.isEmpty) {
@@ -149,29 +148,43 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(_horizontalPadding, 5, _horizontalPadding, 24,
-      ),
-      child: Wrap(
-        spacing: _cardSpacing,
-        runSpacing: _cardSpacing,
-        children: items
-            .map(
-              (item) => LibraryListCard(
-                status: _toCardStatus(item.status),
-                title: item.title,
-                videoTime: item.videoTime,
-                thumbnailUrl: item.thumbnailUrl,
-                progressRatio: item.progressRatio,
-                isSelectable: true,
-                isSelected: _selectedIds.contains(item.lessonId),
-                onTap: item.status == LessonStatus.uploading
-                    ? null
-                    : () => _toggleSelection(item.lessonId),
-              ),
-            )
-            .toList(),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final contentWidth = constraints.maxWidth - (_horizontalPadding * 2);
+        final cardWidth =
+            (contentWidth - (_cardSpacing * (_crossAxisCount - 1))) /
+                _crossAxisCount;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            _horizontalPadding,
+            5,
+            _horizontalPadding,
+            24,
+          ),
+          child: Wrap(
+            spacing: _cardSpacing,
+            runSpacing: _cardSpacing,
+            children: items
+                .map<Widget>(
+                  (item) => LibraryListCard(
+                    width: cardWidth,
+                    status: _toCardStatus(item.status),
+                    title: item.title,
+                    videoTime: item.videoTime,
+                    thumbnailUrl: item.thumbnailUrl,
+                    progressRatio: item.progressRatio,
+                    isSelectable: true,
+                    isSelected: _selectedIds.contains(item.lessonId),
+                    onTap: item.status == LessonStatus.uploading
+                        ? null
+                        : () => _toggleSelection(item.lessonId),
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
     );
   }
 }
