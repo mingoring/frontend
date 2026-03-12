@@ -12,7 +12,7 @@ class LessonItemDto with _$LessonItemDto {
     required String status,
     required String title,
     String? thumbnailUrl,
-    required double progressRatio,
+    double? progressRatio,
     required String videoTime,
     required String addedAt,
     required String originalText,

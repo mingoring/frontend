@@ -29,7 +29,7 @@ class LessonItemModel {
   final LessonStatus status;
   final String title;
   final String? thumbnailUrl;
-  final double progressRatio;
+  final double? progressRatio;
   final String videoTime;
   final DateTime addedAt;
   final String originalText;

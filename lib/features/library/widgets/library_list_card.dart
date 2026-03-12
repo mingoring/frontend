@@ -40,9 +40,9 @@ class LibraryListCard extends StatelessWidget {
     required this.videoTime,
     this.thumbnailUrl,
 
-    /// 마지막으로 학습한 문장 위치 (0.0 ~ 1.0)
+    /// 마지막으로 학습한 문장 위치 (0.0 ~ 1.0), null 이면 0으로 처리
     /// inProgress / completed 상태에서 진행 바로 표시됨
-    this.progressRatio = 0.0,
+    this.progressRatio,
     this.onTap,
 
     /// Edit 버튼 활성화 시 선택 모드 여부
@@ -51,7 +51,7 @@ class LibraryListCard extends StatelessWidget {
     /// [isSelectable]이 true일 때 선택 여부
     this.isSelected = false,
   }) : assert(
-          progressRatio >= 0.0 && progressRatio <= 1.0,
+          progressRatio == null || (progressRatio >= 0.0 && progressRatio <= 1.0),
           'progressRatio must be between 0.0 and 1.0',
         );
 
@@ -60,7 +60,7 @@ class LibraryListCard extends StatelessWidget {
   final String title;
   final String videoTime;
   final String? thumbnailUrl;
-  final double progressRatio;
+  final double? progressRatio;
   final VoidCallback? onTap;
   final bool isSelectable;
   final bool isSelected;
@@ -157,7 +157,7 @@ class LibraryListCard extends StatelessWidget {
   Widget _buildThumbnail() {
     final showProgressBar = status == LibraryListCardStatus.inProgress ||
         status == LibraryListCardStatus.completed;
-    final ratio = progressRatio;
+    final ratio = progressRatio ?? 0.0;
 
     if (!showProgressBar && !_isActuallySelectable) {
       return VideoThumbnail(
