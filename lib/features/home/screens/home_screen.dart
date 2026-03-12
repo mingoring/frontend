@@ -12,7 +12,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/badges/day_of_the_week_badge.dart';
+import '../widgets/day_of_the_week_badge.dart';
 import '../widgets/home_action_card.dart';
 import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';

@@ -35,22 +35,28 @@ class _MingoringTextFieldSearchState extends State<MingoringTextFieldSearch> {
   static const double _iconSize = 16.0;
   static const double _iconGap = 4.0;
 
-  late final FocusNode _internalFocusNode;
-  FocusNode get _focusNode => widget.focusNode ?? _internalFocusNode;
+  late FocusNode _focusNode;
+  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
-    _internalFocusNode = FocusNode();
+    _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_handleFocusChanged);
+    _isFocused = _focusNode.hasFocus;
   }
 
   @override
   void didUpdateWidget(covariant MingoringTextFieldSearch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.focusNode != widget.focusNode) {
-      oldWidget.focusNode?.removeListener(_handleFocusChanged);
+      _focusNode.removeListener(_handleFocusChanged);
+      if (oldWidget.focusNode == null) {
+        _focusNode.dispose();
+      }
+      _focusNode = widget.focusNode ?? FocusNode();
       _focusNode.addListener(_handleFocusChanged);
+      _isFocused = _focusNode.hasFocus;
     }
   }
 
@@ -58,20 +64,18 @@ class _MingoringTextFieldSearchState extends State<MingoringTextFieldSearch> {
   void dispose() {
     _focusNode.removeListener(_handleFocusChanged);
     if (widget.focusNode == null) {
-      _internalFocusNode.dispose();
+      _focusNode.dispose();
     }
     super.dispose();
   }
 
   void _handleFocusChanged() {
-    setState(() {});
+    setState(() => _isFocused = _focusNode.hasFocus);
   }
 
   @override
   Widget build(BuildContext context) {
-    final isFocused = _focusNode.hasFocus;
-    final borderColor = isFocused ? AppColors.pink600 : AppColors.gray400;
-    final iconColor = isFocused ? AppColors.pink600 : AppColors.gray400;
+    final iconColor = _isFocused ? AppColors.pink600 : AppColors.gray400;
 
     return TextField(
       controller: widget.controller,

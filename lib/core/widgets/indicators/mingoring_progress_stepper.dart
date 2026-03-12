@@ -4,7 +4,7 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_text_styles.dart';
 
 // stepper 사이즈
-enum MingoringProgressStepperSize { 
+enum MingoringProgressStepperSize {
   small,
   big
 }

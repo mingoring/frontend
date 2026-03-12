@@ -66,20 +66,9 @@ class VideoThumbnail extends StatelessWidget {
         VideoThumbnailSize.big => 36.0,
       };
 
-  Color get _playButtonBackgroundColor => switch (size) {
-        VideoThumbnailSize.small => AppColors.white70,
-        VideoThumbnailSize.big => AppColors.white70,
-      };
-
-  Color get _playIconColor => switch (size) {
-        VideoThumbnailSize.small => AppColors.black70,
-        VideoThumbnailSize.big => AppColors.black70,
-      };
-
-  Color get _thumbnailDimColor => switch (size) {
-        VideoThumbnailSize.small => AppColors.black10,
-        VideoThumbnailSize.big => AppColors.black10,
-      };
+  static const _playButtonBackgroundColor = AppColors.white70;
+  static const _playIconColor = AppColors.black70;
+  static const _thumbnailDimColor = AppColors.black10;
 
   double get _playIconOffsetX => switch (size) {
         VideoThumbnailSize.small => -0.5,

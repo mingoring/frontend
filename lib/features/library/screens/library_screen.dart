@@ -7,7 +7,7 @@ import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/dialogs/video_uploading_alert_dialog.dart';
+import '../widgets/video_uploading_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/toasts/mingoring_toast.dart';
 import '../constants/library_constants.dart';

@@ -15,10 +15,13 @@ class MingoringNavigationBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTap;
 
+  static const double _minHeight = 48.0;
+  static const double _iconSize = 20.0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 48),
+      constraints: const BoxConstraints(minHeight: _minHeight),
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: AppColors.gray200)),
       ),
@@ -51,39 +54,39 @@ class MingoringNavigationBar extends StatelessWidget {
             NavigationDestination(
               icon: SvgPicture.asset(
                 AppIconAssets.libraryGray,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               selectedIcon: SvgPicture.asset(
                 AppIconAssets.libraryPink,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               label: 'Library',
             ),
             NavigationDestination(
               icon: SvgPicture.asset(
                 AppIconAssets.homeGray,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               selectedIcon: SvgPicture.asset(
                 AppIconAssets.homePink,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               label: 'Home',
             ),
             NavigationDestination(
               icon: SvgPicture.asset(
                 AppIconAssets.userGray,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               selectedIcon: SvgPicture.asset(
                 AppIconAssets.userPink,
-                width: 20,
-                height: 20,
+                width: _iconSize,
+                height: _iconSize,
               ),
               label: 'My page',
             ),
