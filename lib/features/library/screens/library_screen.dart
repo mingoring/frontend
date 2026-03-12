@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,12 +8,12 @@ import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../widgets/video_uploading_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
-import '../../../core/widgets/toasts/mingoring_toast.dart';
 import '../constants/library_constants.dart';
 import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
 import '../widgets/library_add_video_button.dart';
+import '../widgets/library_input_link_bottom_sheet.dart';
 import '../widgets/library_edit_button.dart';
 import '../widgets/library_empty_section.dart';
 import '../widgets/library_filter_bar.dart';
@@ -50,11 +49,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return Scaffold(
       backgroundColor: AppColors.pink100,
       floatingActionButton: LibraryAddVideoButton(
-        onTap: () {
-          if (kDebugMode) {
-            MingoringToast.show(context, message: '[DEBUG] Add Video tapped');
-          }
-        },
+        onTap: () => LibraryInputLinkBottomSheet.show(context),
       ),
       body: SafeArea(
         child: Column(
