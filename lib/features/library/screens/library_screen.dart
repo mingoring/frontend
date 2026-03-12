@@ -10,6 +10,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/dialogs/video_uploading_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../../../core/widgets/toasts/mingoring_toast.dart';
+import '../constants/library_constants.dart';
 import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
@@ -32,12 +33,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
-
-  LibraryListCardStatus _toCardStatus(LessonStatus status) => switch (status) {
-        LessonStatus.uploading => LibraryListCardStatus.uploading,
-        LessonStatus.inProgress => LibraryListCardStatus.inProgress,
-        LessonStatus.completed => LibraryListCardStatus.completed,
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +72,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Library',
+                          LibraryConstants.screenTitle,
                           style: AppLogoTypography.logoB4.copyWith(
                             color: AppColors.pink600,
                           ),
@@ -107,7 +102,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
                   // 서브타이틀
                   Text(
-                    'Add videos and enjoy in this section!',
+                    LibraryConstants.screenSubtitle,
                     style: AppTextStyles.body8Sb14.copyWith(
                       color: AppColors.gray500,
                       height: 1.2,
@@ -150,7 +145,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       debugPrint('[LibraryScreen] stackTrace: ${asyncValue.stackTrace}');
       return Center(
         child: Text(
-          'Failed to load library.',
+          LibraryConstants.loadErrorMessage,
           style: AppTextStyles.body8Sb14.copyWith(color: AppColors.gray500),
         ),
       );
@@ -181,7 +176,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 .map(
                   (item) => LibraryListCard(
                     width: cardWidth,
-                    status: _toCardStatus(item.status),
+                    status: item.status.toCardStatus(),
                     title: item.title,
                     videoTime: item.videoTime,
                     thumbnailUrl: item.thumbnailUrl,

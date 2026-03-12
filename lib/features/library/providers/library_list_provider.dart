@@ -5,7 +5,7 @@ import '../../auth/models/auth_state.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/library_item_model.dart';
 import '../repositories/library_repository.dart';
-import '../widgets/library_filter_bar.dart';
+import '../models/library_filter_option.dart';
 
 /// 라이브러리 목록 조회 파라미터
 class LibraryListParams {

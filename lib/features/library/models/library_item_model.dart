@@ -11,6 +11,7 @@ enum LessonStatus {
       };
 }
 
+
 class LessonItemModel {
   const LessonItemModel({
     required this.lessonId,

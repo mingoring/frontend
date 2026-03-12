@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_colors.dart';
+import '../constants/library_constants.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/dialogs/confirm_alert_dialog.dart';
 import '../../../core/widgets/dialogs/error_alert_dialog.dart';
@@ -100,10 +101,10 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
     await ConfirmAlertDialog.show(
       context,
-      title: 'Discard changes?',
-      description: 'Your unsaved changes will be lost.',
-      cancelLabel: 'Cancel',
-      confirmLabel: 'Discard',
+      title: LibraryConstants.discardChangesTitle,
+      description: LibraryConstants.discardChangesDescription,
+      cancelLabel: LibraryConstants.discardCancelLabel,
+      confirmLabel: LibraryConstants.discardConfirmLabel,
       onConfirm: () {
         shouldDiscard = true;
       },
@@ -115,12 +116,6 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
       context.pop();
     }
   }
-
-  LibraryListCardStatus _toCardStatus(LessonStatus status) => switch (status) {
-        LessonStatus.uploading => LibraryListCardStatus.uploading,
-        LessonStatus.inProgress => LibraryListCardStatus.inProgress,
-        LessonStatus.completed => LibraryListCardStatus.completed,
-      };
 
   LessonStatus _effectiveStatusOf(int lessonId) {
     return _draftStatusesById[lessonId] ?? LessonStatus.inProgress;
@@ -328,7 +323,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     if (items.isEmpty) {
       return Center(
         child: Text(
-          'No lessons found.',
+          LibraryConstants.editEmptyMessage,
           style: AppTextStyles.body8Sb14.copyWith(color: AppColors.gray500),
         ),
       );
@@ -356,7 +351,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
               return LibraryListCard(
                 width: cardWidth,
-                status: _toCardStatus(effectiveStatus),
+                status: effectiveStatus.toCardStatus(),
                 title: item.title,
                 videoTime: item.videoTime,
                 thumbnailUrl: item.thumbnailUrl,

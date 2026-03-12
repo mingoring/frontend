@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../models/library_filter_option.dart';
 
-/// 라이브러리 필터 옵션
-enum LibraryFilterOption { all, uploading, inProgress, completed }
+export '../models/library_filter_option.dart';
 
 extension _LibraryFilterOptionLabel on LibraryFilterOption {
   String get label => switch (this) {

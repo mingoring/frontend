@@ -7,9 +7,18 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/badges/mingoring_badge.dart';
 import '../../../core/widgets/indicators/mingoring_circular_progress_indicator.dart';
 import '../../../core/widgets/video/video_thumbnail.dart';
+import '../models/library_item_model.dart';
 
 /// 라이브러리 목록 카드 상태
 enum LibraryListCardStatus { uploading, inProgress, completed }
+
+extension LessonStatusToCardStatusX on LessonStatus {
+  LibraryListCardStatus toCardStatus() => switch (this) {
+        LessonStatus.uploading => LibraryListCardStatus.uploading,
+        LessonStatus.inProgress => LibraryListCardStatus.inProgress,
+        LessonStatus.completed => LibraryListCardStatus.completed,
+      };
+}
 
 /// 라이브러리 목록 카드 위젯
 ///

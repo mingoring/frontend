@@ -7,7 +7,7 @@ import '../../../core/network/dio_client.dart';
 import '../dto/library_list_response_dto.dart';
 import '../errors/library_error_mapper.dart';
 import '../models/library_item_model.dart';
-import '../widgets/library_filter_bar.dart';
+import '../models/library_filter_option.dart';
 
 extension _FilterOptionX on LibraryFilterOption {
   String get apiValue => switch (this) {

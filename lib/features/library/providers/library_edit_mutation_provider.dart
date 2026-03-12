@@ -10,11 +10,11 @@ import '../repositories/library_repository.dart';
 ///   AsyncData(null)   → idle / 성공
 ///   AsyncLoading()    → 요청 진행 중
 ///   AsyncError(e, st) → 요청 실패
-class LibraryEditMutationNotifier extends StateNotifier<AsyncValue<void>> {
-  LibraryEditMutationNotifier(this._repository)
-      : super(const AsyncValue.data(null));
+class LibraryEditMutationNotifier extends AutoDisposeNotifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
-  final LibraryRepository _repository;
+  LibraryRepository get _repository => ref.read(libraryRepositoryProvider);
 
   Future<bool> deleteVideos(List<int> lessonIds) async {
     state = const AsyncValue.loading();
@@ -83,6 +83,6 @@ class LibraryEditMutationNotifier extends StateNotifier<AsyncValue<void>> {
 }
 
 final libraryEditMutationProvider =
-    StateNotifierProvider.autoDispose<LibraryEditMutationNotifier, AsyncValue<void>>(
-  (ref) => LibraryEditMutationNotifier(ref.watch(libraryRepositoryProvider)),
+    NotifierProvider.autoDispose<LibraryEditMutationNotifier, AsyncValue<void>>(
+  LibraryEditMutationNotifier.new,
 );
