@@ -245,7 +245,6 @@ class _LearningDisplaySettingsBottomSheetState
                         _onShowBookmarksOnlyChanged(!_showBookmarksOnly),
                     behavior: HitTestBehavior.opaque,
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         SvgPicture.asset(
                           _showBookmarksOnly
