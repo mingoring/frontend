@@ -10,8 +10,9 @@ enum LibraryVideoStatus { inProgress, completed }
 
 /// 동영상 상태 변경 바텀시트 (library feature 전용)
 ///
-/// 현재 상태를 강조 표시하며, 다른 상태 칩을 탭하면
-/// [onStatusChanged] 를 호출하고 시트를 자동으로 닫습니다.
+/// - 현재 상태 칩: pink600 border (선택됨)
+/// - 미선택 상태 칩: gray400 border
+/// - 다른 상태 칩 탭 시: 해당 칩 즉시 pink600으로 피드백 → 150ms 후 닫히고 [onStatusChanged] 호출
 ///
 /// 사용 예시:
 /// ```dart
@@ -23,7 +24,7 @@ enum LibraryVideoStatus { inProgress, completed }
 ///   },
 /// );
 /// ```
-class LibraryStatusChangeBottomSheet extends StatelessWidget {
+class LibraryStatusChangeBottomSheet extends StatefulWidget {
   const LibraryStatusChangeBottomSheet({
     super.key,
     required this.currentStatus,
@@ -31,16 +32,6 @@ class LibraryStatusChangeBottomSheet extends StatelessWidget {
   });
 
   static const double _borderRadius = 20.0;
-  static const double _closeIconSize = 13.0;
-  static const double _closeIconTopPadding = 22.0;
-  static const double _closeIconRightPadding = 21.0;
-
-  /// 피그마 기준: content top = 46, close icon row 높이 = 35 → 보정 11
-  static const double _contentTopSpacing = 11.0;
-  static const double _contentHorizontalPadding = 31.0;
-  static const double _titleChipGap = 35.0;
-  static const double _bottomPadding = 80.0;
-  static const double _chipGap = 8.0;
 
   /// 현재 선택된 상태 (칩 강조 표시 기준)
   final LibraryVideoStatus currentStatus;
@@ -71,10 +62,39 @@ class LibraryStatusChangeBottomSheet extends StatelessWidget {
     );
   }
 
-  void _onChipTap(BuildContext context, LibraryVideoStatus tapped) {
-    if (tapped == currentStatus) return;
-    Navigator.of(context).pop();
-    onStatusChanged(tapped);
+  @override
+  State<LibraryStatusChangeBottomSheet> createState() =>
+      _LibraryStatusChangeBottomSheetState();
+}
+
+class _LibraryStatusChangeBottomSheetState
+    extends State<LibraryStatusChangeBottomSheet> {
+  static const double _borderRadius = 20.0;
+  static const double _closeIconSize = 13.0;
+  static const double _closeIconTopPadding = 22.0;
+  static const double _closeIconRightPadding = 21.0;
+  static const double _contentTopSpacing = 11.0;
+  static const double _contentHorizontalPadding = 31.0;
+  static const double _titleChipGap = 35.0;
+  static const double _bottomPadding = 80.0;
+  static const double _chipGap = 8.0;
+  static const Duration _tapFeedbackDelay = Duration(milliseconds: 150);
+
+  LibraryVideoStatus? _tappedStatus;
+
+  bool _isSelected(LibraryVideoStatus status) {
+    if (_tappedStatus != null) return status == _tappedStatus;
+    return status == widget.currentStatus;
+  }
+
+  void _onChipTap(LibraryVideoStatus tapped) {
+    if (tapped == widget.currentStatus) return;
+    setState(() => _tappedStatus = tapped);
+    Future.delayed(_tapFeedbackDelay, () {
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      widget.onStatusChanged(tapped);
+    });
   }
 
   @override
@@ -112,7 +132,6 @@ class LibraryStatusChangeBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-            // close icon row 높이(35) + 보정(11) = 46px → 타이틀 시작점
             const SizedBox(height: _contentTopSpacing),
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -135,18 +154,14 @@ class LibraryStatusChangeBottomSheet extends StatelessWidget {
                     children: [
                       _StatusChip(
                         label: 'In Progress',
-                        isSelected:
-                            currentStatus == LibraryVideoStatus.inProgress,
-                        onTap: () =>
-                            _onChipTap(context, LibraryVideoStatus.inProgress),
+                        isSelected: _isSelected(LibraryVideoStatus.inProgress),
+                        onTap: () => _onChipTap(LibraryVideoStatus.inProgress),
                       ),
                       const SizedBox(width: _chipGap),
                       _StatusChip(
                         label: 'Completed',
-                        isSelected:
-                            currentStatus == LibraryVideoStatus.completed,
-                        onTap: () =>
-                            _onChipTap(context, LibraryVideoStatus.completed),
+                        isSelected: _isSelected(LibraryVideoStatus.completed),
+                        onTap: () => _onChipTap(LibraryVideoStatus.completed),
                       ),
                     ],
                   ),
@@ -195,8 +210,7 @@ class _StatusChip extends StatelessWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(_borderRadius),
           border: Border.all(
-            // 미선택 시 transparent border 로 레이아웃 유지
-            color: isSelected ? AppColors.pink600 : Colors.transparent,
+            color: isSelected ? AppColors.pink600 : AppColors.gray400,
           ),
         ),
         child: Text(

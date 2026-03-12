@@ -18,8 +18,21 @@ extension _FilterOptionX on LibraryFilterOption {
       };
 }
 
+extension _LessonStatusX on LessonStatus {
+  String get apiValue => switch (this) {
+        LessonStatus.uploading => 'UPLOADING',
+        LessonStatus.inProgress => 'IN_PROGRESS',
+        LessonStatus.completed => 'COMPLETED',
+      };
+}
+
 abstract interface class LibraryRepository {
   Future<LessonListModel> fetchList({required LibraryFilterOption filter});
+  Future<void> deleteVideos({required List<int> lessonIds});
+  Future<void> updateStatus({
+    required List<int> lessonIds,
+    required LessonStatus status,
+  });
 }
 
 class LibraryRepositoryImpl implements LibraryRepository {
@@ -45,6 +58,51 @@ class LibraryRepositoryImpl implements LibraryRepository {
       ),
       onSuccess: (data) => LessonListResponseDto.fromJson(data).toModel(),
     );
+  }
+
+  @override
+  Future<void> deleteVideos({required List<int> lessonIds}) =>
+      _requestVoid(
+        request: () => _dio.delete(
+          ApiConstants.lessonsPath,
+          data: {'lessonIds': lessonIds},
+        ),
+      );
+
+  @override
+  Future<void> updateStatus({
+    required List<int> lessonIds,
+    required LessonStatus status,
+  }) =>
+      _requestVoid(
+        request: () => _dio.patch(
+          ApiConstants.lessonsStatusPath,
+          data: {'lessonIds': lessonIds, 'status': status.apiValue},
+        ),
+      );
+
+  Future<void> _requestVoid({
+    required Future<dynamic> Function() request,
+  }) async {
+    try {
+      await request();
+    } on AppException {
+      rethrow;
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw const NetworkException();
+      }
+      final statusCode = e.response?.statusCode ?? 0;
+      final data = e.response?.data;
+      throw data is Map<String, dynamic>
+          ? mapLibraryError(statusCode, data)
+          : mapLibraryError(statusCode, null);
+    } catch (e, st) {
+      Error.throwWithStackTrace(const UnknownException(), st);
+    }
   }
 
   Future<T> _request<T>({

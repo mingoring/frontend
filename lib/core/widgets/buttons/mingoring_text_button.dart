@@ -13,7 +13,7 @@ enum MingoringTextButtonSize {
 
   final double height;
 
-  TextStyle get _textStyle => switch (this) {
+  TextStyle get textStyle => switch (this) {
         big => AppTextStyles.head6B18.copyWith(height: 1.2),
         small || popup => AppTextStyles.body4B15.copyWith(height: 1.2),
       };
@@ -36,33 +36,70 @@ class MingoringTextButton extends StatelessWidget {
     required this.child, // 버튼 내용
   });
 
-  final VoidCallback? onPressed; // 클릭 콜백
-  final VoidCallback? onLongPress; // 길게 누르기 콜백
-  final ValueChanged<bool>? onHover; // 호버 콜백
-  final ValueChanged<bool>? onFocusChange; // 포커스 변경 콜백
-  final MingoringTextButtonSize size; // 버튼 사이즈
-  final ButtonStyle? style; // 커스텀 버튼 스타일
-  final FocusNode? focusNode; // 포커스 노드
-  final bool autofocus; // 자동 포커스 여부
-  final Clip? clipBehavior; // 클립 동작 방식
-  final WidgetStatesController? statesController; // 상태 컨트롤러
-  final Widget child; // 버튼 내용
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
+  final ValueChanged<bool>? onHover;
+  final ValueChanged<bool>? onFocusChange;
+  final MingoringTextButtonSize size;
+  final ButtonStyle? style;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final Clip? clipBehavior;
+  final WidgetStatesController? statesController;
+  final Widget child;
 
-  static const _borderRadius = BorderRadius.all(Radius.circular(20));
+  static const BorderRadius _borderRadius =
+      BorderRadius.all(Radius.circular(20));
 
-  @override
-  Widget build(BuildContext context) {
-    final defaultStyle = TextButton.styleFrom(
+  ButtonStyle _defaultStyle() {
+    return TextButton.styleFrom(
       foregroundColor: AppColors.white,
       disabledForegroundColor: AppColors.white,
       backgroundColor: AppColors.pink600,
       disabledBackgroundColor: AppColors.gray400,
-      textStyle: size._textStyle,
+      textStyle: size.textStyle,
       minimumSize: Size(double.infinity, size.height),
       shape: const RoundedRectangleBorder(borderRadius: _borderRadius),
       padding: EdgeInsets.zero,
     );
+  }
 
+  ButtonStyle _resolvedStyle() {
+    final defaultStyle = _defaultStyle();
+
+    if (style == null) return defaultStyle;
+
+    return defaultStyle.copyWith(
+      foregroundColor: style!.foregroundColor,
+      backgroundColor: style!.backgroundColor,
+      overlayColor: style!.overlayColor,
+      shadowColor: style!.shadowColor,
+      surfaceTintColor: style!.surfaceTintColor,
+      elevation: style!.elevation,
+      padding: style!.padding,
+      minimumSize: style!.minimumSize,
+      fixedSize: style!.fixedSize,
+      maximumSize: style!.maximumSize,
+      side: style!.side,
+      shape: style!.shape,
+      mouseCursor: style!.mouseCursor,
+      visualDensity: style!.visualDensity,
+      tapTargetSize: style!.tapTargetSize,
+      animationDuration: style!.animationDuration,
+      enableFeedback: style!.enableFeedback,
+      alignment: style!.alignment,
+      splashFactory: style!.splashFactory,
+      textStyle: style!.textStyle,
+      iconColor: style!.iconColor,
+      iconSize: style!.iconSize,
+      iconAlignment: style!.iconAlignment,
+      backgroundBuilder: style!.backgroundBuilder,
+      foregroundBuilder: style!.foregroundBuilder,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
       onLongPress: onLongPress,
@@ -72,7 +109,7 @@ class MingoringTextButton extends StatelessWidget {
       autofocus: autofocus,
       clipBehavior: clipBehavior ?? Clip.none,
       statesController: statesController,
-      style: defaultStyle.merge(style),
+      style: _resolvedStyle(),
       child: child,
     );
   }

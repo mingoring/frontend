@@ -269,9 +269,9 @@ class _SecondaryButton extends StatelessWidget {
     return MingoringTextButton(
       onPressed: onPressed,
       size: MingoringTextButtonSize.small,
-      style: TextButton.styleFrom(
-        backgroundColor: AppColors.gray400,
-        overlayColor: AppColors.white70,
+      style: const ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(AppColors.gray400),
+        overlayColor: WidgetStatePropertyAll(AppColors.white70),
       ),
       child: Text(text),
     );

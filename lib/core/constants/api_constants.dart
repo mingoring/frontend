@@ -33,4 +33,5 @@ abstract final class ApiConstants {
 
   // ── Library ───────────────────────────────────────
   static const String lessonsPath = '/api/v1/lessons';
+  static const String lessonsStatusPath = '/api/v1/lessons/status';
 }

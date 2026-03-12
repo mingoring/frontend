@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../models/library_item_model.dart';
+import '../providers/library_edit_mutation_provider.dart';
 import '../providers/library_list_provider.dart';
+import '../widgets/library_delete_bottom_sheet.dart';
 import '../widgets/library_edit_action_bar.dart';
 import '../widgets/library_filter_bar.dart';
 import '../widgets/library_list_card.dart';
+import '../widgets/library_status_change_bottom_sheet.dart';
 
 class LibraryEditScreen extends ConsumerStatefulWidget {
   const LibraryEditScreen({super.key});
@@ -23,6 +28,11 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
   final Set<int> _selectedIds = {};
   List<LessonItemModel> _cachedItems = const [];
 
+  /// 백엔드에 아직 보내지 않은 pending 상태 변경 (Save 시 전송)
+  /// 원본 _cachedItems와 분리하되, 화면 표시에는 반영한다.
+  final Map<int, LessonStatus> _pendingStatusChanges = {};
+  final Set<int> _pendingDeletes = {};
+
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
@@ -33,7 +43,19 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
         LessonStatus.completed => LibraryListCardStatus.completed,
       };
 
+  LessonStatus _effectiveStatusOf(LessonItemModel item) {
+    return _pendingStatusChanges[item.lessonId] ?? item.status;
+  }
+
+  List<LessonItemModel> _buildVisibleItems(List<LessonItemModel> source) {
+    return source
+        .where((item) => !_pendingDeletes.contains(item.lessonId))
+        .toList();
+  }
+
   void _toggleSelection(int lessonId) {
+    if (_pendingDeletes.contains(lessonId)) return;
+
     setState(() {
       if (_selectedIds.contains(lessonId)) {
         _selectedIds.remove(lessonId);
@@ -41,6 +63,98 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
         _selectedIds.add(lessonId);
       }
     });
+  }
+
+  LibraryVideoStatus get _currentStatusForSheet {
+    final selected = _cachedItems.where(
+      (item) =>
+          _selectedIds.contains(item.lessonId) &&
+          !_pendingDeletes.contains(item.lessonId),
+    );
+
+    final allCompleted = selected.isNotEmpty &&
+        selected.every(
+          (item) => _effectiveStatusOf(item) == LessonStatus.completed,
+        );
+
+    return allCompleted
+        ? LibraryVideoStatus.completed
+        : LibraryVideoStatus.inProgress;
+  }
+
+  LessonStatus _toModelStatus(LibraryVideoStatus v) => switch (v) {
+        LibraryVideoStatus.inProgress => LessonStatus.inProgress,
+        LibraryVideoStatus.completed => LessonStatus.completed,
+      };
+
+  /// 삭제 확인 → pending에 저장 (API 즉시 호출 X) 
+  Future<void> _onTrashTap() async {
+    final ids = _selectedIds.toList();
+    bool confirmed = false;
+
+    await LibraryDeleteBottomSheet.show(
+      context,
+      onDelete: () {
+        confirmed = true;
+      },
+    );
+    if (!mounted || !confirmed) return;
+
+    setState(() {
+      _pendingDeletes.addAll(ids);
+
+      for (final id in ids) {
+        _pendingStatusChanges.remove(id);
+      }
+
+      _selectedIds.clear();
+    });
+  }
+
+  /// 상태 변경 선택 → pending에 저장 (API 즉시 호출 X)
+  Future<void> _onChangeTap() async {
+    final ids = _selectedIds.toList();
+    LessonStatus? chosen;
+
+    await LibraryStatusChangeBottomSheet.show(
+      context,
+      currentStatus: _currentStatusForSheet,
+      onStatusChanged: (v) {
+        chosen = _toModelStatus(v);
+      },
+    );
+    if (!mounted || chosen == null) return;
+
+    setState(() {
+      for (final id in ids) {
+        if (_pendingDeletes.contains(id)) continue;
+        _pendingStatusChanges[id] = chosen!;
+      }
+      _selectedIds.clear();
+    });
+  }
+
+  Future<void> _onSave() async {
+    final success = await ref.read(libraryEditMutationProvider.notifier).saveAll(
+          statusChanges: Map.of(_pendingStatusChanges),
+          deleteIds: _pendingDeletes.toList(),
+        );
+    if (!mounted) return;
+
+    if (success) {
+      setState(() {
+        _pendingStatusChanges.clear();
+        _pendingDeletes.clear();
+        _selectedIds.clear();
+      });
+      ref.invalidate(libraryListProvider);
+    } else {
+      final error = ref.read(libraryEditMutationProvider).error;
+      ErrorAlertDialog.show(
+        context,
+        errorMessage: error is AppException ? error.message : null,
+      );
+    }
   }
 
   Widget _buildTitleWidget() {
@@ -75,21 +189,27 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
     ref.listen(libraryListProvider(params), (_, next) {
       next.whenData((model) {
-        setState(() => _cachedItems = model.items);
+        setState(() {
+          _cachedItems = model.items;
+        });
       });
     });
 
-    final hasSelection = _selectedIds.isNotEmpty;
+    final isMutating = ref.watch(libraryEditMutationProvider).isLoading;
+
+    final hasPendingChanges =
+        (_pendingStatusChanges.isNotEmpty || _pendingDeletes.isNotEmpty) &&
+            !isMutating;
+
+    final hasSelection = _selectedIds.isNotEmpty && !isMutating;
 
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: MingoringAppBar.actionSave(
         onBack: () => context.pop(),
         titleWidget: _buildTitleWidget(),
-        isActionEnabled: hasSelection,
-        onActionPressed: () {
-          // TODO: save action
-        },
+        isActionEnabled: hasPendingChanges,
+        onActionPressed: _onSave,
       ),
       body: SafeArea(
         child: Column(
@@ -117,14 +237,15 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
       bottomNavigationBar: LibraryEditActionBar(
         isTrashEnabled: hasSelection,
         isChangeEnabled: hasSelection,
-        onTrashTap: hasSelection ? () {} : null,
-        onChangeTap: hasSelection ? () {} : null,
+        onTrashTap: hasSelection ? _onTrashTap : null,
+        onChangeTap: hasSelection ? _onChangeTap : null,
       ),
     );
   }
 
   Widget _buildBody(AsyncValue<LessonListModel> asyncValue) {
-    final items = asyncValue.valueOrNull?.items ?? _cachedItems;
+    final sourceItems = asyncValue.valueOrNull?.items ?? _cachedItems;
+    final items = _buildVisibleItems(sourceItems);
 
     if (asyncValue.isLoading && items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -165,23 +286,23 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
           child: Wrap(
             spacing: _cardSpacing,
             runSpacing: _cardSpacing,
-            children: items
-                .map<Widget>(
-                  (item) => LibraryListCard(
-                    width: cardWidth,
-                    status: _toCardStatus(item.status),
-                    title: item.title,
-                    videoTime: item.videoTime,
-                    thumbnailUrl: item.thumbnailUrl,
-                    progressRatio: item.progressRatio,
-                    isSelectable: true,
-                    isSelected: _selectedIds.contains(item.lessonId),
-                    onTap: item.status == LessonStatus.uploading
-                        ? null
-                        : () => _toggleSelection(item.lessonId),
-                  ),
-                )
-                .toList(),
+            children: items.map<Widget>((item) {
+              final effectiveStatus = _effectiveStatusOf(item);
+
+              return LibraryListCard(
+                width: cardWidth,
+                status: _toCardStatus(effectiveStatus),
+                title: item.title,
+                videoTime: item.videoTime,
+                thumbnailUrl: item.thumbnailUrl,
+                progressRatio: item.progressRatio,
+                isSelectable: true,
+                isSelected: _selectedIds.contains(item.lessonId),
+                onTap: effectiveStatus == LessonStatus.uploading
+                    ? null
+                    : () => _toggleSelection(item.lessonId),
+              );
+            }).toList(),
           ),
         );
       },
