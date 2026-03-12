@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'mingoring_text_field.dart';
+import 'mingoring_text_field_base.dart';
 
 /// 본문(내용) 입력용 멀티라인 텍스트 필드.
 ///
@@ -28,14 +28,13 @@ class MingoringTextFieldContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: _height,
-      child: MingoringTextField(
+      child: MingoringTextFieldBase(
         controller: controller,
         hintText: hintText,
-        borderStyle: MingoringTextFieldBorderStyle.shadow,
         keyboardType: TextInputType.multiline,
         textInputAction: TextInputAction.newline,
         expands: true,
-        verticalAlignment: CrossAxisAlignment.start,
+        textAlignVertical: TextAlignVertical.top,
         onChanged: onChanged,
         focusNode: focusNode,
         enabled: enabled,

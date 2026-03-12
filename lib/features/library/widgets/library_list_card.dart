@@ -13,14 +13,15 @@ enum LibraryListCardStatus { uploading, inProgress, completed }
 
 /// 라이브러리 목록 카드 위젯
 ///
-/// 업로드 중 / 진행 중 / 완료 상태를 시각적으로 표현합니다.
-/// - [LibraryListCardStatus.uploading]: pink100 배경, 로딩 스피너 표시
-/// - [LibraryListCardStatus.inProgress]: 썸네일 하단 진행 바 + darkPink 배지
-/// - [LibraryListCardStatus.completed]: 썸네일 하단 전체 진행 바 + pink 배지
+/// 업로드 중 / 진행 중 / 완료 상태
+/// - [LibraryListCardStatus.uploading]
+/// - [LibraryListCardStatus.inProgress]
+/// - [LibraryListCardStatus.completed]
 ///
 /// Edit 버튼 활성화 시 [isSelectable]을 true로 설정하면 선택 모드가 활성화됩니다.
-/// - [isSelected] == false: white 배경, gray200 border, 빈 체크박스 아이콘
-/// - [isSelected] == true: pink200 배경, pink600 border, 채워진 체크박스 아이콘
+/// - [isSelectable] == false: 그림자
+/// - [isSelectable] == true && [isSelected] == false: gray400 테두리, 빈 체크박스 아이콘
+/// - [isSelectable] == true && [isSelected] == true: pink600 테두리, 채워진 체크박스 아이콘
 ///
 /// Example:
 /// ```dart
@@ -84,23 +85,37 @@ class LibraryListCard extends StatelessWidget {
   static const double _checkboxRight = -4.0;
   static const double _checkboxTop = -7.0;
 
-  /// uploading 상태는 선택 불가
+  /// 선택 모드이면서 uploading 상태가 아닐 때만 true
   bool get _isActuallySelectable =>
-      isSelectable && status != LibraryListCardStatus.uploading;
+    isSelectable && status != LibraryListCardStatus.uploading;
 
   Color get _backgroundColor {
-    if (_isActuallySelectable && isSelected) return AppColors.pink200;
-    return status == LibraryListCardStatus.uploading
-        ? AppColors.pink100
-        : AppColors.white;
+    if (_isActuallySelectable && isSelected) {
+      return AppColors.pink200;
+    }
+    if (status == LibraryListCardStatus.uploading) {
+      return AppColors.pink100;
+    }
+    return AppColors.white;
   }
 
-  Color get _borderColor {
-    if (_isActuallySelectable && isSelected) return AppColors.pink600;
-    return status == LibraryListCardStatus.uploading
-        ? AppColors.white
-        : AppColors.gray200;
+  // 그림자 (isSelectable = false 일 때 적용)
+  List<BoxShadow>? get _boxShadow {
+    if (isSelectable) {
+      return null;
+    }
+    return const [
+      BoxShadow(
+        color: AppColors.gray300,
+        blurRadius: 4,
+        offset: Offset(0, 2),
+      ),
+    ];
   }
+
+  // 테두리
+  Color get _borderColor =>
+    isSelected ? AppColors.pink600 : AppColors.gray400;
 
   MingoringBadgeColor get _badgeColor => switch (status) {
         LibraryListCardStatus.uploading => MingoringBadgeColor.lightPink,
@@ -127,7 +142,10 @@ class LibraryListCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: _backgroundColor,
           borderRadius: BorderRadius.circular(_cardRadius),
-          boxShadow: const [BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 2),)],
+          border: _isActuallySelectable
+              ? Border.all(color: _borderColor, width: 1)
+              : null,
+          boxShadow: _boxShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

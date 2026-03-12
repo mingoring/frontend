@@ -9,8 +9,10 @@ enum VideoThumbnailSize { small, big }
 /// - [VideoThumbnailSize.small]: 90×50dp
 /// - [VideoThumbnailSize.big]: 140×80dp
 ///
-/// [thumbnailUrl] 이미지 표시, 상단에 20% 블랙 오버레이, 중앙에 재생 아이콘
-/// thumbnailUrl이 null이나 공백일 때 또는 Image.network 로드 실패(errorBuilder)일 때 대체 배경색 표시
+/// [thumbnailUrl]
+/// - 정상: 이미지 표시
+/// - null or 공백 or Image.network 로드 실패(errorBuilder): 대체 배경색 표시
+
 class VideoThumbnail extends StatelessWidget {
   const VideoThumbnail({
     super.key,
@@ -24,7 +26,8 @@ class VideoThumbnail extends StatelessWidget {
   static const double _radius = 10.0;
 
   BorderRadius get _borderRadius => switch (size) {
-        VideoThumbnailSize.small => const BorderRadius.all(Radius.circular(_radius)),
+        VideoThumbnailSize.small =>
+          const BorderRadius.all(Radius.circular(_radius)),
         VideoThumbnailSize.big => const BorderRadius.only(
             topLeft: Radius.circular(_radius),
             topRight: Radius.circular(_radius),
@@ -41,14 +44,34 @@ class VideoThumbnail extends StatelessWidget {
         VideoThumbnailSize.big => 80.0,
       };
 
-  double get _circleSize => switch (size) {
+  double get _playButtonSize => switch (size) {
         VideoThumbnailSize.small => 30.0,
-        VideoThumbnailSize.big => 50.0,
+        VideoThumbnailSize.big => 48.0,
       };
 
-  double get _iconSize => switch (size) {
-        VideoThumbnailSize.small => 14.0,
-        VideoThumbnailSize.big => 22.0,
+  double get _playIconSize => switch (size) {
+        VideoThumbnailSize.small => 23.0,
+        VideoThumbnailSize.big => 36.0,
+      };
+
+  Color get _playButtonBackgroundColor => switch (size) {
+        VideoThumbnailSize.small => AppColors.white70,
+        VideoThumbnailSize.big => AppColors.white70,
+      };
+
+  Color get _playIconColor => switch (size) {
+        VideoThumbnailSize.small => AppColors.black70,
+        VideoThumbnailSize.big => AppColors.black70,
+      };
+
+  Color get _thumbnailDimColor => switch (size) {
+        VideoThumbnailSize.small => AppColors.black10,
+        VideoThumbnailSize.big => AppColors.black10,
+      };
+
+  double get _playIconOffsetX => switch (size) {
+        VideoThumbnailSize.small => -0.5,
+        VideoThumbnailSize.big => -1.0,
       };
 
   @override
@@ -62,22 +85,24 @@ class VideoThumbnail extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             _thumbnailImage(),
-            const ColoredBox(color: AppColors.black10),
+            ColoredBox(color: _thumbnailDimColor),
             Center(
-              child: Container(
-                width: _circleSize,
-                height: _circleSize,
-                decoration: const BoxDecoration(
-                  color: AppColors.gray400,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: _playButtonBackgroundColor,
                   shape: BoxShape.circle,
                 ),
-                alignment: Alignment.center,
                 child: SizedBox(
-                  width: _iconSize,
-                  height: _iconSize,
-                  child: const CustomPaint(
-                    painter: _PlayTrianglePainter(
-                      color: AppColors.gray100,
+                  width: _playButtonSize,
+                  height: _playButtonSize,
+                  child: Center(
+                    child: Transform.translate(
+                      offset: Offset(_playIconOffsetX, 0),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        size: _playIconSize,
+                        color: _playIconColor,
+                      ),
                     ),
                   ),
                 ),
@@ -105,33 +130,5 @@ class VideoThumbnail extends StatelessWidget {
 
   Widget _fallbackBackground() {
     return const ColoredBox(color: AppColors.gray200);
-  }
-}
-
-class _PlayTrianglePainter extends CustomPainter {
-  const _PlayTrianglePainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-
-    // Figma 기준으로 아이콘을 우측으로 살짝 치우친 플레이 삼각형.
-    final path = Path()
-      ..moveTo(size.width * 0.28, size.height * 0.18)
-      ..lineTo(size.width * 0.28, size.height * 0.82)
-      ..lineTo(size.width * 0.82, size.height * 0.50)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _PlayTrianglePainter oldDelegate) {
-    return oldDelegate.color != color;
   }
 }

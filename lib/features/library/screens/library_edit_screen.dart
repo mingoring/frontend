@@ -91,22 +91,26 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
         },
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              LibraryFilterBar(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+
+            // 필터 바
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              child: LibraryFilterBar(
                 selectedOption: _selectedFilter,
                 onSelected: (option) {
                   setState(() => _selectedFilter = option);
                 },
               ),
-              const SizedBox(height: 14),
-              Expanded(child: _buildBody(asyncValue)),
-            ],
-          ),
+            ),
+            const SizedBox(height: 14),
+
+            // 학습 카드 스크롤 영역
+            Expanded(child: _buildBody(asyncValue)),
+          ],
         ),
       ),
       bottomNavigationBar: LibraryEditTabBar(
@@ -146,7 +150,8 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.fromLTRB(_horizontalPadding, 5, _horizontalPadding, 24,
+      ),
       child: Wrap(
         spacing: _cardSpacing,
         runSpacing: _cardSpacing,

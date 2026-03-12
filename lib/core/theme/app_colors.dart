@@ -40,6 +40,7 @@ abstract final class AppColors {
   // Gray Transparency
   // ──────────────────────────────────────────
 
+  static const Color white70 = Color(0xB3FFFFFF);
   static const Color black10 = Color(0x1A000000);
   static const Color black50 = Color(0x80000000);
   static const Color black70 = Color(0xB3000000);
