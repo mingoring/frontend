@@ -31,7 +31,7 @@ class LibraryEditScreen extends ConsumerStatefulWidget {
 }
 
 class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
-  late LibraryFilterOption _selectedFilter;
+  LibraryFilterOption _selectedFilter = LibraryFilterOption.all;
   final Set<int> _selectedIds = {};
 
   /// 편집 화면 진입 시점의 원본 스냅샷
@@ -59,8 +59,6 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedFilter = widget.args.initialFilter;
-
     _originalItemsById = {
       for (final item in widget.args.initialItems) item.lessonId: item,
     };

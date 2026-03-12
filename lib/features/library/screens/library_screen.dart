@@ -38,8 +38,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final visibleParams = LibraryListParams(filter: _selectedFilter);
     final visibleAsyncValue = ref.watch(libraryListProvider(visibleParams));
 
-    /// 편집 화면에서는 필터 변경을 자유롭게 해야 하므로,
-    /// 현재 선택된 필터 목록이 아니라 전체 목록 스냅샷을 따로 확보한다.
+    /// 편집 화면에는 항상 전체 목록 스냅샷을 전달한다.
     final allParams = const LibraryListParams(filter: LibraryFilterOption.all);
     final allItemsAsyncValue = ref.watch(libraryListProvider(allParams));
 
@@ -80,7 +79,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                               RouteNames.libraryEdit,
                               extra: LibraryEditScreenArgs(
                                 initialItems: allItemsForEdit,
-                                initialFilter: _selectedFilter,
                               ),
                             );
                             if (!mounted) return;
