@@ -91,7 +91,8 @@ class _LearningInputLinkBottomSheetState
   }
 
   void _onUrlChanged(String value) {
-    if (value.isEmpty) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
       setState(() {
         _validationStatus = MingoringValidationStatus.none;
         _helperText = null;
@@ -99,7 +100,7 @@ class _LearningInputLinkBottomSheetState
       return;
     }
 
-    final isValid = YoutubeUrlValidator.isValid(value);
+    final isValid = YoutubeUrlValidator.isValid(normalized);
     setState(() {
       _validationStatus = isValid
           ? MingoringValidationStatus.success
