@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/dialogs/confirm_alert_dialog.dart';
 import '../../../core/widgets/dialogs/error_alert_dialog.dart';
 import '../../../core/widgets/layouts/mingoring_app_bar.dart';
 import '../models/library_item_model.dart';
@@ -37,6 +38,38 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
 
+  bool get _hasUnsavedChanges =>
+      _pendingStatusChanges.isNotEmpty || _pendingDeletes.isNotEmpty;
+
+  Future<void> _handleBack() async {
+    final isMutating = ref.read(libraryEditMutationProvider).isLoading;
+    if (isMutating) return;
+
+    if (!_hasUnsavedChanges) {
+      if (mounted) context.pop();
+      return;
+    }
+
+    bool shouldDiscard = false;
+
+    await ConfirmAlertDialog.show(
+      context,
+      title: 'Discard changes?',
+      description: 'Your unsaved changes will be lost.',
+      cancelLabel: 'Cancel',
+      confirmLabel: 'Discard',
+      onConfirm: () {
+        shouldDiscard = true;
+      },
+    );
+
+    if (!mounted) return;
+
+    if (shouldDiscard) {
+      context.pop();
+    }
+  }
+
   LibraryListCardStatus _toCardStatus(LessonStatus status) => switch (status) {
         LessonStatus.uploading => LibraryListCardStatus.uploading,
         LessonStatus.inProgress => LibraryListCardStatus.inProgress,
@@ -48,9 +81,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
   }
 
   List<LessonItemModel> _buildVisibleItems(List<LessonItemModel> source) {
-    return source
-        .where((item) => !_pendingDeletes.contains(item.lessonId))
-        .toList();
+    return source.where((item) => !_pendingDeletes.contains(item.lessonId)).toList();
   }
 
   void _toggleSelection(int lessonId) {
@@ -73,9 +104,7 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
     );
 
     final allCompleted = selected.isNotEmpty &&
-        selected.every(
-          (item) => _effectiveStatusOf(item) == LessonStatus.completed,
-        );
+        selected.every((item) => _effectiveStatusOf(item) == LessonStatus.completed);
 
     return allCompleted
         ? LibraryVideoStatus.completed
@@ -198,42 +227,47 @@ class _LibraryEditScreenState extends ConsumerState<LibraryEditScreen> {
 
     final hasSelection = _selectedIds.isNotEmpty && !isMutating;
 
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: MingoringAppBar.actionSave(
-        onBack: () => context.pop(),
-        titleWidget: _buildTitleWidget(),
-        isActionEnabled: hasPendingChanges,
-        onActionPressed: _onSave,
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-
-            // 필터 바
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-              child: LibraryFilterBar(
-                selectedOption: _selectedFilter,
-                onSelected: (option) {
-                  setState(() => _selectedFilter = option);
-                },
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // 학습 카드 스크롤 영역
-            Expanded(child: _buildBody(asyncValue)),
-          ],
+    return PopScope(
+      canPop: !_hasUnsavedChanges && !isMutating,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        appBar: MingoringAppBar.actionSave(
+          onBack: _handleBack,
+          titleWidget: _buildTitleWidget(),
+          isActionEnabled: hasPendingChanges,
+          onActionPressed: _onSave,
         ),
-      ),
-      bottomNavigationBar: LibraryEditActionBar(
-        isTrashEnabled: hasSelection,
-        isChangeEnabled: hasSelection,
-        onTrashTap: hasSelection ? _onTrashTap : null,
-        onChangeTap: hasSelection ? _onChangeTap : null,
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                child: LibraryFilterBar(
+                  selectedOption: _selectedFilter,
+                  onSelected: (option) {
+                    setState(() => _selectedFilter = option);
+                  },
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // 학습 카드 스크롤 영역
+              Expanded(child: _buildBody(asyncValue)),
+            ],
+          ),
+        ),
+        bottomNavigationBar: LibraryEditActionBar(
+          isTrashEnabled: hasSelection,
+          isChangeEnabled: hasSelection,
+          onTrashTap: hasSelection ? _onTrashTap : null,
+          onChangeTap: hasSelection ? _onChangeTap : null,
+        ),
       ),
     );
   }
