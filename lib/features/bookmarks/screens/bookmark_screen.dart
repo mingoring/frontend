@@ -27,7 +27,6 @@ class BookmarkScreen extends ConsumerStatefulWidget {
 
 class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
   static const _horizontalPadding = 16.5;
-  static const _titleTopSpacing = 27.0;
   static const _subtitleToSearchSpacing = 18.0;
   static const _searchToCountSpacing = 16.0;
   static const _countToListSpacing = 8.0;
@@ -129,7 +128,6 @@ class _BookmarkScreenState extends ConsumerState<BookmarkScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: _titleTopSpacing),
               _TitleSection(),
               const SizedBox(height: _subtitleToSearchSpacing),
               MingoringTextFieldSearch(
