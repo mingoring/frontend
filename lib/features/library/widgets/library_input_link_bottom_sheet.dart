@@ -103,6 +103,15 @@ class _LibraryInputLinkBottomSheetState
     super.dispose();
   }
 
+  void _onChanged(String value) {
+    if (value.isEmpty && _validationStatus != MingoringValidationStatus.none) {
+      setState(() {
+        _validationStatus = MingoringValidationStatus.none;
+        _helperText = null;
+      });
+    }
+  }
+
   void _onSubmitted(String value) {
     final isValid = YoutubeUrlValidator.isValid(value);
 
@@ -242,6 +251,7 @@ class _LibraryInputLinkBottomSheetState
                           helperText: _helperText,
                           keyboardType: TextInputType.url,
                           textInputAction: TextInputAction.done,
+                          onChanged: _onChanged,
                           onSubmitted: _onSubmitted,
                         ),
                       ],
