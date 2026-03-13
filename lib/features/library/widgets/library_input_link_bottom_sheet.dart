@@ -104,8 +104,7 @@ class _LibraryInputLinkBottomSheetState
   }
 
   void _onSubmitted(String value) {
-    final normalized = YoutubeUrlValidator.normalizeUrl(value);
-    final isValid = normalized.isNotEmpty && YoutubeUrlValidator.isValid(value);
+    final isValid = YoutubeUrlValidator.isValid(value);
 
     setState(() {
       _validationStatus = value.isEmpty
@@ -116,7 +115,7 @@ class _LibraryInputLinkBottomSheetState
       _helperText = (!isValid && value.isNotEmpty) ? _helperErrorText : null;
     });
 
-    _focusNode.unfocus();
+    FocusScope.of(context).unfocus();
   }
 
   bool get _isAddEnabled =>
