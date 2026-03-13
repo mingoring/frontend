@@ -6,8 +6,8 @@ import '../../../core/errors/app_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../dto/library_list_response_dto.dart';
 import '../errors/library_error_mapper.dart';
-import '../models/library_item_model.dart';
 import '../models/library_filter_option.dart';
+import '../models/library_item_model.dart';
 
 extension _FilterOptionX on LibraryFilterOption {
   String get apiValue => switch (this) {
@@ -28,6 +28,7 @@ extension _LessonStatusX on LessonStatus {
 
 abstract interface class LibraryRepository {
   Future<LessonListModel> fetchList({required LibraryFilterOption filter});
+  Future<void> addVideo({required String url});
   Future<void> deleteVideos({required List<int> lessonIds});
   Future<void> updateStatus({
     required List<int> lessonIds,
@@ -61,8 +62,15 @@ class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  Future<void> deleteVideos({required List<int> lessonIds}) =>
-      _requestVoid(
+  Future<void> addVideo({required String url}) => _requestVoid(
+        request: () => _dio.post(
+          ApiConstants.lessonsPath,
+          data: {'sourceType': 'YOUTUBE', 'url': url},
+        ),
+      );
+
+  @override
+  Future<void> deleteVideos({required List<int> lessonIds}) => _requestVoid(
         request: () => _dio.delete(
           ApiConstants.lessonsPath,
           data: {'lessonIds': lessonIds},
@@ -95,8 +103,10 @@ class LibraryRepositoryImpl implements LibraryRepository {
           e.type == DioExceptionType.sendTimeout) {
         throw const NetworkException();
       }
+
       final statusCode = e.response?.statusCode ?? 0;
       final data = e.response?.data;
+
       throw data is Map<String, dynamic>
           ? mapLibraryError(statusCode, data)
           : mapLibraryError(statusCode, null);
@@ -112,9 +122,11 @@ class LibraryRepositoryImpl implements LibraryRepository {
     try {
       final response = await request();
       final data = response.data;
+
       if (data is! Map<String, dynamic>) {
         throw const UnknownException();
       }
+
       return onSuccess(data);
     } on AppException {
       rethrow;
@@ -125,11 +137,14 @@ class LibraryRepositoryImpl implements LibraryRepository {
           e.type == DioExceptionType.sendTimeout) {
         throw const NetworkException();
       }
+
       final statusCode = e.response?.statusCode ?? 0;
       final data = e.response?.data;
+
       if (data is Map<String, dynamic>) {
         throw mapLibraryError(statusCode, data);
       }
+
       throw mapLibraryError(statusCode, null);
     } catch (e, st) {
       Error.throwWithStackTrace(const UnknownException(), st);
