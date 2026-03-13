@@ -26,17 +26,19 @@ class LibraryEditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: enabled ? onTap : null,
-      child: Padding(
+    return TextButton(
+      onPressed: enabled ? onTap : null,
+      style: TextButton.styleFrom(
         padding: _hitAreaPadding,
-        child: Text(
-          'Edit',
-          style: AppTextStyles.body7B14.copyWith(
-            color: enabled ? AppColors.pink600 : AppColors.gray300,
-            height: 1.2,
-          ),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        overlayColor: Colors.transparent,
+      ),
+      child: Text(
+        'Edit',
+        style: AppTextStyles.body7B14.copyWith(
+          color: enabled ? AppColors.pink600 : AppColors.gray300,
+          height: 1.2,
         ),
       ),
     );
