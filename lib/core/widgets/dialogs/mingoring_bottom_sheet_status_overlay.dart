@@ -131,7 +131,7 @@ class _PartialOverlay extends StatelessWidget {
 
   static const String _defaultTitle = 'Something went wrong.';
   static const String _defaultDescription =
-      'Something went wrong.\nIf the issue continues, pleaase contact us.';
+      'Something went wrong.\nIf the issue continues, please contact us.';
 
   final MingoringBottomSheetOverlayStatus status;
   final String? title;
