@@ -6,18 +6,18 @@ import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../widgets/video_uploading_alert_dialog.dart';
 import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../constants/library_constants.dart';
 import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
 import '../providers/library_list_provider.dart';
 import '../widgets/library_add_video_button.dart';
-import '../widgets/library_input_link_bottom_sheet.dart';
 import '../widgets/library_edit_button.dart';
 import '../widgets/library_empty_section.dart';
 import '../widgets/library_filter_bar.dart';
+import '../widgets/library_input_link_bottom_sheet.dart';
 import '../widgets/library_list_card.dart';
+import '../widgets/video_uploading_alert_dialog.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -42,24 +42,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     final allParams = const LibraryListParams(filter: LibraryFilterOption.all);
     final allItemsAsyncValue = ref.watch(libraryListProvider(allParams));
 
-    final visibleItems = visibleAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
-    final allItemsForEdit = allItemsAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
+    final visibleItems =
+        visibleAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
+    final allItemsForEdit =
+        allItemsAsyncValue.valueOrNull?.items ?? const <LessonItemModel>[];
 
     return Scaffold(
       backgroundColor: AppColors.pink100,
       floatingActionButton: LibraryAddVideoButton(
-        onTap: () => LibraryInputLinkBottomSheet.show(context),
+        onTap: () async {
+          final added = await LibraryInputLinkBottomSheet.show<bool>(context);
+          if (!mounted) return;
+
+          if (added == true) {
+            ref.invalidate(libraryListProvider);
+          }
+        },
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: _horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Library 타이틀 + Edit 버튼
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Row(
@@ -92,8 +101,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // 서브타이틀
                   Text(
                     LibraryConstants.screenSubtitle,
                     style: AppTextStyles.body8Sb14.copyWith(
@@ -102,8 +109,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // 필터 바
                   LibraryFilterBar(
                     selectedOption: _selectedFilter,
                     onSelected: (option) {
@@ -114,8 +119,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                 ],
               ),
             ),
-
-            // 카드 그리드 (2열 고정)
             Expanded(
               child: _buildBody(visibleAsyncValue, visibleItems),
             ),

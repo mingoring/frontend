@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants/app_icon_assets.dart';
+import '../../constants/app_mingo_assets.dart';
 import '../../theme/app_colors.dart';
+import '../../theme/app_logo_typography.dart';
 import '../../theme/app_text_styles.dart';
 
 // ─────────────────────────────────────────
@@ -31,7 +31,7 @@ enum MingoringBottomSheetOverlayStatus { success, failure }
 /// MingoringBottomSheetStatusOverlay(
 ///   overlayStatus: _overlayStatus,      // null이면 오버레이 미표시
 ///   title: 'Video is being added!',
-///   subtitle: 'It may take a few minutes.',
+///   description: 'It may take a few minutes.',
 ///   topInset: 35.0,                     // X 버튼 row 높이만큼 오버레이 상단 제외
 ///   child: Container(
 ///     // 기존 바텀시트 콘텐츠 ...
@@ -44,7 +44,7 @@ class MingoringBottomSheetStatusOverlay extends StatelessWidget {
     required this.child,
     this.overlayStatus,
     this.title,
-    this.subtitle,
+    this.description,
     this.topInset = 0.0,
     this.overlayColor = AppColors.white70,
     this.overlayBorderRadius = const BorderRadius.vertical(
@@ -61,11 +61,11 @@ class MingoringBottomSheetStatusOverlay extends StatelessWidget {
   /// null이면 오버레이 미표시, non-null이면 해당 상태 오버레이 표시
   final MingoringBottomSheetOverlayStatus? overlayStatus;
 
-  /// 오버레이 타이틀 텍스트
+  /// 오버레이 타이틀 텍스트 (null이면 기본값 "Something went wrong." 표시)
   final String? title;
 
-  /// 오버레이 서브타이틀 텍스트 (선택)
-  final String? subtitle;
+  /// 오버레이 설명 텍스트 (null이면 기본값 표시)
+  final String? description;
 
   /// 오버레이 상단에서 제외할 높이 (기본: 0)
   /// X 닫기 버튼 row가 있는 바텀시트에서는 해당 row 높이를 전달하세요.
@@ -83,19 +83,27 @@ class MingoringBottomSheetStatusOverlay extends StatelessWidget {
     return Stack(
       children: [
         child,
-        AnimatedSwitcher(
-          duration: _fadeDuration,
-          child: overlayStatus != null
-              ? _PartialOverlay(
-                  key: ValueKey(overlayStatus),
-                  status: overlayStatus!,
-                  title: title ?? '',
-                  subtitle: subtitle,
-                  topInset: topInset,
-                  color: overlayColor,
-                  borderRadius: overlayBorderRadius,
-                )
-              : const SizedBox.shrink(),
+        // Positioned을 Stack 직접 자식으로 두어야 Stack이 child 크기로 결정된다.
+        // AnimatedSwitcher를 non-positioned로 두면 Stack이 무한 확장되는 문제가 생긴다.
+        Positioned(
+          top: topInset,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: AnimatedSwitcher(
+            duration: _fadeDuration,
+            child: overlayStatus != null
+                ? _PartialOverlay(
+                    key: ValueKey(overlayStatus),
+                    status: overlayStatus!,
+                    title: title,
+                    description: description,
+                    color: overlayColor,
+                    borderRadius:
+                        topInset > 0 ? BorderRadius.zero : overlayBorderRadius,
+                  )
+                : const SizedBox.shrink(),
+          ),
         ),
       ],
     );
@@ -103,87 +111,73 @@ class MingoringBottomSheetStatusOverlay extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────
-// Private: overlay layer (topInset 이하 영역만 커버)
+// Private: overlay content
 // ─────────────────────────────────────────
 
 class _PartialOverlay extends StatelessWidget {
   const _PartialOverlay({
     super.key,
     required this.status,
-    required this.title,
-    this.subtitle,
-    required this.topInset,
+    this.title,
+    this.description,
     required this.color,
     required this.borderRadius,
   });
 
   static const double _iconSize = 60.0;
   static const double _iconTitleGap = 20.0;
-  static const double _titleSubtitleGap = 6.0;
+  static const double _titleDescriptionGap = 6.0;
   static const double _horizontalPadding = 31.0;
 
+  static const String _defaultTitle = 'Something went wrong.';
+  static const String _defaultDescription =
+      'Something went wrong.\nIf the issue continues, pleaase contact us.';
+
   final MingoringBottomSheetOverlayStatus status;
-  final String title;
-  final String? subtitle;
-  final double topInset;
+  final String? title;
+  final String? description;
   final Color color;
   final BorderRadius borderRadius;
 
-  String get _iconAsset => switch (status) {
-        MingoringBottomSheetOverlayStatus.success => AppIconAssets.check2True1,
-        MingoringBottomSheetOverlayStatus.failure => AppIconAssets.check2False,
-      };
-
-  Color get _titleColor => switch (status) {
-        MingoringBottomSheetOverlayStatus.success => AppColors.pink600,
-        MingoringBottomSheetOverlayStatus.failure => AppColors.gray900,
+  String get _mingoAsset => switch (status) {
+        MingoringBottomSheetOverlayStatus.success => MingoAssets.idleWingsSmile,
+        MingoringBottomSheetOverlayStatus.failure => MingoAssets.idleMainSad,
       };
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: topInset,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: ClipRRect(
-        borderRadius: topInset > 0
-            ? BorderRadius.zero
-            : borderRadius,
-        child: ColoredBox(
-          color: color,
-          child: Center(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: _horizontalPadding),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset(
-                    _iconAsset,
-                    width: _iconSize,
-                    height: _iconSize,
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: ColoredBox(
+        color: color,
+        child: Center(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  _mingoAsset,
+                  width: _iconSize,
+                ),
+                const SizedBox(height: _iconTitleGap),
+                Text(
+                  title ?? _defaultTitle,
+                  textAlign: TextAlign.center,
+                  style: AppLogoTypography.logoEb5.copyWith(
+                    color: AppColors.pink600,
                   ),
-                  const SizedBox(height: _iconTitleGap),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.head6B18.copyWith(
-                      color: _titleColor,
-                    ),
+                ),
+                const SizedBox(height: _titleDescriptionGap),
+                Text(
+                  description ?? _defaultDescription,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.body8Sb14.copyWith(
+                    color: AppColors.gray700,
                   ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: _titleSubtitleGap),
-                    Text(
-                      subtitle!,
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.detail2Sb13.copyWith(
-                        color: AppColors.gray500,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
