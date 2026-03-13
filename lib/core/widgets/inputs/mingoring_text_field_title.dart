@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'mingoring_text_field.dart';
+import 'mingoring_text_field_base.dart';
 
 /// 제목 입력용 단일행 텍스트 필드.
 ///
@@ -26,10 +26,9 @@ class MingoringTextFieldTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MingoringTextField(
+    return MingoringTextFieldBase(
       controller: controller,
       hintText: hintText,
-      borderStyle: MingoringTextFieldBorderStyle.shadow,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
       onChanged: onChanged,

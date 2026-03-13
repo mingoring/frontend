@@ -46,4 +46,10 @@ abstract final class MingoAssets {
     ...idleMainAll,
     ...idleWingsAll,
   ];
+
+  // ──────────────────────────────────────────
+  // Empty State
+  // ──────────────────────────────────────────
+
+  static const String empty = '$_basePath/mingo_empty.svg';
 }

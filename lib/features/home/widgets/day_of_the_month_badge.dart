@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 enum DayOfTheMonthBadgeVariant {
   empty, // 다른 월 날짜 (빈 상태)
@@ -135,6 +135,8 @@ class _DateLabel extends StatelessWidget {
   final int? date;
   final double scale;
 
+  static const double _baseFontSize = 12.0;
+
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -150,6 +152,4 @@ class _DateLabel extends StatelessWidget {
       textAlign: TextAlign.center,
     );
   }
-
-  static const double _baseFontSize = 12.0;
 }

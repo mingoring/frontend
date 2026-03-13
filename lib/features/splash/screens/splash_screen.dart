@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late final Animation<double> _ringReveal;
   late final Animation<double> _dotPop;
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
   ProviderSubscription<AuthState>? _authSubscription;
 
   @override
@@ -73,6 +75,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _playSequence() async {
+    _audioPlayer.play(AssetSource('sounds/mingoring-sound.mp3'));
     await _controller.forward();
     if (!mounted) return;
     await Future.delayed(SplashConstants.holdDuration);
@@ -107,6 +110,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   void dispose() {
+    _audioPlayer.dispose();
     _authSubscription?.close();
     _controller.dispose();
     super.dispose();

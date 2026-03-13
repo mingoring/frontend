@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../constants/app_mingo_assets.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_logo_typography.dart';
-import '../../theme/app_text_styles.dart';
-import '../indicators/mingoring_circular_progress_indicator.dart';
-import 'mingoring_alert_dialog.dart';
+import '../../../core/constants/app_mingo_assets.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_logo_typography.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/widgets/dialogs/mingoring_alert_dialog.dart';
+import '../../../core/widgets/indicators/mingoring_circular_progress_indicator.dart';
 
 /// 영상 생성(업로드) 진행 중 상태 팝업
 ///

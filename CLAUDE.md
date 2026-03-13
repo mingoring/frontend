@@ -28,11 +28,11 @@
 
 ## 3. 필요 시 불러올 Skills
 
-- Flutter 프로젝트 전체 아키텍처/폴더 구조: skills/project-architecture/SKILL.md
-- Riverpod 상태관리, 인증/인가 처리: skills/state-management/SKILL.md
-- 에러 처리: skills/error-handling/SKILL.md
-- 네이밍 컨벤션: skills/naming-conventions/SKILL.md
-- 컴포넌트 구현: skills/flutter-component-builder/SKILL.md
+- Flutter 프로젝트 전체 아키텍처/폴더 구조: .claude/skills/project-architecture/SKILL.md
+- Riverpod 상태관리, 인증/인가 처리: .claude/skills/state-management/SKILL.md
+- 에러 처리: .claude/skills/error-handling/SKILL.md
+- 네이밍 컨벤션: .claude/skills/naming-conventions/SKILL.md
+- 컴포넌트 구현: .claude/skills/flutter-component-builder/SKILL.md
 
 
 ## 4. 로컬 저장소 활용

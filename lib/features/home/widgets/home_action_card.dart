@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants/app_icon_assets.dart';
-import '../../theme/app_colors.dart';
-import '../video/video_thumbnail.dart';
-import '../../theme/app_logo_typography.dart';
-import '../../theme/app_text_styles.dart';
-import '../badges/day_of_the_week_badge.dart';
+import '../../../core/constants/app_icon_assets.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/video/video_thumbnail.dart';
+import '../../../core/theme/app_logo_typography.dart';
+import '../../../core/theme/app_text_styles.dart';
+import 'day_of_the_week_badge.dart';
 
 enum HomeActionCardType { bookmarks, goToLesson, calendar }
 
@@ -103,17 +103,9 @@ class _HomeActionCardState extends State<HomeActionCard> {
         HomeActionCardType.calendar => AppColors.pink200,
       };
 
-  List<BoxShadow> get _boxShadow => switch (widget._type) {
-        HomeActionCardType.bookmarks => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
-          ],
-        HomeActionCardType.calendar => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
-          ],
-        HomeActionCardType.goToLesson => const [
-            BoxShadow(color: AppColors.gray300, blurRadius: 5)
-          ],
-      };
+  static const _boxShadow = [
+    BoxShadow(color: AppColors.gray300, blurRadius: 4, offset: Offset(0, 0)),
+  ];
 
   void _onTapDown(TapDownDetails _) => setState(() => _isPressed = true);
 

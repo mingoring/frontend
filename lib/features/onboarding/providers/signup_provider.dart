@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/storage/app_storage.dart';
 import '../../../core/storage/local_storage_service.dart';
-import '../../../core/widgets/inputs/mingoring_input_textfield_verify.dart';
+import '../../../core/widgets/inputs/mingoring_text_field_verify.dart';
 import '../../auth/models/auth_state.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../constants/signup_screen_constants.dart';
@@ -162,7 +162,12 @@ class SignupNotifier extends _$SignupNotifier {
   /// 결과를 state에 반영한다(AsyncValue 사용).
   Future<void> verifyReferralCode() async {
     final code = state.referralCodeInput;
-    if (code.isEmpty) return;
+    if (code.isEmpty) {
+      state = state.copyWith(
+        referralCodeValidationState: const AsyncValue.data(null),
+      );
+      return;
+    }
     state =
         state.copyWith(referralCodeValidationState: const AsyncValue.loading());
     final result = await AsyncValue.guard<bool?>(

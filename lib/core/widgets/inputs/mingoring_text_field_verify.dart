@@ -20,8 +20,8 @@ enum _TrailingIconType {
 }
 
 // 검증 기능이 포함된 표준 텍스트 입력 위젯.
-class MingoringInputTextfieldVerify extends StatefulWidget {
-  const MingoringInputTextfieldVerify({
+class MingoringTextFieldVerify extends StatefulWidget {
+  const MingoringTextFieldVerify({
     super.key,
     required this.controller, // 텍스트 컨트롤러
     this.hintText = '', // 힌트 텍스트
@@ -56,27 +56,26 @@ class MingoringInputTextfieldVerify extends StatefulWidget {
   final FocusNode? focusNode;
 
   @override
-  State<MingoringInputTextfieldVerify> createState() =>
-      _MingoringInputTextfieldVerifyState();
+  State<MingoringTextFieldVerify> createState() =>
+      _MingoringTextFieldVerifyState();
 }
 
-class _MingoringInputTextfieldVerifyState
-    extends State<MingoringInputTextfieldVerify> {
-  late FocusNode _internalFocusNode;
+class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
+  late FocusNode _focusNode;
   bool _isFocused = false;
   bool _hasText = false;
 
   @override
   void initState() {
     super.initState();
-    _internalFocusNode = widget.focusNode ?? FocusNode();
-    _internalFocusNode.addListener(_onFocusChanged);
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onTextChanged);
     _hasText = widget.controller.text.isNotEmpty;
   }
 
   @override
-  void didUpdateWidget(covariant MingoringInputTextfieldVerify oldWidget) {
+  void didUpdateWidget(covariant MingoringTextFieldVerify oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_onTextChanged);
@@ -84,25 +83,25 @@ class _MingoringInputTextfieldVerifyState
       _hasText = widget.controller.text.isNotEmpty;
     }
     if (oldWidget.focusNode != widget.focusNode) {
-      _internalFocusNode.removeListener(_onFocusChanged);
-      if (oldWidget.focusNode == null) _internalFocusNode.dispose();
-      _internalFocusNode = widget.focusNode ?? FocusNode();
-      _internalFocusNode.addListener(_onFocusChanged);
+      _focusNode.removeListener(_onFocusChanged);
+      if (oldWidget.focusNode == null) _focusNode.dispose();
+      _focusNode = widget.focusNode ?? FocusNode();
+      _focusNode.addListener(_onFocusChanged);
     }
   }
 
   @override
   void dispose() {
-    _internalFocusNode.removeListener(_onFocusChanged);
+    _focusNode.removeListener(_onFocusChanged);
     widget.controller.removeListener(_onTextChanged);
     if (widget.focusNode == null) {
-      _internalFocusNode.dispose();
+      _focusNode.dispose();
     }
     super.dispose();
   }
 
   void _onFocusChanged() {
-    setState(() => _isFocused = _internalFocusNode.hasFocus);
+    setState(() => _isFocused = _focusNode.hasFocus);
   }
 
   void _onTextChanged() {
@@ -142,11 +141,8 @@ class _MingoringInputTextfieldVerifyState
 
   bool get _hasTrailingIcon => _trailingIconType != _TrailingIconType.none;
 
-  Color get _borderColor {
-    if (_isError) return AppColors.pink600;
-    if (_showOutline) return AppColors.pink600;
-    return AppColors.gray400;
-  }
+  Color get _borderColor =>
+      (_isError || _showOutline) ? AppColors.pink600 : AppColors.gray400;
 
   Color get _backgroundColor {
     if (_showErrorBackground) return AppColors.pink200;
@@ -167,7 +163,7 @@ class _MingoringInputTextfieldVerifyState
       onTap: () {
         // TextField 영역 전체를 눌렀을 때 포커스 요청 (아이콘 터치 영역 외 전체)
         if (widget.enabled) {
-          FocusScope.of(context).requestFocus(_internalFocusNode);
+          FocusScope.of(context).requestFocus(_focusNode);
         }
       },
       child: Container(
@@ -240,7 +236,7 @@ class _MingoringInputTextfieldVerifyState
   Widget _buildTextField() {
     return TextField(
       controller: widget.controller,
-      focusNode: _internalFocusNode,
+      focusNode: _focusNode,
       enabled: widget.enabled,
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
