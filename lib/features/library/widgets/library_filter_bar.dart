@@ -29,10 +29,15 @@ class LibraryFilterBar extends StatelessWidget {
     super.key,
     required this.selectedOption,
     required this.onSelected,
+    this.editableOnly = false,
   });
 
   final LibraryFilterOption selectedOption;
   final ValueChanged<LibraryFilterOption> onSelected;
+
+  /// true: 상태 변경 가능한 옵션만 표시 (In Progress, Completed)
+  /// false(기본): 전체 옵션 표시
+  final bool editableOnly;
 
   static const double _barHeight = 33.0;
   static const double _chipHeight = 27.0;
@@ -40,6 +45,10 @@ class LibraryFilterBar extends StatelessWidget {
   static const double _chipVerticalPadding = 4.0;
   static const double _chipRadius = 20.0;
   static const double _gap = 6.0;
+
+  List<LibraryFilterOption> get _options => editableOnly
+      ? const [LibraryFilterOption.inProgress, LibraryFilterOption.completed]
+      : LibraryFilterOption.values;
 
   @override
   Widget build(BuildContext context) {
@@ -50,17 +59,17 @@ class LibraryFilterBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            for (int i = 0; i < LibraryFilterOption.values.length; i++) ...[
+            for (int i = 0; i < _options.length; i++) ...[
               _LibraryFilterChip(
-                option: LibraryFilterOption.values[i],
-                isSelected: LibraryFilterOption.values[i] == selectedOption,
-                onTap: () => onSelected(LibraryFilterOption.values[i]),
+                option: _options[i],
+                isSelected: _options[i] == selectedOption,
+                onTap: () => onSelected(_options[i]),
                 chipHeight: _chipHeight,
                 chipHorizontalPadding: _chipHorizontalPadding,
                 chipVerticalPadding: _chipVerticalPadding,
                 chipRadius: _chipRadius,
               ),
-              if (i < LibraryFilterOption.values.length - 1)
+              if (i < _options.length - 1)
                 const SizedBox(width: _gap),
             ],
           ],

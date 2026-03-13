@@ -10,6 +10,7 @@ import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
 import '../../features/library/models/library_edit_screen_args.dart';
+import '../../features/library/providers/library_list_provider.dart';
 import '../../features/library/screens/library_edit_screen.dart';
 import '../../features/library/screens/library_screen.dart';
 import '../../features/onboarding/screens/login_screen.dart';
@@ -94,13 +95,20 @@ GoRouter appRouter(Ref ref) {
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          return Scaffold(
-            body: navigationShell,
-            bottomNavigationBar: MingoringNavigationBar(
-              currentIndex: navigationShell.currentIndex,
-              onTap: (index) => navigationShell.goBranch(
-                index,
-                initialLocation: index == navigationShell.currentIndex,
+          return Consumer(
+            builder: (context, ref, _) => Scaffold(
+              body: navigationShell,
+              bottomNavigationBar: MingoringNavigationBar(
+                currentIndex: navigationShell.currentIndex,
+                onTap: (index) {
+                  if (index == 0) {
+                    ref.invalidate(libraryListProvider);
+                  }
+                  navigationShell.goBranch(
+                    index,
+                    initialLocation: index == navigationShell.currentIndex,
+                  );
+                },
               ),
             ),
           );

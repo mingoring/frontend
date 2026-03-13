@@ -26,7 +26,7 @@ class ConfirmAlertDialog extends StatelessWidget {
   static const double _topPadding = 50.0;
   static const double _bottomPadding = 25.0;
   static const double _textGap = 8.0;
-  static const double _contentToButtonGap = 50.0;
+  static const double _contentToButtonGap = 30.0;
   static const double _buttonGap = 18.0;
 
   final String title;

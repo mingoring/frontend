@@ -21,10 +21,10 @@ class MingoringAppBar extends StatelessWidget implements PreferredSizeWidget {
     required VoidCallback this.onBack,
     this.type = MingoringBackHeaderType.none,
     this.text,
+    this.titleWidget,
     this.backgroundColor = AppColors.white,
     this.horizontalPadding = AppSpacing.homeContentHorizontalSpacing,
   })  : onActionPressed = null,
-        titleWidget = null,
         isActionEnabled = true,
         assert(
           type != MingoringBackHeaderType.titleWithSave &&

@@ -46,49 +46,6 @@ class LibraryEditMutationNotifier extends AutoDisposeNotifier<AsyncValue<void>> 
     }
   }
 
-  /// status change 먼저 (status별 그룹 → 순차 호출), 이후 delete (동기 순차)
-  Future<bool> saveAll({
-    required Map<int, LessonStatus> statusChanges,
-    required List<int> deleteIds,
-  }) async {
-    if (statusChanges.isEmpty && deleteIds.isEmpty) {
-      state = const AsyncValue.data(null);
-      return true;
-    }
-
-    state = const AsyncValue.loading();
-    try {
-      if (deleteIds.isNotEmpty) {
-        await _repository.deleteVideos(lessonIds: deleteIds);
-      }
-
-      final remainingStatusChanges = {
-        for (final entry in statusChanges.entries)
-          if (!deleteIds.contains(entry.key)) entry.key: entry.value,
-      };
-
-      if (remainingStatusChanges.isNotEmpty) {
-        final grouped = <LessonStatus, List<int>>{};
-        for (final entry in remainingStatusChanges.entries) {
-          grouped.putIfAbsent(entry.value, () => []).add(entry.key);
-        }
-        for (final entry in grouped.entries) {
-          await _repository.updateStatus(
-            lessonIds: entry.value,
-            status: entry.key,
-          );
-        }
-      }
-      state = const AsyncValue.data(null);
-      return true;
-    } on AppException catch (e, st) {
-      state = AsyncValue.error(e, st);
-      return false;
-    } catch (e, st) {
-      state = AsyncValue.error(const UnknownException(), st);
-      return false;
-    }
-  }
 }
 
 final libraryEditMutationProvider =

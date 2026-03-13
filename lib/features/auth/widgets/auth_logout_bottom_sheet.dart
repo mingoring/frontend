@@ -35,7 +35,7 @@ class AuthLogoutBottomSheet {
       primaryButtonText: _primaryButtonText,
       secondaryButtonText: _secondaryButtonText,
       onPrimaryPressed: onLogout,
-      // primaryButtonOnLeft: false → Cancel(좌/회색) | Log Out(우/핑크)
     );
   }
 }
+

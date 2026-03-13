@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/route_names.dart';
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -27,11 +28,30 @@ class LibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
-  LibraryFilterOption _selectedFilter = LibraryFilterOption.all;
+  LibraryFilterOption _selectedFilter = LibraryFilterOption.inProgress;
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    final storage = ref.read(localStorageServiceProvider).valueOrNull;
+    final saved = storage?.getLastLibraryFilterOption();
+    if (saved != null) {
+      final matched = LibraryFilterOption.values
+          .where((o) => o.name == saved)
+          .firstOrNull;
+      if (matched != null) _selectedFilter = matched;
+    }
+  }
+
+  void _onFilterSelected(LibraryFilterOption option) {
+    setState(() => _selectedFilter = option);
+    final storage = ref.read(localStorageServiceProvider).valueOrNull;
+    storage?.saveLastLibraryFilterOption(option.name);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,17 +104,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         LibraryEditButton(
                           enabled: allItemsForEdit.isNotEmpty,
                           onTap: () async {
-                            final saved = await context.push<bool>(
+                            await context.push(
                               RouteNames.libraryEdit,
                               extra: LibraryEditScreenArgs(
                                 initialItems: allItemsForEdit,
                               ),
                             );
-                            if (!mounted) return;
-
-                            if (saved == true) {
-                              ref.invalidate(libraryListProvider);
-                            }
                           },
                         ),
                       ],
@@ -111,9 +126,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   const SizedBox(height: 16),
                   LibraryFilterBar(
                     selectedOption: _selectedFilter,
-                    onSelected: (option) {
-                      setState(() => _selectedFilter = option);
-                    },
+                    onSelected: _onFilterSelected,
                   ),
                   const SizedBox(height: 14),
                 ],
