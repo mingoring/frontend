@@ -298,6 +298,9 @@ class _CalendarContent extends StatelessWidget {
   final int streakDays;
   final List<DayOfWeekBadgeData> weekBadges;
 
+  String get _description =>
+      streakDays == 0 ? 'Start your streak today!' : 'Continuous learning!';
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -312,13 +315,26 @@ class _CalendarContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  '${streakDays}days',
-                  style: AppLogoTypography.logoB5
-                      .copyWith(color: AppColors.pink600),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '$streakDays',
+                        style: AppLogoTypography.logoB5.copyWith(
+                          color: AppColors.pink600,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' Day Streak',
+                        style: AppLogoTypography.logo6.copyWith(
+                          color: AppColors.pink600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Text(
-                  'Continuous learning!',
+                  _description,
                   style: AppTextStyles.detail5Sb12
                       .copyWith(color: AppColors.gray500),
                 ),

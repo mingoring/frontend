@@ -37,9 +37,9 @@ class MingoringTextFieldVerify extends StatefulWidget {
     this.helperText, // 도움말 텍스트
     this.focusNode, // 포커스 노드
   }) : assert(
-          showMax == false || maxLength != null,
-          'maxLength is required when showMax is true',
-        );
+         showMax == false || maxLength != null,
+         'maxLength is required when showMax is true',
+       );
 
   final TextEditingController controller;
   final String hintText;
@@ -65,6 +65,14 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
   bool _isFocused = false;
   bool _hasText = false;
 
+  static const double _borderRadius = 20.0;
+  static const double _height = 50.0;
+  static const double _horizontalPadding = 16.0;
+  static const double _verticalPadding = 14.0;
+  static const double _iconSize = 16.0;
+  static const double _contentGap = 10.0;
+  static const double _helperGap = 8.0;
+
   @override
   void initState() {
     super.initState();
@@ -77,16 +85,21 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
   @override
   void didUpdateWidget(covariant MingoringTextFieldVerify oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_onTextChanged);
       widget.controller.addListener(_onTextChanged);
       _hasText = widget.controller.text.isNotEmpty;
     }
+
     if (oldWidget.focusNode != widget.focusNode) {
       _focusNode.removeListener(_onFocusChanged);
-      if (oldWidget.focusNode == null) _focusNode.dispose();
+      if (oldWidget.focusNode == null) {
+        _focusNode.dispose();
+      }
       _focusNode = widget.focusNode ?? FocusNode();
       _focusNode.addListener(_onFocusChanged);
+      _isFocused = _focusNode.hasFocus;
     }
   }
 
@@ -111,16 +124,6 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
     }
   }
 
-  static const double _borderRadius = 20.0;
-  static const double _height = 50.0;
-  static const double _horizontalPadding = 16.0;
-  static const double _verticalPadding = 14.0;
-  static const double _iconSize = 16.0;
-  static const double _contentGapDefault = 10.0;
-  static const double _contentGapDense = 7.0;
-  static const double _helperGap = 8.0;
-
-  // ── 내부 계산 getters ─────────────────────────────
   bool get _isError =>
       widget.validationStatus == MingoringValidationStatus.error;
 
@@ -161,7 +164,6 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
     final field = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        // TextField 영역 전체를 눌렀을 때 포커스 요청 (아이콘 터치 영역 외 전체)
         if (widget.enabled) {
           FocusScope.of(context).requestFocus(_focusNode);
         }
@@ -186,17 +188,13 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
                 children: [
                   if (widget.leadingIconAsset != null) ...[
                     _buildLeadingIcon(),
-                    SizedBox(
-                      width: _isError || _showOutline
-                          ? _contentGapDense
-                          : _contentGapDefault,
-                    ),
+                    const SizedBox(width: _contentGap),
                   ],
                   Expanded(
                     child: _buildTextField(),
                   ),
                   if (_hasTrailingIcon)
-                    const SizedBox(width: _contentGapDense + _iconSize),
+                    const SizedBox(width: _contentGap + _iconSize),
                 ],
               ),
             ),
@@ -246,6 +244,7 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
       ),
       decoration: InputDecoration(
         isCollapsed: true,
+        isDense: true,
         border: InputBorder.none,
         focusedBorder: InputBorder.none,
         enabledBorder: InputBorder.none,
@@ -255,7 +254,6 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
           color: AppColors.gray400,
         ),
         counterText: '',
-        isDense: true,
       ),
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
@@ -303,7 +301,6 @@ class _MingoringTextFieldVerifyState extends State<MingoringTextFieldVerify> {
       ),
     );
 
-    // 삭제 버튼 터치 영역 (아이콘 시작 x좌표부터 우측 끝 지정)
     final touchAreaWidth = _iconSize + _horizontalPadding;
 
     final touchArea = Container(

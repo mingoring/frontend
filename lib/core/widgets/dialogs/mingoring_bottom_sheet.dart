@@ -59,7 +59,7 @@ class MingoringBottomSheet extends StatelessWidget {
 
   static const ButtonStyle _secondaryButtonStyle = ButtonStyle(
     backgroundColor: WidgetStatePropertyAll(AppColors.gray400),
-    overlayColor: WidgetStatePropertyAll(AppColors.white70),
+    overlayColor: WidgetStatePropertyAll(AppColors.white85),
   );
 
   /// 바텀시트 제목

@@ -58,7 +58,7 @@ class DayOfTheWeekBadge extends StatelessWidget {
 
   Color get _backgroundColor => switch (variant) {
         DayBadgeVariant.completedDay => AppColors.pink600,
-        DayBadgeVariant.incompletedPastDay => AppColors.white,
+        DayBadgeVariant.incompletedPastDay => AppColors.gray100,
         DayBadgeVariant.incompletedToday => AppColors.pink300,
       };
 
