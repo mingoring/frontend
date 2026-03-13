@@ -33,7 +33,7 @@ final libraryListProvider = FutureProvider.autoDispose
   }
 
   try {
-    return ref
+    return await ref
         .watch(libraryRepositoryProvider)
         .fetchList(filter: params.filter);
   } on UnauthorizedException {
