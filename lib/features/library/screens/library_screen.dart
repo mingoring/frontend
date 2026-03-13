@@ -35,17 +35,42 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
 
+  ProviderSubscription<AsyncValue<LocalStorageService>>? _storageSub;
+  bool _didRestoreFilter = false;
+
+  LibraryFilterOption? _parseSavedFilter(String? saved) {
+    if (saved == null) return null;
+    for (final option in LibraryFilterOption.values) {
+      if (option.name == saved) return option;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
-    final storage = ref.read(localStorageServiceProvider).valueOrNull;
-    final saved = storage?.getLastLibraryFilterOption();
-    if (saved != null) {
-      final matched = LibraryFilterOption.values
-          .where((o) => o.name == saved)
-          .firstOrNull;
-      if (matched != null) _selectedFilter = matched;
-    }
+    _storageSub = ref.listenManual<AsyncValue<LocalStorageService>>(
+      localStorageServiceProvider,
+      (_, next) {
+        if (_didRestoreFilter) return;
+        if (next.valueOrNull == null) return;
+
+        _didRestoreFilter = true;
+        final matched = _parseSavedFilter(
+          next.valueOrNull!.getLastLibraryFilterOption(),
+        );
+        if (matched != null && mounted) {
+          setState(() => _selectedFilter = matched);
+        }
+      },
+      fireImmediately: true,
+    );
+  }
+
+  @override
+  void dispose() {
+    _storageSub?.close();
+    super.dispose();
   }
 
   void _onFilterSelected(LibraryFilterOption option) {
