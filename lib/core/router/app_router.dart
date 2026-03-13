@@ -10,8 +10,8 @@ import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
 import '../../features/library/models/library_edit_screen_args.dart';
-import '../../features/library/providers/library_list_provider.dart';
 import '../../features/library/screens/library_edit_screen.dart';
+import '../providers/tab_navigation_provider.dart';
 import '../../features/library/screens/library_screen.dart';
 import '../../features/onboarding/screens/login_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
@@ -101,9 +101,9 @@ GoRouter appRouter(Ref ref) {
               bottomNavigationBar: MingoringNavigationBar(
                 currentIndex: navigationShell.currentIndex,
                 onTap: (index) {
-                  if (index == 0) {
-                    ref.invalidate(libraryListProvider);
-                  }
+                  ref
+                      .read(tabNavigationNotifierProvider.notifier)
+                      .onTabTapped(AppTab.values[index]);
                   navigationShell.goBranch(
                     index,
                     initialLocation: index == navigationShell.currentIndex,

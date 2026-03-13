@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/providers/tab_navigation_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
@@ -55,6 +56,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(tabNavigationNotifierProvider, (_, next) {
+      if (next?.tab == AppTab.library) {
+        ref.invalidate(libraryListProvider);
+      }
+    });
+
     final visibleParams = LibraryListParams(filter: _selectedFilter);
     final visibleAsyncValue = ref.watch(libraryListProvider(visibleParams));
 
