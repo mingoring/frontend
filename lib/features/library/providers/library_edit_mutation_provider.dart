@@ -58,9 +58,18 @@ class LibraryEditMutationNotifier extends AutoDisposeNotifier<AsyncValue<void>> 
 
     state = const AsyncValue.loading();
     try {
-      if (statusChanges.isNotEmpty) {
+      if (deleteIds.isNotEmpty) {
+        await _repository.deleteVideos(lessonIds: deleteIds);
+      }
+
+      final remainingStatusChanges = {
+        for (final entry in statusChanges.entries)
+          if (!deleteIds.contains(entry.key)) entry.key: entry.value,
+      };
+
+      if (remainingStatusChanges.isNotEmpty) {
         final grouped = <LessonStatus, List<int>>{};
-        for (final entry in statusChanges.entries) {
+        for (final entry in remainingStatusChanges.entries) {
           grouped.putIfAbsent(entry.value, () => []).add(entry.key);
         }
         for (final entry in grouped.entries) {
@@ -69,9 +78,6 @@ class LibraryEditMutationNotifier extends AutoDisposeNotifier<AsyncValue<void>> 
             status: entry.key,
           );
         }
-      }
-      if (deleteIds.isNotEmpty) {
-        await _repository.deleteVideos(lessonIds: deleteIds);
       }
       state = const AsyncValue.data(null);
       return true;
