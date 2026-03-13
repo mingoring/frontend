@@ -196,7 +196,7 @@ class _StreakSection extends StatelessWidget {
         ),
         const SizedBox(height: _numberToStreakGap),
         Text(
-          'Days Streak',
+          'Day Streak',
           style: AppLogoTypography.logoB4.copyWith(
             color: AppColors.pink600,
           ),

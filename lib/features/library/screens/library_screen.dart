@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/providers/tab_navigation_provider.dart';
 import '../../../core/router/route_names.dart';
+import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -27,14 +29,64 @@ class LibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _LibraryScreenState extends ConsumerState<LibraryScreen> {
-  LibraryFilterOption _selectedFilter = LibraryFilterOption.all;
+  LibraryFilterOption _selectedFilter = LibraryFilterOption.inProgress;
 
   static const double _horizontalPadding = 20.0;
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
 
+  ProviderSubscription<AsyncValue<LocalStorageService>>? _storageSub;
+  bool _didRestoreFilter = false;
+
+  LibraryFilterOption? _parseSavedFilter(String? saved) {
+    if (saved == null) return null;
+    for (final option in LibraryFilterOption.values) {
+      if (option.name == saved) return option;
+    }
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _storageSub = ref.listenManual<AsyncValue<LocalStorageService>>(
+      localStorageServiceProvider,
+      (_, next) {
+        if (_didRestoreFilter) return;
+        if (next.valueOrNull == null) return;
+
+        _didRestoreFilter = true;
+        final matched = _parseSavedFilter(
+          next.valueOrNull!.getLastLibraryFilterOption(),
+        );
+        if (matched != null && mounted) {
+          setState(() => _selectedFilter = matched);
+        }
+      },
+      fireImmediately: true,
+    );
+  }
+
+  @override
+  void dispose() {
+    _storageSub?.close();
+    super.dispose();
+  }
+
+  void _onFilterSelected(LibraryFilterOption option) {
+    setState(() => _selectedFilter = option);
+    final storage = ref.read(localStorageServiceProvider).valueOrNull;
+    storage?.saveLastLibraryFilterOption(option.name);
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen(tabNavigationNotifierProvider, (_, next) {
+      if (next?.tab == AppTab.library) {
+        ref.invalidate(libraryListProvider);
+      }
+    });
+
     final visibleParams = LibraryListParams(filter: _selectedFilter);
     final visibleAsyncValue = ref.watch(libraryListProvider(visibleParams));
 
@@ -84,17 +136,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                         LibraryEditButton(
                           enabled: allItemsForEdit.isNotEmpty,
                           onTap: () async {
-                            final saved = await context.push<bool>(
+                            await context.push(
                               RouteNames.libraryEdit,
                               extra: LibraryEditScreenArgs(
                                 initialItems: allItemsForEdit,
                               ),
                             );
-                            if (!mounted) return;
-
-                            if (saved == true) {
-                              ref.invalidate(libraryListProvider);
-                            }
                           },
                         ),
                       ],
@@ -111,9 +158,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   const SizedBox(height: 16),
                   LibraryFilterBar(
                     selectedOption: _selectedFilter,
-                    onSelected: (option) {
-                      setState(() => _selectedFilter = option);
-                    },
+                    onSelected: _onFilterSelected,
                   ),
                   const SizedBox(height: 14),
                 ],

@@ -66,7 +66,7 @@ class VideoThumbnail extends StatelessWidget {
         VideoThumbnailSize.big => 36.0,
       };
 
-  static const _playButtonBackgroundColor = AppColors.white70;
+  static const _playButtonBackgroundColor = AppColors.white85;
   static const _playIconColor = AppColors.black70;
   static const _thumbnailDimColor = AppColors.black10;
 

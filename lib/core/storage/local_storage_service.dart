@@ -66,6 +66,15 @@ class LocalStorageService {
   /// 북마크 정렬 기준을 조회한다. 저장값이 없으면 null을 반환한다.
   String? getBookmarkSort() => _prefs.getString(StorageKeys.bookmarkSort);
 
+  /// 마지막으로 선택한 라이브러리 필터 옵션을 저장한다.
+  Future<void> saveLastLibraryFilterOption(String value) async {
+    final saved = await _prefs.setString(StorageKeys.lastLibraryFilterOption, value);
+    if (!saved) AppLogger.w('[LocalStorage] saveLastLibraryFilterOption 저장 실패 (key: ${StorageKeys.lastLibraryFilterOption})');
+  }
+
+  /// 마지막으로 선택한 라이브러리 필터 옵션을 조회한다. 저장값이 없으면 null을 반환한다.
+  String? getLastLibraryFilterOption() => _prefs.getString(StorageKeys.lastLibraryFilterOption);
+
   /// 로컬 스토리지 데이터를 모두 정리한다.
   Future<void> clearSessionAll() async {
     await clearLoginData();

@@ -17,4 +17,7 @@ abstract final class StorageKeys {
 
   // Bookmark
   static const String bookmarkSort = 'bookmark_sort';
+
+  // Library
+  static const String lastLibraryFilterOption = 'lastSelectedLibraryFilterOption';
 }
