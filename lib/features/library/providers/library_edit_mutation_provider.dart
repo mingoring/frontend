@@ -51,7 +51,10 @@ class LibraryEditMutationNotifier extends AutoDisposeNotifier<AsyncValue<void>> 
     required Map<int, LessonStatus> statusChanges,
     required List<int> deleteIds,
   }) async {
-    if (statusChanges.isEmpty && deleteIds.isEmpty) return true;
+    if (statusChanges.isEmpty && deleteIds.isEmpty) {
+      state = const AsyncValue.data(null);
+      return true;
+    }
 
     state = const AsyncValue.loading();
     try {

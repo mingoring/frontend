@@ -162,7 +162,12 @@ class SignupNotifier extends _$SignupNotifier {
   /// 결과를 state에 반영한다(AsyncValue 사용).
   Future<void> verifyReferralCode() async {
     final code = state.referralCodeInput;
-    if (code.isEmpty) return;
+    if (code.isEmpty) {
+      state = state.copyWith(
+        referralCodeValidationState: const AsyncValue.data(null),
+      );
+      return;
+    }
     state =
         state.copyWith(referralCodeValidationState: const AsyncValue.loading());
     final result = await AsyncValue.guard<bool?>(
