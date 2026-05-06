@@ -33,6 +33,7 @@
 - 에러 처리: .claude/skills/error-handling/SKILL.md
 - 네이밍 컨벤션: .claude/skills/naming-conventions/SKILL.md
 - 컴포넌트 구현: .claude/skills/flutter-component-builder/SKILL.md
+- iOS WebView 인라인 재생(YouTube 전체화면 방지): .claude/skills/webview-ios-inline-playback/SKILL.md
 
 
 ## 4. 로컬 저장소 활용

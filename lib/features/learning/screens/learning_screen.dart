@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 /// 학습 화면 — 영상별 웹뷰를 전체 화면으로 표시한다.
 ///
@@ -26,7 +27,17 @@ class _LearningScreenState extends State<LearningScreen> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    _controller = WebViewController()
+
+    // iOS에서 YouTube 영상이 자동으로 전체화면이 되는 것을 방지
+    final PlatformWebViewControllerCreationParams params =
+        WebViewPlatform.instance is WebKitWebViewPlatform
+            ? WebKitWebViewControllerCreationParams(
+                allowsInlineMediaPlayback: true,
+                mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+              )
+            : const PlatformWebViewControllerCreationParams();
+
+    _controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(Uri.parse(widget.videoUrl));
   }
