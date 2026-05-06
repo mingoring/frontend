@@ -17,7 +17,6 @@ class LessonItemDto with _$LessonItemDto {
     required String addedAt,
     required String originalText,
     required String translatedText,
-    String? videoId,
   }) = _LessonItemDto;
 
   factory LessonItemDto.fromJson(Map<String, dynamic> json) =>
