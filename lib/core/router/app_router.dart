@@ -10,7 +10,9 @@ import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
 import '../../features/library/models/library_edit_screen_args.dart';
+import '../../features/library/models/video_watch_screen_args.dart';
 import '../../features/library/screens/library_edit_screen.dart';
+import '../../features/library/screens/video_watch_screen.dart';
 import '../providers/tab_navigation_provider.dart';
 import '../../features/library/screens/library_screen.dart';
 import '../../features/onboarding/screens/login_screen.dart';
@@ -83,6 +85,16 @@ GoRouter appRouter(Ref ref) {
             throw ArgumentError('LibraryEditScreenArgs is required for libraryEdit route.');
           }
           return LibraryEditScreen(args: extra);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.videoWatch,
+        builder: (_, state) {
+          final extra = state.extra;
+          if (extra is! VideoWatchScreenArgs) {
+            throw ArgumentError('VideoWatchScreenArgs is required for videoWatch route.');
+          }
+          return VideoWatchScreen(args: extra);
         },
       ),
       GoRoute(
@@ -165,5 +177,6 @@ bool _isProtectedRoute(String location) =>
     location == RouteNames.libraryEdit ||
     location == RouteNames.myPage ||
     location == RouteNames.calendar ||
-    location == RouteNames.bookmarks;
+    location == RouteNames.bookmarks ||
+    location == RouteNames.videoWatch;
     

@@ -16,36 +16,6 @@
 - **린트**: flutter_lints: 5.0.0 (dev)
 
 
-## 디렉토리 구조 (기준안)
-```
-lib/
-├── main.dart
-├── core/                    # 전역 공유 코드
-│   ├── constants/           # 상수 (색상, 문자열, 사이즈 등)
-│   ├── utils/               # 공통 유틸 함수
-│   ├── extensions/          # extension 메서드
-│   └── errors/              # 공통 에러 정의
-│
-├── data/                    # 데이터 계층 (구현 중심)
-│   ├── models/              # DTO / 데이터 모델 (JSON 직렬화)
-│   ├── repositories/        # Repository 구현체 (Domain의 인터페이스 구현)
-│   └── datasources/         # 데이터 소스 (API, Local DB)
-│       ├── remote/          # 원격 API 호출
-│       └── local/           # 로컬 저장소
-│
-├── domain/                  # 비즈니스 로직 계층
-│   ├── entities/            # 순수 비즈니스 엔티티 (JSON 의존성 X)
-│   ├── repositories/        # Repository 인터페이스 (추상)
-│   └── usecases/            # 유스케이스 (행동 단위)
-│
-└── presentation/            # UI 계층
-    ├── screens/             # 화면(Page)
-    ├── widgets/             # 재사용 UI 컴포넌트
-    ├── themes/              # Theme, ColorScheme
-    └── viewmodels/          # 상태 관리 (MVVM)
-```
-
-
 ## 코드 생성 명령어
 ```bash
 # 코드 생성 실행 (한 번만)

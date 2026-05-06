@@ -12,6 +12,7 @@ import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../constants/library_constants.dart';
 import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
+import '../models/video_watch_screen_args.dart';
 import '../providers/library_list_provider.dart';
 import '../widgets/library_add_video_button.dart';
 import '../widgets/library_edit_button.dart';
@@ -35,42 +36,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   static const double _cardSpacing = 12.0;
   static const int _crossAxisCount = 2;
 
-  ProviderSubscription<AsyncValue<LocalStorageService>>? _storageSub;
-  bool _didRestoreFilter = false;
-
-  LibraryFilterOption? _parseSavedFilter(String? saved) {
-    if (saved == null) return null;
-    for (final option in LibraryFilterOption.values) {
-      if (option.name == saved) return option;
-    }
-    return null;
-  }
-
   @override
   void initState() {
     super.initState();
-    _storageSub = ref.listenManual<AsyncValue<LocalStorageService>>(
-      localStorageServiceProvider,
-      (_, next) {
-        if (_didRestoreFilter) return;
-        if (next.valueOrNull == null) return;
-
-        _didRestoreFilter = true;
-        final matched = _parseSavedFilter(
-          next.valueOrNull!.getLastLibraryFilterOption(),
-        );
-        if (matched != null && mounted) {
-          setState(() => _selectedFilter = matched);
-        }
-      },
-      fireImmediately: true,
-    );
-  }
-
-  @override
-  void dispose() {
-    _storageSub?.close();
-    super.dispose();
+    final storage = ref.read(localStorageServiceProvider).valueOrNull;
+    final saved = storage?.getLastLibraryFilterOption();
+    if (saved != null) {
+      final matched = LibraryFilterOption.values
+          .where((o) => o.name == saved)
+          .firstOrNull;
+      if (matched != null) _selectedFilter = matched;
+    }
   }
 
   void _onFilterSelected(LibraryFilterOption option) {
@@ -231,6 +207,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                               videoTitle: item.title,
                               originalText: item.originalText,
                               translatedText: item.translatedText,
+                              onWatchPressed: () => context.push(
+                                RouteNames.videoWatch,
+                                extra: VideoWatchScreenArgs(
+                                  item: item,
+                                  // TODO: API가 videoId를 내려주면 item.videoId로 교체
+                                  videoId: item.videoId ?? 'nM0xDI5R50E',
+                                ),
+                              ),
                             ),
                     },
                   ),

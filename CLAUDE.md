@@ -33,6 +33,7 @@
 - 에러 처리: .claude/skills/error-handling/SKILL.md
 - 네이밍 컨벤션: .claude/skills/naming-conventions/SKILL.md
 - 컴포넌트 구현: .claude/skills/flutter-component-builder/SKILL.md
+- YouTube 플레이어 통합/유지보수: .claude/skills/youtube-player/SKILL.md
 
 
 ## 4. 로컬 저장소 활용

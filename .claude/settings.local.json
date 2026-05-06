@@ -8,7 +8,11 @@
       "Bash(flutter analyze:*)",
       "mcp__figma-remote-mcp__get_design_context",
       "Bash(xargs sed:*)",
-      "Bash(find /Users/Joy/Documents/source_files/project/mingoring/frontend/flutter/mingoring/lib/features/home -type f -name \"*.dart\" -exec wc -l {} \\\\; | sort -rn)"
+      "Bash(find /Users/Joy/Documents/source_files/project/mingoring/frontend/flutter/mingoring/lib/features/home -type f -name \"*.dart\" -exec wc -l {} \\\\; | sort -rn)",
+      "Bash(rm -rf /Users/Joy/Documents/source_files/project/mingoring/frontend/flutter/mingoring/.dart_tool/build && dart run build_runner build --delete-conflicting-outputs 2>&1; echo \"EXIT: $?\")",
+      "WebFetch(domain:www.figma.com)",
+      "Bash(xargs ls:*)",
+      "Bash(dart analyze:*)"
     ]
   }
 }

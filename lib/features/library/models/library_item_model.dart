@@ -23,6 +23,7 @@ class LessonItemModel {
     required this.addedAt,
     required this.originalText,
     required this.translatedText,
+    this.videoId,
   });
 
   final int lessonId;
@@ -34,6 +35,7 @@ class LessonItemModel {
   final DateTime addedAt;
   final String originalText;
   final String translatedText;
+  final String? videoId;
 }
 
 class LessonListModel {

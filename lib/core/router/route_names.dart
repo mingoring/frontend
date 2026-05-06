@@ -13,4 +13,5 @@ abstract final class RouteNames {
   static const String myPage = '/mypage';
   static const String bookmarks = '/bookmarks';
   static const String libraryEdit = '/library/edit';
+  static const String videoWatch = '/library/watch';
 }
