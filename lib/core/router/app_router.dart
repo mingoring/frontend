@@ -10,6 +10,7 @@ import '../../features/onboarding/providers/onboarding_provider.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/home/screens/calendar_screen.dart';
 import '../../features/library/models/library_edit_screen_args.dart';
+import '../../features/learning/screens/learning_screen.dart';
 import '../../features/library/screens/library_edit_screen.dart';
 import '../providers/tab_navigation_provider.dart';
 import '../../features/library/screens/library_screen.dart';
@@ -74,6 +75,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RouteNames.login,
         builder: (_, __) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.learning,
+        builder: (_, state) {
+          // TODO: extra로 전달받은 영상별 URL을 사용하도록 변경
+          const videoUrl = 'https://eunjeongheo.github.io/mingoring-webview/PR3w_rPXtrw';
+          return const LearningScreen(videoUrl: videoUrl);
+        },
       ),
       GoRoute(
         path: RouteNames.libraryEdit,
@@ -165,5 +174,6 @@ bool _isProtectedRoute(String location) =>
     location == RouteNames.libraryEdit ||
     location == RouteNames.myPage ||
     location == RouteNames.calendar ||
-    location == RouteNames.bookmarks;
+    location == RouteNames.bookmarks ||
+    location == RouteNames.learning;
     

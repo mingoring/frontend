@@ -8,7 +8,6 @@ import '../../../core/storage/local_storage_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_logo_typography.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 import '../constants/library_constants.dart';
 import '../models/library_edit_screen_args.dart';
 import '../models/library_item_model.dart';
@@ -225,13 +224,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     onTap: switch (item.status) {
                       LessonStatus.uploading =>
                         () => VideoUploadingAlertDialog.show(context),
+                      // TODO: item별 videoUrl을 extra로 전달하도록 변경
                       LessonStatus.inProgress || LessonStatus.completed =>
-                        () => VideoWatchAlertDialog.show(
-                              context,
-                              videoTitle: item.title,
-                              originalText: item.originalText,
-                              translatedText: item.translatedText,
-                            ),
+                        () => context.push(RouteNames.learning),
                     },
                   ),
                 )
