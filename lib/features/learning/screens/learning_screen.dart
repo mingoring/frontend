@@ -44,6 +44,13 @@ class _LearningScreenState extends State<LearningScreen> {
 
     _controller = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.white)
+      ..setNavigationDelegate(NavigationDelegate(
+        onPageFinished: (_) => _controller.runJavaScript(
+          "document.documentElement.style.cssText += ';height:100%;overflow:hidden;';"
+          "document.body.style.cssText += ';height:100%;overflow:hidden;';",
+        ),
+      ))
       ..loadRequest(Uri.parse(widget.videoUrl));
   }
 
@@ -56,7 +63,9 @@ class _LearningScreenState extends State<LearningScreen> {
         type: MingoringBackHeaderType.title,
         text: widget.title,
       ),
-      body: WebViewWidget(controller: _controller),
+      body: SizedBox.expand(
+        child: WebViewWidget(controller: _controller),
+      ),
     );
   }
 }
