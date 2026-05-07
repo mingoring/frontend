@@ -19,6 +19,7 @@ import '../widgets/library_filter_bar.dart';
 import '../widgets/library_input_link_bottom_sheet.dart';
 import '../widgets/library_list_card.dart';
 import '../widgets/video_uploading_alert_dialog.dart';
+import '../../../core/widgets/dialogs/video_watch_alert_dialog.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -224,9 +225,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     onTap: switch (item.status) {
                       LessonStatus.uploading =>
                         () => VideoUploadingAlertDialog.show(context),
-                      // TODO: item별 videoUrl을 extra로 전달하도록 변경
                       LessonStatus.inProgress || LessonStatus.completed =>
-                        () => context.push(RouteNames.learning),
+                        () => VideoWatchAlertDialog.show(
+                              context,
+                              videoTitle: item.title,
+                              originalText: item.originalText,
+                              translatedText: item.translatedText,
+                              onWatchPressed: () => context.push(RouteNames.learning),
+                            ),
                     },
                   ),
                 )

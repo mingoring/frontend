@@ -79,9 +79,9 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: RouteNames.learning,
         builder: (_, state) {
-          // TODO: extra로 전달받은 영상별 URL을 사용하도록 변경
+          // TODO: extra로 전달받은 영상별 URL과 title을 사용하도록 변경
           const videoUrl = 'https://eunjeongheo.github.io/mingoring-webview/PR3w_rPXtrw';
-          return const LearningScreen(videoUrl: videoUrl);
+          return const LearningScreen(videoUrl: videoUrl, title: '제목');
         },
       ),
       GoRoute(
